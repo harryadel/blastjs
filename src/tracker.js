@@ -123,7 +123,7 @@ function _throwOrLog(from, e) {
     printArgs.push(e.stack);
     _maybeSuppressMoreLogs(printArgs.length);
 
-    for (let i = 0; i < printArgs.length; i + 1) {
+    for (let i = 0; i < printArgs.length; i++) {
       _debugFunc()(printArgs[i]);
     }
   }
@@ -284,7 +284,7 @@ Tracker.Computation = class Computation {
 
       // callbacks can't add callbacks, because
       // this.invalidated === true.
-      for (let i = 0, f; f = this._onInvalidateCallbacks[i]; i + 1) {
+      for (let i = 0, f; f = this._onInvalidateCallbacks[i]; i++) {
         Tracker.nonreactive(() => {
           withNoYieldsAllowed(f)(this);
         });
