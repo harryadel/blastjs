@@ -4,6 +4,8 @@
 // Package docs at http://docs.meteor.com/#tracker //
 /// //////////////////////////////////////////////////
 
+const Fiber = require('fibers');
+
 /**
  * @namespace Tracker
  * @summary The namespace for Tracker-related methods.
@@ -50,9 +52,7 @@ function _debugFunc(...args) {
   // on some browser we come across, like it was on IE 7).
   //
   // Lazy evaluation because `Meteor` does not exist right away.(??)
-  if (typeof Meteor !== 'undefined') {
-    return Meteor._debug;
-  } if ((typeof console !== 'undefined') && console.error) {
+  if ((typeof console !== 'undefined') && console.error) {
     return function () {
       console.error.apply(console, args);
     };
@@ -60,15 +60,27 @@ function _debugFunc(...args) {
   return (function () { });
 }
 
-function _maybeSuppressMoreLogs(messagesLength) {
-  // Sometimes when running tests, we intentionally suppress logs on expected
-  // printed errors. Since the current implementation of _throwOrLog can log
-  // multiple separate log messages, suppress all of them if at least one suppress
-  // is expected as we still want them to count as one.
-  if (typeof Meteor !== 'undefined') {
-    if (Meteor._suppressed_log_expected()) {
-      Meteor._suppress_log(messagesLength - 1);
-    }
+// function _maybeSuppressMoreLogs(messagesLength) {
+//   // Sometimes when running tests, we intentionally suppress logs on expected
+//   // printed errors. Since the current implementation of _throwOrLog can log
+//   // multiple separate log messages, suppress all of them if at least one suppress
+//   // is expected as we still want them to count as one.
+//   if (typeof Meteor !== 'undefined') {
+//     if (Meteor._suppressed_log_expected()) {
+//       Meteor._suppress_log(messagesLength - 1);
+//     }
+//   }
+// }
+
+function _noYieldsAllowed(f) {
+  const savedYield = Fiber.yield;
+  Fiber.yield = function () {
+    throw new Error("Can't call yield in a noYieldsAllowed block!");
+  };
+  try {
+    return f();
+  } finally {
+    Fiber.yield = savedYield;
   }
 }
 
@@ -78,11 +90,11 @@ function _maybeSuppressMoreLogs(messagesLength) {
 // no-op). This has the benefit of not adding an unnecessary stack
 // frame on the client.
 function withNoYieldsAllowed(f) {
-  if ((typeof Meteor === 'undefined') || Meteor.isClient) {
+  if (typeof window === 'undefined') {
     return f;
   }
   return function (...args) {
-    Meteor._noYieldsAllowed(() => {
+    _noYieldsAllowed(() => {
       f.apply(null, args);
     });
   };
@@ -121,7 +133,7 @@ function _throwOrLog(from, e) {
       }
     }
     printArgs.push(e.stack);
-    _maybeSuppressMoreLogs(printArgs.length);
+    // _maybeSuppressMoreLogs(printArgs.length);
 
     for (let i = 0; i < printArgs.length; i++) {
       _debugFunc()(printArgs[i]);
@@ -134,7 +146,7 @@ const afterFlushCallbacks = [];
 function requireFlush() {
   if (!willFlush) {
     // We want this code to work without Meteor, see debugFunc above
-    if (typeof Meteor !== 'undefined') { Meteor._setImmediate(Tracker._runFlush); } else { setTimeout(Tracker._runFlush, 0); }
+    if (typeof Meteor !== 'undefined') { setImmediate(Tracker._runFlush); } else { setTimeout(Tracker._runFlush, 0); }
     willFlush = true;
   }
 }

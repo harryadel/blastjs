@@ -1,9 +1,12 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-plusplus */
+
 const { Tracker } = require('../src/tracker');
 
 test('tracker - run', (test) => {
   const d = new Tracker.Dependency();
   let x = 0;
-  const handle = Tracker.autorun((handle) => {
+  const handle = Tracker.autorun(() => {
     d.depend();
     ++x;
   });
@@ -30,7 +33,7 @@ test('tracker - run', (test) => {
   Tracker.autorun((internalHandle) => {
     d.depend();
     ++x;
-    if (x == 6) { internalHandle.stop(); }
+    if (x === 6) { internalHandle.stop(); }
   });
   expect(x).toEqual(4);
   d.changed();
@@ -72,7 +75,7 @@ test('tracker - nested run', (test) => {
       Tracker.autorun(() => {
         c.depend();
         buf += 'c';
-        var c2 = Tracker.autorun(() => {
+        const c2 = Tracker.autorun(() => {
           d.depend();
           buf += 'd';
           Tracker.autorun(() => {
@@ -90,8 +93,8 @@ test('tracker - nested run', (test) => {
         });
       });
     });
-    Tracker.onInvalidate((c1) => {
-      c1.stop();
+    Tracker.onInvalidate((cI) => {
+      cI.stop();
     });
   });
 
@@ -225,7 +228,7 @@ test('tracker - flush', (test) => {
     buf += 'c';
   });
 
-  var c4 = Tracker.autorun((c) => {
+  let c4 = Tracker.autorun((c) => {
     c4 = c;
     buf += 'b';
   });
@@ -273,7 +276,7 @@ test('tracker - lifecycle', (test) => {
   const buf = [];
   let cbId = 1;
   const makeCb = function () {
-    const id = cbId++;
+    const id = cbId += 1;
     return function () {
       buf.push(id);
     };
@@ -282,11 +285,11 @@ test('tracker - lifecycle', (test) => {
   let shouldStop = false;
 
   const c1 = Tracker.autorun((c) => {
-    expect.toBeTruthy(Tracker.active);
-    expect.toEqual(c, Tracker.currentComputation);
-    expect.toEqual(c.stopped, false);
-    expect.toEqual(c.invalidated, false);
-    expect.toEqual(c.firstRun, firstRun);
+    expect(Tracker.active).toBeTruthy();
+    expect(c).toEqual(Tracker.currentComputation);
+    expect(c.stopped).toEqual(false);
+    expect(c.invalidated).toEqual(false);
+    expect(c.firstRun).toEqual(firstRun);
 
     Tracker.onInvalidate(makeCb()); // 1, 6, ...
     Tracker.afterFlush(makeCb()); // 2, 7, ...
@@ -298,35 +301,35 @@ test('tracker - lifecycle', (test) => {
       Tracker.onInvalidate(makeCb()); // 4, 9, ...
       Tracker.afterFlush(makeCb()); // 5, 10, ...
     });
-    runCount++;
+    runCount += 1;
 
     if (shouldStop) { c.stop(); }
   });
 
   firstRun = false;
 
-  expect.toEqual(runCount, 1);
+  expect(runCount).toEqual(1);
 
-  expect.toEqual(buf, [4]);
+  expect(buf).toEqual([4]);
   c1.invalidate();
-  expect.toEqual(runCount, 1);
-  expect.toEqual(c1.invalidated, true);
-  expect.toEqual(c1.stopped, false);
-  expect.toEqual(buf, [4, 1, 3]);
+  expect(runCount).toEqual(1);
+  expect(c1.invalidated).toEqual(true);
+  expect(c1.stopped).toEqual(false);
+  expect(buf).toEqual([4, 1, 3]);
 
   Tracker.flush();
 
-  expect.toEqual(runCount, 2);
-  expect.toEqual(c1.invalidated, false);
-  expect.toEqual(buf, [4, 1, 3, 9, 2, 5, 7, 10]);
+  expect(runCount).toEqual(2);
+  expect(c1.invalidated).toEqual(false);
+  expect(buf).toEqual([4, 1, 3, 9, 2, 5, 7, 10]);
 
   // test self-stop
   buf.length = 0;
   shouldStop = true;
   c1.invalidate();
-  expect.toEqual(buf, [6, 8]);
+  expect(buf).toEqual([6, 8]);
   Tracker.flush();
-  expect.toEqual(buf, [6, 8, 14, 11, 13, 12, 15]);
+  expect(buf).toEqual([6, 8, 14, 11, 13, 12, 15]);
 });
 
 test('tracker - onInvalidate', (test) => {
@@ -338,8 +341,8 @@ test('tracker - onInvalidate', (test) => {
 
   const append = function (x, expectedComputation) {
     return function (givenComputation) {
-      expect.toBeFalsy(Tracker.active);
-      expect.toEqual(givenComputation, expectedComputation || c1);
+      expect(Tracker.active).toBeFalsy();
+      expect(givenComputation).toEqual(expectedComputation || c1);
       buf += x;
     };
   };
@@ -348,19 +351,19 @@ test('tracker - onInvalidate', (test) => {
 
   c1.onInvalidate(append('a'));
   c1.onInvalidate(append('b'));
-  expect.toEqual(buf, '*');
+  expect(buf).toEqual('*');
   Tracker.autorun((me) => {
     Tracker.onInvalidate(append('z', me));
     me.stop();
-    expect.toEqual(buf, '*z');
+    expect(buf).toEqual('*z');
     c1.invalidate();
   });
-  expect.toEqual(buf, '*zab');
+  expect(buf).toEqual('*zab');
   c1.onInvalidate(append('c'));
   c1.onInvalidate(append('d'));
-  expect.toEqual(buf, '*zabcd');
+  expect(buf).toEqual('*zabcd');
   Tracker.flush();
-  expect.toEqual(buf, '*zabcd*');
+  expect(buf).toEqual('*zabcd*');
 
   // afterFlush ordering
   buf = '';
@@ -382,20 +385,20 @@ test('tracker - onInvalidate', (test) => {
     c1.invalidate();
   });
 
-  expect.toEqual(buf, '');
+  expect(buf).toEqual('');
   Tracker.flush();
-  expect.toEqual(buf, 'xabc*ze*yd*');
+  expect(buf).toEqual('xabc*ze*yd*');
 
   buf = '';
   c1.onInvalidate(append('m'));
   Tracker.flush();
-  expect.toEqual(buf, '');
+  expect(buf).toEqual('');
   c1.stop();
-  expect.toEqual(buf, 'ms'); // s is from onStop
+  expect(buf).toEqual('ms'); // s is from onStop
   Tracker.flush();
-  expect.toEqual(buf, 'ms');
+  expect(buf).toEqual('ms');
   c1.onStop(append('S'));
-  expect.toEqual(buf, 'msS');
+  expect(buf).toEqual('msS');
 });
 
 test('tracker - invalidate at flush time', (test) => {
@@ -418,7 +421,7 @@ test('tracker - invalidate at flush time', (test) => {
     }
   });
 
-  var c2 = Tracker.autorun((c) => {
+  let c2 = Tracker.autorun((c) => {
     if (!c.firstRun) {
       buf.push('B');
       c.stop();
@@ -430,7 +433,7 @@ test('tracker - invalidate at flush time', (test) => {
   c1.invalidate();
   Tracker.flush();
 
-  expect.toEqual(buf.join(''), 'ABC');
+  expect(buf.join('')).toEqual('ABC');
 });
 
 test('tracker - throwFirstError', (test) => {
@@ -443,7 +446,7 @@ test('tracker - throwFirstError', (test) => {
 
   d.changed();
   // doesn't throw; logs instead.
-  Meteor._suppress_log(1);
+  // Meteor._suppress_log(1);
   Tracker.flush();
 
   d.changed();
@@ -452,19 +455,18 @@ test('tracker - throwFirstError', (test) => {
   }, /foo/);
 });
 
-test('tracker - no infinite recomputation', async (test, onComplete) => {
+test('tracker - no infinite recomputation', async (test) => {
   let reran = false;
-  const c = Tracker.autorun((c) => {
-    if (!c.firstRun) { reran = true; }
-    c.invalidate();
+  const c = Tracker.autorun((computation) => {
+    if (!computation.firstRun) { reran = true; }
+    computation.invalidate();
   });
-  expect.toBeFalsy(reran);
-  Meteor.setTimeout(() => {
+  expect(reran).toBeFalsy();
+  setTimeout(() => {
     c.stop();
     Tracker.afterFlush(() => {
-      expect.toBeTruthy(reran);
-      expect.toBeTruthy(c.stopped);
-      onComplete();
+      expect(reran).toBeTruthy();
+      expect(c.stopped).toBeTruthy();
     });
   }, 100);
 });
@@ -475,27 +477,31 @@ test('tracker - Tracker.flush finishes', (test) => {
   // running 2000 computations. Which isn't quite the same as infinity, but it's
   // getting there.
   let n = 0;
-  const c = Tracker.autorun((c) => {
+  const c = Tracker.autorun((computation) => {
     if (++n < 2000) {
-      c.invalidate();
+      computation.invalidate();
     }
   });
-  expect.toEqual(n, 1);
+  expect(n).toEqual(1);
   Tracker.flush();
-  expect.toEqual(n, 2000);
+  expect(n).toEqual(2000);
 });
 
-test('tracker - Tracker.autorun, onError option', async (test, expect) => {
+test('tracker - Tracker.autorun, onError option', (test) => {
+  // const errorFunction = jest.fn();
+  const errorFunction = jest.fn((err) => {
+    expect(err.message).toEqual('foo');
+  });
+
   const d = new Tracker.Dependency();
-  const c = Tracker.autorun((c) => {
+  const c = Tracker.autorun((computation) => {
     d.depend();
 
-    if (!c.firstRun) { throw new Error('foo'); }
+    if (!computation.firstRun) { throw new Error('foo'); }
   }, {
-    onError: expect((err) => {
-      expect.toEqual(err.message, 'foo');
-    }),
+    onError: errorFunction,
   });
+  expect(errorFunction).toHaveBeenCalled();
 
   d.changed();
   Tracker.flush();
@@ -513,17 +519,17 @@ test('computation - #flush', (test) => {
     d.depend();
     j += 1;
   });
-  expect.toEqual(i, 1);
-  expect.toEqual(j, 1);
+  expect(i).toEqual(1);
+  expect(j).toEqual(1);
 
   d.changed();
   c1.flush();
-  expect.toEqual(i, 2);
-  expect.toEqual(j, 1);
+  expect(i).toEqual(2);
+  expect(j).toEqual(1);
 
   Tracker.flush();
-  expect.toEqual(i, 2);
-  expect.toEqual(j, 2);
+  expect(i).toEqual(2);
+  expect(j).toEqual(2);
 });
 
 test('computation - #run', () => {
