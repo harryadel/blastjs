@@ -4,6 +4,60 @@
 const { suppressLog } = require('../src/debug');
 const { Tracker } = require('../src/tracker');
 
+test('computation - #flush', () => {
+  let i = 0;
+  let j = 0;
+  const d = new Tracker.Dependency();
+  const c1 = Tracker.autorun(() => {
+    d.depend();
+    i += 1;
+  });
+  const c2 = Tracker.autorun(() => {
+    d.depend();
+    j += 1;
+  });
+
+  expect(i).toEqual(1);
+  expect(j).toEqual(1);
+
+  d.changed();
+  c1.flush();
+  expect(i).toEqual(2);
+  expect(j).toEqual(1);
+
+  Tracker.flush();
+  expect(i).toEqual(2);
+  expect(j).toEqual(2);
+});
+
+test('computation - #run', () => {
+  let i = 0;
+  const d = new Tracker.Dependency();
+  const d2 = new Tracker.Dependency();
+  const computation = Tracker.autorun(() => {
+    d.depend();
+    i += 1;
+    // when #run() is called, this dependency should be picked up
+    if (i >= 2 && i < 4) { d2.depend(); }
+  });
+  expect(i).toEqual(1);
+  computation.run();
+  expect(i).toEqual(2);
+
+  d.changed(); Tracker.flush();
+  expect(i).toEqual(3);
+
+  // we expect to depend on d2 at this point
+  d2.changed(); Tracker.flush();
+  expect(i).toEqual(4);
+
+  // we no longer depend on d2, only d
+  d2.changed(); Tracker.flush();
+  expect(i).toEqual(4);
+  d.changed(); Tracker.flush();
+  expect(i).toEqual(5);
+});
+
 test('tracker - run', () => {
   const d = new Tracker.Dependency();
   let x = 0;
@@ -458,22 +512,6 @@ test('tracker - throwFirstError', () => {
   }).toThrow();
 });
 
-test('tracker - no infinite recomputation', async () => {
-  let reran = false;
-  const c = Tracker.autorun((computation) => {
-    if (!computation.firstRun) { reran = true; }
-    computation.invalidate();
-  });
-  expect(reran).toBeFalsy();
-  setTimeout(() => {
-    c.stop();
-    Tracker.afterFlush(() => {
-      expect(reran).toBeTruthy();
-      expect(c.stopped).toBeTruthy();
-    });
-  }, 100);
-});
-
 test('tracker - Tracker.flush finishes', () => {
   // Currently, _runFlush will "yield" every 1000 computations... unless run in
   // Tracker.flush. So this test validates that Tracker.flush is capable of
@@ -505,56 +543,18 @@ test('tracker - Tracker.autorun, onError option', () => {
   Tracker.flush();
 });
 
-test('computation - #flush', () => {
-  let i = 0;
-  let j = 0;
-  const d = new Tracker.Dependency();
-  const c1 = Tracker.autorun(() => {
-    d.depend();
-    i += 1;
+test('tracker - no infinite recomputation', () => {
+  let reran = false;
+  const c = Tracker.autorun((computation) => {
+    if (!computation.firstRun) { reran = true; }
+    computation.invalidate();
   });
-  const c2 = Tracker.autorun(() => {
-    d.depend();
-    j += 1;
-  });
-
-  expect(i).toEqual(1);
-  expect(j).toEqual(1);
-
-  d.changed();
-  c1.flush();
-  expect(i).toEqual(2);
-  expect(j).toEqual(1);
-
-  Tracker.flush();
-  expect(i).toEqual(2);
-  expect(j).toEqual(2);
-});
-
-test('computation - #run', () => {
-  let i = 0;
-  const d = new Tracker.Dependency();
-  const d2 = new Tracker.Dependency();
-  const computation = Tracker.autorun(() => {
-    d.depend();
-    i += 1;
-    // when #run() is called, this dependency should be picked up
-    if (i >= 2 && i < 4) { d2.depend(); }
-  });
-  expect(i).toEqual(1);
-  computation.run();
-  expect(i).toEqual(2);
-
-  d.changed(); Tracker.flush();
-  expect(i).toEqual(3);
-
-  // we expect to depend on d2 at this point
-  d2.changed(); Tracker.flush();
-  expect(i).toEqual(4);
-
-  // we no longer depend on d2, only d
-  d2.changed(); Tracker.flush();
-  expect(i).toEqual(4);
-  d.changed(); Tracker.flush();
-  expect(i).toEqual(5);
+  expect(reran).toEqual(false);
+  setTimeout(() => {
+    c.stop();
+    Tracker.afterFlush(() => {
+      expect(reran).toEqual(true);
+      expect(c.stopped).toEqual(true);
+    });
+  }, 100);
 });
