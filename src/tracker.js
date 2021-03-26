@@ -444,7 +444,7 @@ Tracker.Dependency = class Dependency {
    * @returns {Boolean}
    */
   hasDependents() {
-    if (Object.keys(this._dependentsById).length > 1) { return true; }
+    for (const id in this._dependentsById) { return true; }
     return false;
   }
 };
