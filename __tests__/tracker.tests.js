@@ -529,14 +529,13 @@ test('computation - #flush', () => {
   expect(j).toEqual(1);
 
   d.changed();
-  // c1.flush();
+  c1.flush();
+  expect(i).toEqual(2);
+  expect(j).toEqual(1);
+
   Tracker.flush();
   expect(i).toEqual(2);
   expect(j).toEqual(2);
-
-  // Tracker.flush();
-  // expect(i).toEqual(2);
-  // expect(j).toEqual(2);
 });
 
 test('computation - #run', () => {
