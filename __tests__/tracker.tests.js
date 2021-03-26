@@ -431,13 +431,6 @@ test('tracker - invalidate at flush time', () => {
     }
   });
 
-  // var c2 = Tracker.autorun((c) => {
-  //   if (!c.firstRun) {
-  //     buf.push('B');
-  //     c.stop();
-  //   }
-  // });
-
   // Invalidate c1.  If all goes well, the re-running of
   // c2 should happen before the afterFlush.
   c1.invalidate();
