@@ -87,7 +87,7 @@ function withNoYieldsAllowed(f) {
   };
 }
 
-const nextId = 1;
+let nextId = 1;
 // computations whose callbacks we should call at flush time
 const pendingComputations = [];
 // `true` if a Tracker.flush is scheduled, or if we are in Tracker.flush now
@@ -162,7 +162,6 @@ Tracker.Computation = class Computation {
       );
     }
     Tracker.constructingComputation = false;
-
     // http://docs.meteor.com/#computation_stopped
 
     /**
@@ -201,7 +200,7 @@ Tracker.Computation = class Computation {
      */
     this.firstRun = true;
 
-    this._id = nextId + 1;
+    this._id = nextId++;
     this._onInvalidateCallbacks = [];
     this._onStopCallbacks = [];
     // the plan is at some point to use the parent relation
@@ -313,7 +312,6 @@ Tracker.Computation = class Computation {
 
   _compute() {
     this.invalidated = false;
-
     const previous = Tracker.currentComputation;
     setCurrentComputation(this);
     const previousInCompute = inCompute;
@@ -413,7 +411,6 @@ Tracker.Dependency = class Dependency {
   depend(computation) {
     if (!computation) {
       if (!Tracker.active) { return false; }
-
       computation = Tracker.currentComputation;
     }
     const id = computation._id;
@@ -426,7 +423,6 @@ Tracker.Dependency = class Dependency {
     }
     return false;
   }
-
   // http://docs.meteor.com/#dependency_changed
 
   /**
@@ -594,7 +590,6 @@ Tracker.autorun = function (f, options) {
   const c = new Tracker.Computation(
     f, Tracker.currentComputation, options.onError,
   );
-
   if (Tracker.active) {
     Tracker.onInvalidate(() => {
       c.stop();
