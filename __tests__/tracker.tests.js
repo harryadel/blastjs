@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-plusplus */
 
+const { suppressLog } = require('../src/debug');
 const { Tracker } = require('../src/tracker');
 
-test('tracker - run', (test) => {
+test('tracker - run', () => {
   const d = new Tracker.Dependency();
   let x = 0;
   const handle = Tracker.autorun(() => {
@@ -35,6 +36,7 @@ test('tracker - run', (test) => {
     ++x;
     if (x === 6) { internalHandle.stop(); }
   });
+
   expect(x).toEqual(4);
   d.changed();
   Tracker.flush();
@@ -48,15 +50,16 @@ test('tracker - run', (test) => {
   // Still 6!
   expect(x).toEqual(6);
 
-  test.throws(() => {
+  expect(() => {
     Tracker.autorun();
-  });
-  test.throws(() => {
+  }).toThrow();
+
+  expect(() => {
     Tracker.autorun({});
-  });
+  }).toThrow();
 });
 
-test('tracker - nested run', (test) => {
+test('tracker - nested run', () => {
   const a = new Tracker.Dependency();
   const b = new Tracker.Dependency();
   const c = new Tracker.Dependency();
@@ -117,7 +120,7 @@ test('tracker - nested run', (test) => {
   const changeAndExpect = function (v, str) {
     v.changed();
     Tracker.flush();
-    expect(str);
+    expect(v).toEqual(str);
   };
 
   // should cause running
@@ -169,7 +172,7 @@ test('tracker - nested run', (test) => {
   expect(f.hasDependents()).toBeFalsy();
 });
 
-test('tracker - flush', (test) => {
+test('tracker - flush', () => {
   let buf = '';
 
   const c1 = Tracker.autorun((c) => {
@@ -178,14 +181,14 @@ test('tracker - flush', (test) => {
     if (c.firstRun) { c.invalidate(); }
   });
 
-  expect.toEqual(buf, 'a');
+  expect(buf).toEqual('a');
   Tracker.flush();
-  expect.toEqual(buf, 'aa');
+  expect(buf).toEqual('aa');
   Tracker.flush();
-  expect.toEqual(buf, 'aa');
+  expect(buf).toEqual('aa');
   c1.stop();
   Tracker.flush();
-  expect.toEqual(buf, 'aa');
+  expect(buf).toEqual('aa');
 
   /// ///
 
@@ -201,13 +204,13 @@ test('tracker - flush', (test) => {
     });
   });
 
-  expect.toEqual(buf, 'a*');
+  expect(buf).toEqual('a*');
   Tracker.flush();
-  expect.toEqual(buf, 'a*a');
+  expect(buf).toEqual('a*a');
   c2.stop();
-  expect.toEqual(buf, 'a*a*');
+  expect(buf).toEqual('a*a*');
   Tracker.flush();
-  expect.toEqual(buf, 'a*a*');
+  expect(buf).toEqual('a*a*');
 
   /// //
   // Can flush a different run from a run;
@@ -228,13 +231,12 @@ test('tracker - flush', (test) => {
     buf += 'c';
   });
 
-  let c4 = Tracker.autorun((c) => {
-    c4 = c;
+  const c4 = Tracker.autorun((c) => {
     buf += 'b';
   });
 
   Tracker.flush();
-  expect.toEqual(buf, 'aba0c0');
+  expect(buf).toEqual('aba0c0');
   c3.stop();
   c4.stop();
   Tracker.flush();
@@ -244,30 +246,30 @@ test('tracker - flush', (test) => {
   let ran = false;
   Tracker.afterFlush((arg) => {
     ran = true;
-    expect.toEqual(typeof arg, 'undefined');
-    test.throws(() => {
+    expect(typeof arg).toEqual('undefined');
+    expect(() => {
       Tracker.flush(); // illegal nested flush
-    });
+    }).toThrow();
   });
 
   Tracker.flush();
   expect(ran).toBeTruthy();
 
-  test.throws(() => {
+  expect(() => {
     Tracker.autorun(() => {
       Tracker.flush(); // illegal to flush from a computation
     });
-  });
+  }).toThrow();
 
-  test.throws(() => {
+  expect(() => {
     Tracker.autorun(() => {
       Tracker.autorun(() => { });
       Tracker.flush();
     });
-  });
+  }).toThrow();
 });
 
-test('tracker - lifecycle', (test) => {
+test('tracker - lifecycle', () => {
   expect(Tracker.active).toBeFalsy();
   expect(Tracker.currentComputation).toEqual(null);
 
@@ -276,7 +278,8 @@ test('tracker - lifecycle', (test) => {
   const buf = [];
   let cbId = 1;
   const makeCb = function () {
-    const id = cbId += 1;
+    const id = +1;
+    cbId = +1;
     return function () {
       buf.push(id);
     };
@@ -332,7 +335,7 @@ test('tracker - lifecycle', (test) => {
   expect(buf).toEqual([6, 8, 14, 11, 13, 12, 15]);
 });
 
-test('tracker - onInvalidate', (test) => {
+test('tracker - onInvalidate', () => {
   let buf = '';
 
   const c1 = Tracker.autorun(() => {
@@ -401,7 +404,7 @@ test('tracker - onInvalidate', (test) => {
   expect(buf).toEqual('msS');
 });
 
-test('tracker - invalidate at flush time', (test) => {
+test('tracker - invalidate at flush time', () => {
   // Test this sentence of the docs: Functions are guaranteed to be
   // called at a time when there are no invalidated computations that
   // need rerunning.
@@ -410,6 +413,13 @@ test('tracker - invalidate at flush time', (test) => {
 
   Tracker.afterFlush(() => {
     buf.push('C');
+  });
+
+  const c2 = Tracker.autorun((c) => {
+    if (!c.firstRun) {
+      buf.push('B');
+      c.stop();
+    }
   });
 
   // When c1 is invalidated, it invalidates c2, then stops.
@@ -421,12 +431,12 @@ test('tracker - invalidate at flush time', (test) => {
     }
   });
 
-  let c2 = Tracker.autorun((c) => {
-    if (!c.firstRun) {
-      buf.push('B');
-      c.stop();
-    }
-  });
+  // var c2 = Tracker.autorun((c) => {
+  //   if (!c.firstRun) {
+  //     buf.push('B');
+  //     c.stop();
+  //   }
+  // });
 
   // Invalidate c1.  If all goes well, the re-running of
   // c2 should happen before the afterFlush.
@@ -436,7 +446,7 @@ test('tracker - invalidate at flush time', (test) => {
   expect(buf.join('')).toEqual('ABC');
 });
 
-test('tracker - throwFirstError', (test) => {
+test('tracker - throwFirstError', () => {
   const d = new Tracker.Dependency();
   Tracker.autorun((c) => {
     d.depend();
@@ -446,16 +456,16 @@ test('tracker - throwFirstError', (test) => {
 
   d.changed();
   // doesn't throw; logs instead.
-  // Meteor._suppress_log(1);
+  suppressLog(1);
   Tracker.flush();
 
   d.changed();
-  test.throws(() => {
+  expect(() => {
     Tracker.flush({ _throwFirstError: true });
-  }, /foo/);
+  }).toThrow();
 });
 
-test('tracker - no infinite recomputation', async (test) => {
+test('tracker - no infinite recomputation', async () => {
   let reran = false;
   const c = Tracker.autorun((computation) => {
     if (!computation.firstRun) { reran = true; }
@@ -471,7 +481,7 @@ test('tracker - no infinite recomputation', async (test) => {
   }, 100);
 });
 
-test('tracker - Tracker.flush finishes', (test) => {
+test('tracker - Tracker.flush finishes', () => {
   // Currently, _runFlush will "yield" every 1000 computations... unless run in
   // Tracker.flush. So this test validates that Tracker.flush is capable of
   // running 2000 computations. Which isn't quite the same as infinity, but it's
@@ -487,27 +497,22 @@ test('tracker - Tracker.flush finishes', (test) => {
   expect(n).toEqual(2000);
 });
 
-test('tracker - Tracker.autorun, onError option', (test) => {
-  // const errorFunction = jest.fn();
-  const errorFunction = jest.fn((err) => {
-    expect(err.message).toEqual('foo');
-  });
-
+test('tracker - Tracker.autorun, onError option', () => {
   const d = new Tracker.Dependency();
   const c = Tracker.autorun((computation) => {
     d.depend();
 
     if (!computation.firstRun) { throw new Error('foo'); }
   }, {
-    onError: errorFunction,
+    onError: (err) => {
+      expect(err.message).toEqual('foo');
+    },
   });
-  expect(errorFunction).toHaveBeenCalled();
-
   d.changed();
   Tracker.flush();
 });
 
-test('computation - #flush', (test) => {
+test('computation - #flush', () => {
   let i = 0;
   let j = 0;
   const d = new Tracker.Dependency();

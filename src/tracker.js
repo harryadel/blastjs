@@ -5,6 +5,7 @@
 /// //////////////////////////////////////////////////
 
 const Fiber = require('fibers');
+const { debugFunction, suppressLog, suppressedLogExpected } = require('./debug');
 
 /**
  * @namespace Tracker
@@ -46,31 +47,17 @@ function setCurrentComputation(c) {
   Tracker.active = !!c;
 }
 
-function _debugFunc(...args) {
-  // We want this code to work without Meteor, and also without
-  // "console" (which is technically non-standard and may be missing
-  // on some browser we come across, like it was on IE 7).
-  //
-  // Lazy evaluation because `Meteor` does not exist right away.(??)
-  if ((typeof console !== 'undefined') && console.error) {
-    return function () {
-      console.error.apply(console, args);
-    };
+function maybeSuppressMoreLogs(messagesLength) {
+  // Sometimes when running tests, we intentionally suppress logs on expected
+  // printed errors. Since the current implementation of _throwOrLog can log
+  // multiple separate log messages, suppress all of them if at least one suppress
+  // is expected as we still want them to count as one.
+  if (typeof Meteor !== 'undefined') {
+    if (suppressedLogExpected()) {
+      suppressLog(messagesLength - 1);
+    }
   }
-  return (function () { });
 }
-
-// function _maybeSuppressMoreLogs(messagesLength) {
-//   // Sometimes when running tests, we intentionally suppress logs on expected
-//   // printed errors. Since the current implementation of _throwOrLog can log
-//   // multiple separate log messages, suppress all of them if at least one suppress
-//   // is expected as we still want them to count as one.
-//   if (typeof Meteor !== 'undefined') {
-//     if (Meteor._suppressed_log_expected()) {
-//       Meteor._suppress_log(messagesLength - 1);
-//     }
-//   }
-// }
 
 function _noYieldsAllowed(f) {
   const savedYield = Fiber.yield;
@@ -133,10 +120,10 @@ function _throwOrLog(from, e) {
       }
     }
     printArgs.push(e.stack);
-    // _maybeSuppressMoreLogs(printArgs.length);
+    maybeSuppressMoreLogs(printArgs.length);
 
     for (let i = 0; i < printArgs.length; i++) {
-      _debugFunc()(printArgs[i]);
+      debugFunction(printArgs[i]);
     }
   }
 }
