@@ -123,7 +123,7 @@ test('tracker - nested run', () => {
 
   let buf = '';
 
-  const c1 = Tracker.autorun(() => {
+  const computation = Tracker.autorun(() => {
     a.depend();
     buf += 'a';
     Tracker.autorun(() => {
@@ -150,8 +150,8 @@ test('tracker - nested run', () => {
         });
       });
     });
-    Tracker.onInvalidate((cI) => {
-      cI.stop();
+    Tracker.onInvalidate((c1) => {
+      c1.stop();
     });
   });
 
@@ -163,13 +163,13 @@ test('tracker - nested run', () => {
   expect(f.hasDependents()).toBeTruthy();
 
   b.changed();
-  expect(''); // didn't flush yet
+  expect(buf).toEqual(''); // didn't flush yet
   Tracker.flush();
-  expect('bcdef');
+  expect(buf).toEqual('bcdef');
 
   c.changed();
   Tracker.flush();
-  expect('cdef');
+  expect(buf).toEqual('cdef');
 
   const changeAndExpect = function (v, str) {
     v.changed();
@@ -332,8 +332,7 @@ test('tracker - lifecycle', () => {
   const buf = [];
   let cbId = 1;
   const makeCb = function () {
-    const id = +1;
-    cbId = +1;
+    const id = cbId++;
     return function () {
       buf.push(id);
     };

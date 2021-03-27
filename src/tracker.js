@@ -133,14 +133,14 @@ const afterFlushCallbacks = [];
 function requireFlush() {
   if (!willFlush) {
     // We want this code to work without Meteor, see debugFunc above
-    if (typeof Meteor !== 'undefined') { setImmediate(Tracker._runFlush); } else { setTimeout(Tracker._runFlush, 0); }
+    setImmediate(Tracker._runFlush);
     willFlush = true;
   }
 }
 
 // Tracker.Computation constructor is visible but private
 // (throws an error if you try to call it)
-Tracker.constructingComputation = false;
+let constructingComputation = false;
 
 //
 // http://docs.meteor.com/#tracker_computation
@@ -156,12 +156,13 @@ Tracker.constructingComputation = false;
  */
 Tracker.Computation = class Computation {
   constructor(f, parent, onError) {
-    if (!Tracker.constructingComputation) {
+    if (!constructingComputation) {
       throw new Error(
         'Tracker.Computation constructor is private; use Tracker.autorun',
       );
     }
-    Tracker.constructingComputation = false;
+    constructingComputation = false;
+
     // http://docs.meteor.com/#computation_stopped
 
     /**
@@ -312,6 +313,7 @@ Tracker.Computation = class Computation {
 
   _compute() {
     this.invalidated = false;
+
     const previous = Tracker.currentComputation;
     setCurrentComputation(this);
     const previousInCompute = inCompute;
@@ -411,6 +413,7 @@ Tracker.Dependency = class Dependency {
   depend(computation) {
     if (!computation) {
       if (!Tracker.active) { return false; }
+
       computation = Tracker.currentComputation;
     }
     const id = computation._id;
@@ -423,6 +426,7 @@ Tracker.Dependency = class Dependency {
     }
     return false;
   }
+
   // http://docs.meteor.com/#dependency_changed
 
   /**
@@ -503,7 +507,7 @@ Tracker._runFlush = function (options) {
   let finishedTry = false;
   try {
     while (pendingComputations.length
-      || afterFlushCallbacks.length) {
+           || afterFlushCallbacks.length) {
       // recompute all pending computations
       while (pendingComputations.length) {
         const comp = pendingComputations.shift();
@@ -586,10 +590,11 @@ Tracker.autorun = function (f, options) {
 
   options = options || {};
 
-  this.constructingComputation = true;
+  constructingComputation = true;
   const c = new Tracker.Computation(
     f, Tracker.currentComputation, options.onError,
   );
+
   if (Tracker.active) {
     Tracker.onInvalidate(() => {
       c.stop();
