@@ -1,7 +1,7 @@
 {
   "name": "tracker",
   "version": "1.0.0",
-  "description": "[Source code of released version](https://github.com/meteor/meteor/tree/master/packages/tracker) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/tracker) ***",
+  "description": "NPM version of Meteor [Tracker](https://github.com/meteor/meteor/tree/devel/packages/tracker)",
   "main": "src/tracker.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*"
