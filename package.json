@@ -1,5 +1,5 @@
 {
-  "name": "tracker",
+  "name": "meteor-tracker",
   "version": "1.0.0",
   "description": "NPM version of Meteor [Tracker](https://github.com/meteor/meteor/tree/devel/packages/tracker)",
   "main": "src/tracker.js",
