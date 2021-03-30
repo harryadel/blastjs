@@ -1,0 +1,22 @@
+{
+  "name": "test-meteor",
+  "private": true,
+  "scripts": {
+    "start": "meteor run",
+    "test": "TEST_BROWSER_DRIVER=puppeteer TEST_WATCH=0 meteor test --once --driver-package meteortesting:mocha",
+    "test:watch": "TEST_BROWSER_DRIVER=puppeteer TEST_WATCH=1 meteor test --driver-package meteortesting:mocha",
+    "visualize": "meteor --production --extra-packages bundle-visualizer"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.11.2",
+    "meteor-node-stubs": "^1.0.1",
+    "standalone-tracker": "file:.."
+  },
+  "meteor": {
+    "testModule": "tests/main.js"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "puppeteer": "^8.0.0"
+  }
+}
