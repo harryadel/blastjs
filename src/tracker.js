@@ -1,11 +1,26 @@
 /* eslint-disable no-underscore-dangle */
-
-/// //////////////////////////////////////////////////
-// Package docs at http://docs.meteor.com/#tracker //
-/// //////////////////////////////////////////////////
-
-const Fiber = require('fibers');
 const { debugFunction, suppressLog, suppressedLogExpected } = require('./debug');
+const isClient = () => typeof window === 'object';
+
+// If we are on the client we can't make use of Fibers so we only import
+// the module if we have no window available.
+// At the same time we need to import a polyfill for "setImmediate", because
+// this is natively only available on some IE and node versions.
+const Fiber = (function () {
+  let mod = undefined;
+
+  try {
+    if (!isClient()) {
+      mod = require('fibers');
+    } else {
+      require('setimmediate');
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  return mod;
+})();
 
 /**
  * @namespace Tracker
@@ -71,13 +86,13 @@ function _noYieldsAllowed(f) {
   }
 }
 
-// Takes a function `f`, and wraps it in a `Meteor._noYieldsAllowed`
+// Takes a function `f`, and wraps it in a `_noYieldsAllowed`
 // block if we are running on the server. On the client, returns the
-// original function (since `Meteor._noYieldsAllowed` is a
+// original function (since `_noYieldsAllowed` is a
 // no-op). This has the benefit of not adding an unnecessary stack
 // frame on the client.
 function withNoYieldsAllowed(f) {
-  if (typeof window === 'undefined') {
+  if (isClient()) {
     return f;
   }
   return function (...args) {
