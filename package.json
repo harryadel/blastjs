@@ -6,6 +6,7 @@
   "scripts": {
     "lint": "eslint src __tests__",
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
+    "test:watch": "jest --runInBand --detectOpenHandles --forceExit --watch __tests__/*",
     "clean": "rimraf dist",
     "build": "babel src --out-dir ./dist",
     "prepublish": "npm run lint && npm run test && npm run clean && npm run build"
