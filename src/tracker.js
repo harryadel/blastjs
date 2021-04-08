@@ -1,5 +1,7 @@
 /* eslint-disable no-underscore-dangle */
-const { debugFunction, suppressLog, suppressedLogExpected } = require('./debug');
+// eslint-disable-next-line max-classes-per-file
+import { debugFunction, suppressLog, suppressedLogExpected } from './debug';
+
 const isClient = () => typeof window === 'object';
 
 // If we are on the client we can't make use of Fibers so we only import
@@ -7,12 +9,14 @@ const isClient = () => typeof window === 'object';
 // At the same time we need to import a polyfill for "setImmediate", because
 // this is natively only available on some IE and node versions.
 const Fiber = (function () {
-  let mod = undefined;
+  let mod;
 
   try {
     if (!isClient()) {
+      // eslint-disable-next-line global-require
       mod = require('fibers');
     } else {
+      // eslint-disable-next-line global-require
       require('setimmediate');
     }
   } catch (e) {
@@ -20,7 +24,7 @@ const Fiber = (function () {
   }
 
   return mod;
-})();
+}());
 
 /**
  * @namespace Tracker
@@ -97,7 +101,7 @@ function withNoYieldsAllowed(f) {
   }
   return function (...args) {
     _noYieldsAllowed(() => {
-      f.apply(null, args);
+      f.apply(...args);
     });
   };
 }
@@ -137,7 +141,7 @@ function _throwOrLog(from, e) {
     printArgs.push(e.stack);
     maybeSuppressMoreLogs(printArgs.length);
 
-    for (let i = 0; i < printArgs.length; i++) {
+    for (let i = 0; i < printArgs.length; i += 1) {
       debugFunction(printArgs[i]);
     }
   }
@@ -298,7 +302,7 @@ Tracker.Computation = class Computation {
 
       // callbacks can't add callbacks, because
       // this.invalidated === true.
-      for (let i = 0, f; f = this._onInvalidateCallbacks[i]; i++) {
+      for (let i = 0, f; f = this._onInvalidateCallbacks[i]; i += 1) {
         Tracker.nonreactive(() => {
           withNoYieldsAllowed(f)(this);
         });
@@ -317,7 +321,7 @@ Tracker.Computation = class Computation {
     if (!this.stopped) {
       this.stopped = true;
       this.invalidate();
-      for (let i = 0, f; f = this._onStopCallbacks[i]; i++) {
+      for (let i = 0, f; f = this._onStopCallbacks[i]; i += 1) {
         Tracker.nonreactive(() => {
           withNoYieldsAllowed(f)(this);
         });
@@ -426,15 +430,16 @@ Tracker.Dependency = class Dependency {
    * @returns {Boolean}
    */
   depend(computation) {
+    let currentComputation = computation;
     if (!computation) {
       if (!Tracker.active) { return false; }
 
-      computation = Tracker.currentComputation;
+      currentComputation = Tracker.currentComputation;
     }
-    const id = computation._id;
+    const id = currentComputation._id;
     if (!(id in this._dependentsById)) {
-      this._dependentsById[id] = computation;
-      computation.onInvalidate(() => {
+      this._dependentsById[id] = currentComputation;
+      currentComputation.onInvalidate(() => {
         delete this._dependentsById[id];
       });
       return true;
@@ -463,8 +468,7 @@ Tracker.Dependency = class Dependency {
    * @returns {Boolean}
    */
   hasDependents() {
-    for (const id in this._dependentsById) { return true; }
-    return false;
+    return Object.keys(this._dependentsById).length;
   }
 };
 
@@ -496,7 +500,7 @@ Tracker.inFlush = function () {
 // Run all pending computations and afterFlush callbacks.  If we were not called
 // directly via Tracker.flush, this may return before they're all done to allow
 // the event loop to run a little before continuing.
-Tracker._runFlush = function (options) {
+Tracker._runFlush = function (options = {}) {
   // XXX What part of the comment below is still true? (We no longer
   // have Spark)
   //
@@ -511,8 +515,6 @@ Tracker._runFlush = function (options) {
   if (Tracker.inFlush()) { throw new Error("Can't call Tracker.flush while flushing"); }
 
   if (inCompute) { throw new Error("Can't flush inside Tracker.autorun"); }
-
-  options = options || {};
 
   inFlush = true;
   willFlush = true;
@@ -600,10 +602,8 @@ Tracker._runFlush = function (options) {
  * thrown. Defaults to the error being logged to the console.
  * @returns {Tracker.Computation}
  */
-Tracker.autorun = function (f, options) {
+Tracker.autorun = function (f, options = {}) {
   if (typeof f !== 'function') { throw new Error('Tracker.autorun requires a function argument'); }
-
-  options = options || {};
 
   constructingComputation = true;
   const c = new Tracker.Computation(
