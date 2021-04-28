@@ -1,0 +1,30 @@
+{
+  "name": "session",
+  "version": "1.0.0",
+  "description": "[Source code of released version](https://github.com/meteor/meteor/tree/master/packages/session) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/session) ***",
+  "main": "session.js",
+  "scripts": {
+    "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
+    "clean": "rimraf lib",
+    "lint": "eslint src __tests__",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir lib",
+    "prepublish": "npm run clean && npm run lint && npm run test && npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/preset-env": "^7.13.12",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.23.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "jest": "^26.6.3",
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "reactive-dict": "^1.0.8",
+    "standalone-tracker": "^1.0.0"
+  }
+}
