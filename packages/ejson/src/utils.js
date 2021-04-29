@@ -24,9 +24,10 @@ export const checkError = {
   maxStack: (msgError) => new RegExp('Maximum call stack size exceeded', 'g').test(msgError),
 };
 
-export const handleError = (fn) => function () {
+// eslint-disable-next-line func-names
+export const handleError = (fn) => function (...args) {
   try {
-    return fn.apply(this, arguments);
+    return fn.apply(this, args);
   } catch (error) {
     const isMaxStack = checkError.maxStack(error.message);
     if (isMaxStack) {
@@ -39,7 +40,7 @@ export const handleError = (fn) => function () {
 // eslint-disable-next-line no-underscore-dangle
 export const _noYieldsAllowed = (f) => {
   const savedYield = Fiber.yield;
-  Fiber.yield = function () {
+  Fiber.yield = () => {
     throw new Error("Can't call yield in a noYieldsAllowed block!");
   };
   try {

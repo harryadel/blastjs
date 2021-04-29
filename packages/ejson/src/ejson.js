@@ -1,3 +1,5 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable no-underscore-dangle */
 import { Base64 } from 'js-base64';
 import {
   isFunction,
@@ -97,7 +99,8 @@ EJSON.addType = (name, factory) => {
 };
 
 const builtinConverters = [
-  { // Date
+  {
+    // Date
     matchJSONValue(obj) {
       return hasOwn(obj, '$date') && lengthOf(obj) === 1;
     },
@@ -111,11 +114,12 @@ const builtinConverters = [
       return new Date(obj.$date);
     },
   },
-  { // RegExp
+  {
+    // RegExp
     matchJSONValue(obj) {
-      return hasOwn(obj, '$regexp')
-        && hasOwn(obj, '$flags')
-        && lengthOf(obj) === 2;
+      return (
+        hasOwn(obj, '$regexp') && hasOwn(obj, '$flags') && lengthOf(obj) === 2
+      );
     },
     matchObject(obj) {
       return obj instanceof RegExp;
@@ -138,7 +142,8 @@ const builtinConverters = [
       );
     },
   },
-  { // NaN, Inf, -Inf. (These are the only objects with typeof !== 'object'
+  {
+    // NaN, Inf, -Inf. (These are the only objects with typeof !== 'object'
     // which we match.)
     matchJSONValue(obj) {
       return hasOwn(obj, '$InfNaN') && lengthOf(obj) === 1;
@@ -159,13 +164,16 @@ const builtinConverters = [
       return obj.$InfNaN / 0;
     },
   },
-  { // Binary
+  {
+    // Binary
     matchJSONValue(obj) {
       return hasOwn(obj, '$binary') && lengthOf(obj) === 1;
     },
     matchObject(obj) {
-      return typeof Uint8Array !== 'undefined' && obj instanceof Uint8Array
-        || (obj && hasOwn(obj, '$Uint8ArrayPolyfill'));
+      return (
+        (typeof Uint8Array !== 'undefined' && obj instanceof Uint8Array)
+        || (obj && hasOwn(obj, '$Uint8ArrayPolyfill'))
+      );
     },
     toJSONValue(obj) {
       return { $binary: Base64.encode(obj) };
@@ -174,7 +182,8 @@ const builtinConverters = [
       return Base64.decode(obj.$binary);
     },
   },
-  { // Escaping one level
+  {
+    // Escaping one level
     matchJSONValue(obj) {
       return hasOwn(obj, '$escape') && lengthOf(obj) === 1;
     },
@@ -203,10 +212,12 @@ const builtinConverters = [
       return newObj;
     },
   },
-  { // Custom
+  {
+    // Custom
     matchJSONValue(obj) {
-      return hasOwn(obj, '$type')
-        && hasOwn(obj, '$value') && lengthOf(obj) === 2;
+      return (
+        hasOwn(obj, '$type') && hasOwn(obj, '$value') && lengthOf(obj) === 2
+      );
     },
     matchObject(obj) {
       return EJSON._isCustomType(obj);
@@ -226,13 +237,12 @@ const builtinConverters = [
   },
 ];
 
-EJSON._isCustomType = (obj) => (
-  obj
+EJSON._isCustomType = (obj) => obj
   && isFunction(obj.toJSONValue)
   && isFunction(obj.typeName)
-  && customTypes.has(obj.typeName())
-);
+  && customTypes.has(obj.typeName());
 
+// eslint-disable-next-line max-len
 EJSON._getTypes = (isOriginal = false) => (isOriginal ? customTypes : convertMapToObject(customTypes));
 
 EJSON._getConverters = () => builtinConverters;
@@ -269,13 +279,13 @@ const adjustTypesToJSONValue = (obj) => {
   // Iterate over array or object structure.
   keysOf(obj).forEach((key) => {
     const value = obj[key];
-    if (!isObject(value) && value !== undefined
-        && !isInfOrNaN(value)) {
+    if (!isObject(value) && value !== undefined && !isInfOrNaN(value)) {
       return; // continue
     }
 
     const changed = toJSONValueHelper(value);
     if (changed) {
+      // eslint-disable-next-line no-param-reassign
       obj[key] = changed;
       return; // on to the next key
     }
@@ -315,8 +325,10 @@ EJSON.toJSONValue = (item) => {
 const fromJSONValueHelper = (value) => {
   if (isObject(value) && value !== null) {
     const keys = keysOf(value);
-    if (keys.length <= 2
-        && keys.every((k) => typeof k === 'string' && k.substr(0, 1) === '$')) {
+    if (
+      keys.length <= 2
+      && keys.every((k) => typeof k === 'string' && k.substr(0, 1) === '$')
+    ) {
       for (let i = 0; i < builtinConverters.length; i++) {
         const converter = builtinConverters[i];
         if (converter.matchJSONValue(value)) {
@@ -351,6 +363,7 @@ const adjustTypesFromJSONValue = (obj) => {
     if (isObject(value)) {
       const changed = fromJSONValueHelper(value);
       if (value !== changed) {
+        // eslint-disable-next-line no-param-reassign
         obj[key] = changed;
         return;
       }
@@ -396,6 +409,7 @@ EJSON.stringify = handleError((item, options) => {
   let serialized;
   const json = EJSON.toJSONValue(item);
   if (options && (options.canonical || options.indent)) {
+    // eslint-disable-next-line global-require
     const canonicalStringify = require('./stringify').default;
     serialized = canonicalStringify(json, options);
   } else {
@@ -423,8 +437,10 @@ EJSON.parse = (item) => {
  * @param {Object} x The variable to check.
  * @locus Anywhere
  */
-EJSON.isBinary = (obj) => !!((typeof Uint8Array !== 'undefined' && obj instanceof Uint8Array)
-    || (obj && obj.$Uint8ArrayPolyfill));
+EJSON.isBinary = (obj) => !!(
+  (typeof Uint8Array !== 'undefined' && obj instanceof Uint8Array)
+    || (obj && obj.$Uint8ArrayPolyfill)
+);
 
 /**
  * @summary Return true if `a` and `b` are equal to each other.  Return false
@@ -502,8 +518,10 @@ EJSON.equals = (a, b, options) => {
 
   // fallback for custom types that don't implement their own equals
   switch (EJSON._isCustomType(a) + EJSON._isCustomType(b)) {
-    case 1: return false;
-    case 2: return EJSON.equals(EJSON.toJSONValue(a), EJSON.toJSONValue(b));
+    case 1:
+      return false;
+    case 2:
+      return EJSON.equals(EJSON.toJSONValue(a), EJSON.toJSONValue(b));
     default: // Do nothing
   }
 
@@ -613,4 +631,5 @@ EJSON.clone = (v) => {
 // also have to use 'base64'.)
 EJSON.newBinary = Base64.newBinary;
 
+// eslint-disable-next-line import/prefer-default-export
 export { EJSON };

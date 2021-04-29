@@ -1,3 +1,5 @@
+/* eslint-disable class-methods-use-this */
+// eslint-disable-next-line max-classes-per-file
 import { EJSON } from '../src/ejson';
 
 class Address {

@@ -11,6 +11,7 @@ function quote(string) {
   return JSON.stringify(string);
 }
 
+// eslint-disable-next-line consistent-return
 const str = (key, holder, singleIndent, outerIndent, canonical) => {
   const value = holder[key];
 
@@ -19,15 +20,15 @@ const str = (key, holder, singleIndent, outerIndent, canonical) => {
     case 'string':
       return quote(value);
     case 'number':
-    // JSON numbers must be finite. Encode non-finite numbers as null.
-      return isFinite(value) ? String(value) : 'null';
+      // JSON numbers must be finite. Encode non-finite numbers as null.
+      return Number.isFinite(value) ? String(value) : 'null';
     case 'boolean':
       return String(value);
-      // If the type is 'object', we might be dealing with an object or an array or
-      // null.
+    // If the type is 'object', we might be dealing with an object or an array or
+    // null.
     case 'object': {
-    // Due to a specification blunder in ECMAScript, typeof null is 'object',
-    // so watch out for that case.
+      // Due to a specification blunder in ECMAScript, typeof null is 'object',
+      // so watch out for that case.
       if (!value) {
         return 'null';
       }
@@ -38,9 +39,9 @@ const str = (key, holder, singleIndent, outerIndent, canonical) => {
       let v;
 
       // Is the value an array?
-      if (Array.isArray(value) || ({}).hasOwnProperty.call(value, 'callee')) {
-      // The value is an array. Stringify every element. Use null as a
-      // placeholder for non-JSON values.
+      if (Array.isArray(value) || {}.hasOwnProperty.call(value, 'callee')) {
+        // The value is an array. Stringify every element. Use null as a
+        // placeholder for non-JSON values.
         const { length } = value;
         for (let i = 0; i < length; i += 1) {
           partial[i] = str(i, value, singleIndent, innerIndent, canonical) || 'null';
@@ -51,13 +52,9 @@ const str = (key, holder, singleIndent, outerIndent, canonical) => {
         if (partial.length === 0) {
           v = '[]';
         } else if (innerIndent) {
-          v = `[\n${
-            innerIndent
-          }${partial.join(`,\n${
-            innerIndent}`)
-          }\n${
-            outerIndent
-          }]`;
+          v = `[\n${innerIndent}${partial.join(
+            `,\n${innerIndent}`,
+          )}\n${outerIndent}]`;
         } else {
           v = `[${partial.join(',')}]`;
         }
@@ -81,13 +78,9 @@ const str = (key, holder, singleIndent, outerIndent, canonical) => {
       if (partial.length === 0) {
         v = '{}';
       } else if (innerIndent) {
-        v = `{\n${
-          innerIndent
-        }${partial.join(`,\n${
-          innerIndent}`)
-        }\n${
-          outerIndent
-        }}`;
+        v = `{\n${innerIndent}${partial.join(
+          `,\n${innerIndent}`,
+        )}\n${outerIndent}}`;
       } else {
         v = `{${partial.join(',')}}`;
       }
@@ -107,10 +100,12 @@ const canonicalStringify = (value, options) => {
     canonical: false,
     ...options,
   };
+
   if (allOptions.indent === true) {
     allOptions.indent = '  ';
   } else if (typeof allOptions.indent === 'number') {
     let newIndent = '';
+    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < allOptions.indent; i++) {
       newIndent += ' ';
     }
