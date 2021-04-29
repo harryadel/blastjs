@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-// eslint-disable-next-line max-classes-per-file
-import { debugFunction, suppressLog, suppressedLogExpected } from './debug';
+import { debugFunc, _maybeSuppressMoreLogs } from './debug';
 
 const isClient = () => typeof window === 'object';
 
@@ -30,20 +29,18 @@ const Fiber = (function () {
  * @namespace Tracker
  * @summary The namespace for Tracker-related methods.
  */
-const Tracker = {};
+export const Tracker = {};
 
 /**
  * @namespace Deps
  * @deprecated
  */
-const Deps = Tracker;
+export const Deps = Tracker;
 
 // http://docs.meteor.com/#tracker_active
 
 /**
- * @summary True if there is a current computation,
- *  meaning that dependencies on reactive data sources will be tracked
- *  and potentially cause the current computation to be rerun.
+ * @summary True if there is a current computation, meaning that dependencies on reactive data sources will be tracked and potentially cause the current computation to be rerun.
  * @locus Client
  * @type {Boolean}
  */
@@ -52,10 +49,7 @@ Tracker.active = false;
 // http://docs.meteor.com/#tracker_currentcomputation
 
 /**
- * @summary The current computation, or `null` if there isn't one.
- *  The current computation is the [`Tracker.Computation`](#tracker_computation) object created
- *  by the innermost active call to `Tracker.autorun`,
- *  and it's the computation that gains dependencies when reactive data sources are accessed.
+ * @summary The current computation, or `null` if there isn't one.  The current computation is the [`Tracker.Computation`](#tracker_computation) object created by the innermost active call to `Tracker.autorun`, and it's the computation that gains dependencies when reactive data sources are accessed.
  * @locus Client
  * @type {Tracker.Computation}
  */
@@ -66,42 +60,42 @@ function setCurrentComputation(c) {
   Tracker.active = !!c;
 }
 
-function maybeSuppressMoreLogs(messagesLength) {
-  // Sometimes when running tests, we intentionally suppress logs on expected
-  // printed errors. Since the current implementation of _throwOrLog can log
-  // multiple separate log messages, suppress all of them if at least one suppress
-  // is expected as we still want them to count as one.
-  if (typeof Meteor !== 'undefined') {
-    if (suppressedLogExpected()) {
-      suppressLog(messagesLength - 1);
+const _throwOrLog = (from, e) => {
+  if (throwFirstError) {
+    throw e;
+  } else {
+    const printArgs = [`Exception from Tracker ${from} function:`];
+    if (e.stack && e.message && e.name) {
+      const idx = e.stack.indexOf(e.message);
+      if (idx < 0 || idx > e.name.length + 2) {
+        // check for "Error: "
+        // message is not part of the stack
+        const message = `${e.name}: ${e.message}`;
+        printArgs.push(message);
+      }
+    }
+    printArgs.push(e.stack);
+    _maybeSuppressMoreLogs(printArgs.length);
+
+    for (let i = 0; i < printArgs.length; i++) {
+      debugFunc(printArgs[i]);
     }
   }
-}
+};
 
-function _noYieldsAllowed(f) {
-  const savedYield = Fiber.yield;
-  Fiber.yield = function () {
-    throw new Error("Can't call yield in a noYieldsAllowed block!");
-  };
-  try {
-    return f();
-  } finally {
-    Fiber.yield = savedYield;
-  }
-}
-
-// Takes a function `f`, and wraps it in a `_noYieldsAllowed`
+// Takes a function `f`, and wraps it in a `Meteor._noYieldsAllowed`
 // block if we are running on the server. On the client, returns the
-// original function (since `_noYieldsAllowed` is a
+// original function (since `Meteor._noYieldsAllowed` is a
 // no-op). This has the benefit of not adding an unnecessary stack
 // frame on the client.
 function withNoYieldsAllowed(f) {
-  if (isClient()) {
+  if (typeof Meteor === 'undefined' || Meteor.isClient) {
     return f;
   }
-  return function (...args) {
-    _noYieldsAllowed(() => {
-      f.apply(...args);
+  return function () {
+    const args = arguments;
+    Meteor._noYieldsAllowed(() => {
+      f.apply(null, args);
     });
   };
 }
@@ -124,28 +118,6 @@ let inCompute = false;
 // finish flushing (from a finally block), logging any subsequent
 // errors.
 let throwFirstError = false;
-
-function _throwOrLog(from, e) {
-  if (throwFirstError) {
-    throw e;
-  } else {
-    const printArgs = [`Exception from Tracker ${from} function:`];
-    if (e.stack && e.message && e.name) {
-      const idx = e.stack.indexOf(e.message);
-      if (idx < 0 || idx > e.name.length + 2) { // check for "Error: "
-        // message is not part of the stack
-        const message = `${e.name}: ${e.message}`;
-        printArgs.push(message);
-      }
-    }
-    printArgs.push(e.stack);
-    maybeSuppressMoreLogs(printArgs.length);
-
-    for (let i = 0; i < printArgs.length; i += 1) {
-      debugFunction(printArgs[i]);
-    }
-  }
-}
 
 const afterFlushCallbacks = [];
 
@@ -196,8 +168,7 @@ Tracker.Computation = class Computation {
     // http://docs.meteor.com/#computation_invalidated
 
     /**
-     * @summary True if this computation has been invalidated (and not yet rerun),
-     *  or if it has been stopped.
+     * @summary True if this computation has been invalidated (and not yet rerun), or if it has been stopped.
      * @locus Client
      * @memberOf Tracker.Computation
      * @instance
@@ -209,9 +180,7 @@ Tracker.Computation = class Computation {
     // http://docs.meteor.com/#computation_firstrun
 
     /**
-     * @summary True during the initial run of the computation
-     *  at the time `Tracker.autorun` is called,
-     *  and false on subsequent reruns and at other times.
+     * @summary True during the initial run of the computation at the time `Tracker.autorun` is called, and false on subsequent reruns and at other times.
      * @locus Client
      * @memberOf Tracker.Computation
      * @instance
@@ -236,23 +205,23 @@ Tracker.Computation = class Computation {
       errored = false;
     } finally {
       this.firstRun = false;
-      if (errored) { this.stop(); }
+      if (errored) {
+        this.stop();
+      }
     }
   }
 
   // http://docs.meteor.com/#computation_oninvalidate
 
   /**
-   * @summary Registers `callback` to run when this computation is next invalidated,
-   *  or runs it immediately if the computation is already invalidated.
-   *  The callback is run exactly once and not upon future invalidations
-   * unless `onInvalidate` is called again after the computation becomes valid again.
+   * @summary Registers `callback` to run when this computation is next invalidated, or runs it immediately if the computation is already invalidated.  The callback is run exactly once and not upon future invalidations unless `onInvalidate` is called again after the computation becomes valid again.
    * @locus Client
-   * @param {Function} callback Function to be called on invalidation.
-   *  Receives one argument, the computation that was invalidated.
+   * @param {Function} callback Function to be called on invalidation. Receives one argument, the computation that was invalidated.
    */
   onInvalidate(f) {
-    if (typeof f !== 'function') { throw new Error('onInvalidate requires a function'); }
+    if (typeof f !== 'function') {
+      throw new Error('onInvalidate requires a function');
+    }
 
     if (this.invalidated) {
       Tracker.nonreactive(() => {
@@ -264,15 +233,14 @@ Tracker.Computation = class Computation {
   }
 
   /**
-   * @summary Registers `callback` to run when this computation is stopped,
-   *  or runs it immediately if the computation is already stopped.
-   *   The callback is run after any `onInvalidate` callbacks.
+   * @summary Registers `callback` to run when this computation is stopped, or runs it immediately if the computation is already stopped.  The callback is run after any `onInvalidate` callbacks.
    * @locus Client
-   * @param {Function} callback Function to be called on stop.
-   *  Receives one argument, the computation that was stopped.
+   * @param {Function} callback Function to be called on stop. Receives one argument, the computation that was stopped.
    */
   onStop(f) {
-    if (typeof f !== 'function') { throw new Error('onStop requires a function'); }
+    if (typeof f !== 'function') {
+      throw new Error('onStop requires a function');
+    }
 
     if (this.stopped) {
       Tracker.nonreactive(() => {
@@ -302,7 +270,7 @@ Tracker.Computation = class Computation {
 
       // callbacks can't add callbacks, because
       // this.invalidated === true.
-      for (let i = 0, f; f = this._onInvalidateCallbacks[i]; i += 1) {
+      for (var i = 0, f; (f = this._onInvalidateCallbacks[i]); i++) {
         Tracker.nonreactive(() => {
           withNoYieldsAllowed(f)(this);
         });
@@ -321,7 +289,7 @@ Tracker.Computation = class Computation {
     if (!this.stopped) {
       this.stopped = true;
       this.invalidate();
-      for (let i = 0, f; f = this._onStopCallbacks[i]; i += 1) {
+      for (var i = 0, f; (f = this._onStopCallbacks[i]); i++) {
         Tracker.nonreactive(() => {
           withNoYieldsAllowed(f)(this);
         });
@@ -375,7 +343,9 @@ Tracker.Computation = class Computation {
    * @locus Client
    */
   flush() {
-    if (this._recomputing) { return; }
+    if (this._recomputing) {
+      return;
+    }
 
     this._recompute();
   }
@@ -416,30 +386,27 @@ Tracker.Dependency = class Dependency {
   // if there is no currentComputation.
 
   /**
-   * @summary Declares that the current computation
-   *  (or `fromComputation` if given) depends on `dependency`.
-   *  The computation will be invalidated the next time `dependency` changes.
+   * @summary Declares that the current computation (or `fromComputation` if given) depends on `dependency`.  The computation will be invalidated the next time `dependency` changes.
 
-   If there is no current computation and `depend()` is called with no arguments,
-    it does nothing and returns false.
+   If there is no current computation and `depend()` is called with no arguments, it does nothing and returns false.
 
    Returns true if the computation is a new dependent of `dependency` rather than an existing one.
    * @locus Client
-   * @param {Tracker.Computation} [fromComputation] An optional computation declared
-   *  to depend on `dependency` instead of the current computation.
+   * @param {Tracker.Computation} [fromComputation] An optional computation declared to depend on `dependency` instead of the current computation.
    * @returns {Boolean}
    */
   depend(computation) {
-    let currentComputation = computation;
     if (!computation) {
-      if (!Tracker.active) { return false; }
+      if (!Tracker.active) {
+        return false;
+      }
 
-      currentComputation = Tracker.currentComputation;
+      computation = Tracker.currentComputation;
     }
-    const id = currentComputation._id;
+    const id = computation._id;
     if (!(id in this._dependentsById)) {
-      this._dependentsById[id] = currentComputation;
-      currentComputation.onInvalidate(() => {
+      this._dependentsById[id] = computation;
+      computation.onInvalidate(() => {
         delete this._dependentsById[id];
       });
       return true;
@@ -454,29 +421,30 @@ Tracker.Dependency = class Dependency {
    * @locus Client
    */
   changed() {
-    Object.keys(this._dependentsById).forEach((id) => {
+    for (const id in this._dependentsById) {
       this._dependentsById[id].invalidate();
-    });
+    }
   }
 
   // http://docs.meteor.com/#dependency_hasdependents
 
   /**
-   * @summary True if this Dependency has one or more dependent Computations,
-   *  which would be invalidated if this Dependency were to change.
+   * @summary True if this Dependency has one or more dependent Computations, which would be invalidated if this Dependency were to change.
    * @locus Client
    * @returns {Boolean}
    */
   hasDependents() {
-    return Object.keys(this._dependentsById).length;
+    for (const id in this._dependentsById) {
+      return true;
+    }
+    return false;
   }
 };
 
 // http://docs.meteor.com/#tracker_flush
 
 /**
- * @summary Process all reactive updates immediately
- *  and ensure that all invalidated computations are rerun.
+ * @summary Process all reactive updates immediately and ensure that all invalidated computations are rerun.
  * @locus Client
  */
 Tracker.flush = function (options) {
@@ -487,9 +455,7 @@ Tracker.flush = function (options) {
 };
 
 /**
- * @summary True if we are computing a computation now, either first time or recompute.
- *   This matches Tracker.active unless we are inside Tracker.nonreactive,
- *  which nullfies currentComputation even though an enclosing computation may still be running.
+ * @summary True if we are computing a computation now, either first time or recompute.  This matches Tracker.active unless we are inside Tracker.nonreactive, which nullfies currentComputation even though an enclosing computation may still be running.
  * @locus Client
  * @returns {Boolean}
  */
@@ -500,7 +466,7 @@ Tracker.inFlush = function () {
 // Run all pending computations and afterFlush callbacks.  If we were not called
 // directly via Tracker.flush, this may return before they're all done to allow
 // the event loop to run a little before continuing.
-Tracker._runFlush = function (options = {}) {
+Tracker._runFlush = function (options) {
   // XXX What part of the comment below is still true? (We no longer
   // have Spark)
   //
@@ -512,9 +478,15 @@ Tracker._runFlush = function (options = {}) {
   // any useful notion of a nested flush.
   //
   // https://app.asana.com/0/159908330244/385138233856
-  if (Tracker.inFlush()) { throw new Error("Can't call Tracker.flush while flushing"); }
+  if (Tracker.inFlush()) {
+    throw new Error("Can't call Tracker.flush while flushing");
+  }
 
-  if (inCompute) { throw new Error("Can't flush inside Tracker.autorun"); }
+  if (inCompute) {
+    throw new Error("Can't flush inside Tracker.autorun");
+  }
+
+  options = options || {};
 
   inFlush = true;
   willFlush = true;
@@ -523,8 +495,7 @@ Tracker._runFlush = function (options = {}) {
   let recomputedCount = 0;
   let finishedTry = false;
   try {
-    while (pendingComputations.length
-           || afterFlushCallbacks.length) {
+    while (pendingComputations.length || afterFlushCallbacks.length) {
       // recompute all pending computations
       while (pendingComputations.length) {
         const comp = pendingComputations.shift();
@@ -602,12 +573,18 @@ Tracker._runFlush = function (options = {}) {
  * thrown. Defaults to the error being logged to the console.
  * @returns {Tracker.Computation}
  */
-Tracker.autorun = function (f, options = {}) {
-  if (typeof f !== 'function') { throw new Error('Tracker.autorun requires a function argument'); }
+Tracker.autorun = function (f, options) {
+  if (typeof f !== 'function') {
+    throw new Error('Tracker.autorun requires a function argument');
+  }
+
+  options = options || {};
 
   constructingComputation = true;
   const c = new Tracker.Computation(
-    f, Tracker.currentComputation, options.onError,
+    f,
+    Tracker.currentComputation,
+    options.onError,
   );
 
   if (Tracker.active) {
@@ -644,15 +621,14 @@ Tracker.nonreactive = function (f) {
 // http://docs.meteor.com/#tracker_oninvalidate
 
 /**
- * @summary Registers a new [`onInvalidate`](#computation_oninvalidate)
- * callback on the current computation (which must exist),
- * to be called immediately when the current computation is invalidated or stopped.
+ * @summary Registers a new [`onInvalidate`](#computation_oninvalidate) callback on the current computation (which must exist), to be called immediately when the current computation is invalidated or stopped.
  * @locus Client
- * @param {Function} callback A callback function that will be invoked as `func(c)`,
- * where `c` is the computation on which the callback is registered.
+ * @param {Function} callback A callback function that will be invoked as `func(c)`, where `c` is the computation on which the callback is registered.
  */
 Tracker.onInvalidate = function (f) {
-  if (!Tracker.active) { throw new Error('Tracker.onInvalidate requires a currentComputation'); }
+  if (!Tracker.active) {
+    throw new Error('Tracker.onInvalidate requires a currentComputation');
+  }
 
   Tracker.currentComputation.onInvalidate(f);
 };
@@ -660,19 +636,11 @@ Tracker.onInvalidate = function (f) {
 // http://docs.meteor.com/#tracker_afterflush
 
 /**
- * @summary Schedules a function to be called during the next flush,
- *  or later in the current flush if one is in progress,
- *  after all invalidated computations have been rerun.
- *  The function will be run once and not on subsequent flushes unless `afterFlush` is called again.
+ * @summary Schedules a function to be called during the next flush, or later in the current flush if one is in progress, after all invalidated computations have been rerun.  The function will be run once and not on subsequent flushes unless `afterFlush` is called again.
  * @locus Client
  * @param {Function} callback A function to call at flush time.
  */
 Tracker.afterFlush = function (f) {
   afterFlushCallbacks.push(f);
   requireFlush();
-};
-
-module.exports = {
-  Tracker,
-  Deps,
 };
