@@ -1,7 +1,18 @@
 {
   "name": "root",
-  "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "build": "lerna run build",
+    "bootstrap": "lerna bootstrap && lerna run build",
+    "clean": "lerna clean --yes",
+    "start": "cd example-apps/meteor-blaze-app && npm i && npm start",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
   "devDependencies": {
-    "lerna": "^4.0.0"
+    "lerna": "^4.0.0",
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
   }
 }
