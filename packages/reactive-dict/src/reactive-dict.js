@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Tracker } from 'standalone-tracker';
-import EJSON from 'ejson';
+import { EJSON } from 'standalone-ejson';
 import MongoID from './mongoId';
 
 const hasOwn = Object.prototype.hasOwnProperty;
