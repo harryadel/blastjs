@@ -1,7 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import { Tracker } from 'standalone-tracker';
-import { EJSON } from 'standalone-ejson';
-import MongoID from './mongoId';
+import EJSON from 'ejson';
+import { MongoID } from 'standalone-mongo-id';
+
+EJSON.addType('oid', (str) => new MongoID.ObjectID(str));
 
 const hasOwn = Object.prototype.hasOwnProperty;
 
@@ -22,26 +24,22 @@ function parse(serialized) {
 }
 
 function changed(v) {
-  return v && v.changed();
+  v && v.changed();
 }
 
 // XXX COMPAT WITH 0.9.1 : accept migrationData instead of dictName
 /**
  * @class
  * @instanceName ReactiveDict
- * @summary Constructor for a ReactiveDict,
- *  which represents a reactive dictionary of key/value pairs.
+ * @summary Constructor for a ReactiveDict, which represents a reactive dictionary of key/value pairs.
  * @locus Client
- * @param {String} [name] Optional.  When a name is passed,
- *  preserves contents across Hot Code Pushes
+ * @param {String} [name] Optional.  When a name is passed, preserves contents across Hot Code Pushes
  * @param {Object} [initialValue] Optional.  The default values for the dictionary
  */
-// eslint-disable-next-line import/prefer-default-export
 export class ReactiveDict {
   constructor(dictName, dictData) {
     // this.keys: key -> value
     this.keys = {};
-
     this._migratedDictData = {}; // name -> data
     this._dictsToMigrate = {}; // name -> ReactiveDict
 
@@ -53,9 +51,7 @@ export class ReactiveDict {
         // Only run migration logic on client, it will cause
         // duplicate name errors on server during reloads.
         // _registerDictForMigrate will throw an error on duplicate name.
-        if (typeof window !== 'undefined') {
-          this._registerDictForMigrate(dictName, this);
-        }
+        typeof window !== 'undefined' && this._registerDictForMigrate(dictName, this);
         const migratedData = typeof window !== 'undefined' && this._loadMigratedDict(dictName);
 
         if (migratedData) {
@@ -137,7 +133,7 @@ export class ReactiveDict {
    * @param {EJSONable | undefined} value The new value for `key`
    */
   setDefault(keyOrObject, value) {
-    if (typeof keyOrObject === 'object' && value === undefined) {
+    if ((typeof keyOrObject === 'object') && (value === undefined)) {
       // Called as `dict.setDefault({...})`
       this._setDefaultObject(keyOrObject);
       return;
@@ -178,6 +174,7 @@ export class ReactiveDict {
    * test against
    */
   equals(key, value) {
+    // Mongo.ObjectID is in the 'mongo' package
     const { ObjectID } = MongoID;
     // We don't allow objects (or arrays that might include objects) for
     // .equals, because JSON.stringify doesn't canonicalize object key
@@ -195,8 +192,7 @@ export class ReactiveDict {
       && typeof value !== 'undefined'
       && !(value instanceof Date)
       && !(ObjectID && value instanceof ObjectID)
-      && value !== null
-    ) {
+        && value !== null) {
       throw new Error('ReactiveDict.equals: value must be scalar');
     }
     const serializedValue = stringify(value);
@@ -345,9 +341,7 @@ export class ReactiveDict {
   }
 
   _registerDictForMigrate(dictName, dict) {
-    if (hasOwn.call(this._dictsToMigrate, dictName)) {
-      throw new Error(`Duplicate ReactiveDict name: ${dictName}`);
-    }
+    if (hasOwn.call(this._dictsToMigrate, dictName)) { throw new Error(`Duplicate ReactiveDict name: ${dictName}`); }
 
     this._dictsToMigrate[dictName] = dict;
   }

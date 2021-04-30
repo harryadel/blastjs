@@ -1,6 +1,6 @@
 import { Tracker } from 'standalone-tracker';
+import { MongoID } from 'standalone-mongo-id';
 import { ReactiveDict } from '../src/reactive-dict';
-import MongoID from '../src/mongoId';
 
 test('ReactiveDict - set to undefined', () => {
   const dict = new ReactiveDict();
@@ -207,7 +207,7 @@ test('ReactiveDict - get/set/equals types', () => {
   expect(
     dict.equals('oid', new MongoID.ObjectID('fffffffffffffffffffffffa')),
   ).toBeFalsy();
-  console.log('ZZZZZZZZZZZZ: ', dict.equals('oid', new MongoID.ObjectID('ffffffffffffffffffffffff')));
+
   expect(
     dict.equals('oid', new MongoID.ObjectID('ffffffffffffffffffffffff')),
   ).toBeTruthy();

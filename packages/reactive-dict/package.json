@@ -17,7 +17,8 @@
   "license": "MIT",
   "dependencies": {
     "@reactioncommerce/random": "^1.0.2",
-    "standalone-ejson": "^0.1.0",
+    "ejson": "^2.2.1",
+    "standalone-mongo-id": "^0.1.0",
     "standalone-tracker": "^1.0.0"
   },
   "devDependencies": {
