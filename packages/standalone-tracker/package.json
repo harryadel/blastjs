@@ -34,5 +34,6 @@
   "bugs": {
     "url": "https://github.com/harryadel/tracker/issues"
   },
-  "homepage": "https://github.com/harryadel/tracker#readme"
+  "homepage": "https://github.com/harryadel/tracker#readme",
+  "gitHead": "d4707c98c046f9f4171eed2d76439e55d40c2691"
 }
