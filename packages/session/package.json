@@ -1,6 +1,6 @@
 {
   "name": "session",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "[Source code of released version](https://github.com/meteor/meteor/tree/master/packages/session) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/session) ***",
   "main": "session.js",
   "scripts": {
@@ -20,8 +20,8 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "reactive-dict": "^1.0.8",
-    "standalone-mongo-id": "^0.1.0",
-    "standalone-tracker": "^1.0.0"
+    "reactive-dict": "^1.0.9",
+    "standalone-mongo-id": "^0.1.1",
+    "standalone-tracker": "^1.0.1"
   }
 }

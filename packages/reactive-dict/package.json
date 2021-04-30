@@ -1,6 +1,6 @@
 {
   "name": "reactive-dict",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "[Source code of released version](https://github.com/meteor/meteor/tree/master/packages/reactive-dict) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/reactive-dict) ***",
   "main": "./lib/reactive-dict.js",
   "scripts": {
@@ -18,8 +18,8 @@
   "dependencies": {
     "@reactioncommerce/random": "^1.0.2",
     "ejson": "^2.2.1",
-    "standalone-mongo-id": "^0.1.0",
-    "standalone-tracker": "^1.0.0"
+    "standalone-mongo-id": "^0.1.1",
+    "standalone-tracker": "^1.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
