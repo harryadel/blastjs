@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "reactive-dict": "^1.0.8",
+    "standalone-mongo-id": "^0.1.0",
     "standalone-tracker": "^1.0.0"
   }
 }
