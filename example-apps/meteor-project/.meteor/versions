@@ -30,6 +30,7 @@ html-tools@1.0.11
 htmljs@1.0.11
 id-map@1.1.0
 inter-process-messaging@0.1.0
+jquery@1.0.2
 livedata@1.0.18
 logging@1.1.20
 meteor@1.9.2
@@ -62,4 +63,4 @@ tracker@1.2.0
 underscore@1.0.10
 webapp@1.7.2
 webapp-hashing@1.0.9
-znewsham:blaze@0.0.2
+znewsham:blaze@2.3.0
