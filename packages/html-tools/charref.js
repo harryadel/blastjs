@@ -1,4 +1,4 @@
-const HTMLTools = require("./preamble.js");
+import { makeRegexMatcher } from './scanner';
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json
 
@@ -2241,8 +2241,8 @@ var ENTITIES = {
 };
 
 var ALPHANUMERIC = /^[a-zA-Z0-9]/;
-var getPossibleNamedEntityStart = HTMLTools.makeRegexMatcher(/^&[a-zA-Z0-9]/);
-var getApparentNamedEntity = HTMLTools.makeRegexMatcher(/^&[a-zA-Z0-9]+;/);
+var getPossibleNamedEntityStart = makeRegexMatcher(/^&[a-zA-Z0-9]/);
+var getApparentNamedEntity = makeRegexMatcher(/^&[a-zA-Z0-9]+;/);
 
 var getNamedEntityByFirstChar = {};
 (function () {
@@ -2253,7 +2253,7 @@ var getNamedEntityByFirstChar = {};
     namedEntitiesByFirstChar[chr].push(ent.slice(2));
   }
   for (var chr in namedEntitiesByFirstChar) {
-    getNamedEntityByFirstChar[chr] = HTMLTools.makeRegexMatcher(
+    getNamedEntityByFirstChar[chr] = makeRegexMatcher(
       new RegExp('^&' + chr + '(?:' +
                  namedEntitiesByFirstChar[chr].join('|') + ')'));
   }
@@ -2315,7 +2315,7 @@ var getCodePoints = function (namedEntity) {
 
 var ALLOWED_AFTER_AMP = /^[\u0009\u000a\u000c <&]/;
 
-var getCharRefNumber = HTMLTools.makeRegexMatcher(/^(?:[xX][0-9a-fA-F]+|[0-9]+);/);
+var getCharRefNumber = makeRegexMatcher(/^(?:[xX][0-9a-fA-F]+|[0-9]+);/);
 
 var BIG_BAD_CODEPOINTS = (function (obj) {
   var list = [0x1FFFE, 0x1FFFF, 0x2FFFE, 0x2FFFF, 0x3FFFE, 0x3FFFF,
@@ -2361,7 +2361,7 @@ var isLegalCodepoint = function (cp) {
 // either `"`, `'`, or `>` and is supplied when parsing attribute values.  NOTE: In the current spec, the
 // value of `allowedChar` doesn't actually seem to end up mattering, but there is still some debate about
 // the right approach to ampersands.
-getCharacterReference = HTMLTools.Parse.getCharacterReference = function (scanner, inAttribute, allowedChar) {
+export function getCharacterReference (scanner, inAttribute, allowedChar) {
   if (scanner.peek() !== '&')
     // no ampersand
     return null;
@@ -2412,4 +2412,4 @@ getCharacterReference = HTMLTools.Parse.getCharacterReference = function (scanne
       return null;
     }
   }
-};
+}

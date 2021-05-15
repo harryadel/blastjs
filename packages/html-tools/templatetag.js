@@ -1,11 +1,3 @@
-const HTMLTools = require("./preamble.js");
-require("./utils.js");
-require("./scanner.js");
-require("./tokenize.js");
-require("./parse.js");
-require("./charref.js");
-require("./utils.js");
-module.exports = HTMLTools;
 // _assign is like _.extend or the upcoming Object.assign.
 // Copy src's own, enumerable properties onto tgt and return
 // tgt.
@@ -19,17 +11,17 @@ var _assign = function (tgt, src) {
 };
 
 
-HTMLTools.TemplateTag = function (props) {
-  if (! (this instanceof HTMLTools.TemplateTag))
+export function TemplateTag (props) {
+  if (! (this instanceof TemplateTag))
     // called without `new`
-    return new HTMLTools.TemplateTag;
+    return new TemplateTag;
 
   if (props)
     _assign(this, props);
-};
+}
 
-_assign(HTMLTools.TemplateTag.prototype, {
-  constructorName: 'HTMLTools.TemplateTag',
+_assign(TemplateTag.prototype, {
+  constructorName: 'TemplateTag',
   toJS: function (visitor) {
     return visitor.generateCall(this.constructorName,
                                 _assign({}, this));
