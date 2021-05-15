@@ -1,0 +1,39 @@
+{
+  "name": "meteor-blaze-runtime",
+  "version": "1.1.8",
+  "description": "The Meteor blaze templating runtime environment",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/znewsham/meteor-blaze."
+  },
+  "homepage": "https://bitbucket.org/znewsham/meteor-blaze/src/master/runtime/#readme",
+  "main": "./src/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "browser": "./src/index.js",
+  "scripts": {
+    "test": "node ./tests/tinytest-runner.js"
+  },
+  "author": "Zack Newsham",
+  "license": "ISC",
+  "peerDependencies": {
+    "jquery": "^3.4.1"
+  },
+  "dependencies": {
+    "meteor-blaze-common": "^1.0.3",
+    "meteor-ejson": "^0.6.3",
+    "meteor-random": "0.0.3",
+    "meteor-standalone-diff-sequence": "0.0.3",
+    "meteor-standalone-mongo-id": "0.0.3",
+    "meteor-standalone-ordered-dict": "0.0.6",
+    "meteor-standalone-reactive-var": "0.0.3",
+    "meteor-standalone-tracker": "^1.0.97",
+    "tls": "0.0.1"
+  },
+  "devDependencies": {
+    "jsdom": "^13.0.0",
+    "meteor-standalone-npm-tinytest": "0.0.17",
+    "meteor-blaze-compiler": "^1.0.6"
+  }
+}

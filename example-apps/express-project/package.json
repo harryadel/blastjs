@@ -1,0 +1,22 @@
+{
+  "name": "express-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node ./node_modules/.bin/blaze ./example.html > ./templates/example.template.js",
+    "start": "node ./index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "jsdom": "^13.0.0",
+    "meteor-blaze-runtime": "^1.1.2",
+    "meteor-blaze-compiler": "^1.0.8",
+    "node-hook": "^1.0.0"
+  },
+  "devDependencies": {
+  }
+}

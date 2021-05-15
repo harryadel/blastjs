@@ -1,0 +1,7 @@
+<template name="sidenav">
+  <ul>
+    {{#each page in pages}}
+      <li data-pageid="{{page.id}}">{{page.title}}</li>
+    {{/each}}
+  </ul>
+</template>

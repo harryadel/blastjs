@@ -1,0 +1,16 @@
+{
+  "name": "meteor-blaze-common",
+  "version": "1.0.3",
+  "description": "Common ccode for the Meteor blaze templating compiler and runtime",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/znewsham/meteor-blaze.git"
+  },
+  "main": "src/index.js",
+  "browser": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zack Newsham",
+  "license": "ISC"
+}

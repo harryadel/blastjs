@@ -1,0 +1,11 @@
+{
+  "name": "meteor-project",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.1.5",
+    "meteor-node-stubs": "^0.4.1"
+  }
+}

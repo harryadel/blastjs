@@ -1,0 +1,19 @@
+{
+  "name": "blaze-loader",
+  "version": "1.0.2",
+  "description": "A webpack loader for blaze templates",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/znewsham/meteor-blaze."
+  },
+  "homepage": "https://bitbucket.org/znewsham/meteor-blaze/src/master/webpack/#readme",
+  "main": "blaze-loader.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zack Newsham",
+  "license": "ISC",
+  "dependencies": {
+    "meteor-blaze-compiler": "^1.0.5"
+  }
+}
