@@ -1,4 +1,9 @@
-const { TemplatingTools } = require("./object.js");
+import { CompileError } from './throw-compile-error';
+
+export function scanHtmlForTags(options) {
+  const scan = new HtmlScan(options);
+  return scan.getTags();
+}
 
 /**
  * Scan an HTML file for top-level tags and extract their contents. Pass them to
@@ -8,8 +13,7 @@ const { TemplatingTools } = require("./object.js");
  * top-level tags, which are allowed to have attributes,
  * and ignores top-level HTML comments.
  */
-module.exports = {
-  HtmlScan: class HtmlScan {
+class HtmlScan {
   /**
    * Initialize and run a scan of a single file
    * @param  {String} sourceName The filename, used in errors only
@@ -152,7 +156,7 @@ module.exports = {
   throwCompileError(msg, overrideIndex) {
     const finalIndex = (typeof overrideIndex === 'number' ? overrideIndex : this.index);
 
-    const err = new TemplatingTools.CompileError();
+    const err = new CompileError();
     err.message = msg || "bad formatting in template file";
     err.file = this.sourceName;
     err.line = this.contents.substring(0, finalIndex).split('\n').length;
@@ -168,4 +172,3 @@ module.exports = {
     return this.tags;
   }
 }
-};
