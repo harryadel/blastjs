@@ -1,8 +1,4 @@
-
-const Tracker = typeof Package !== "undefined" && Package.tracker ? Package.tracker.Tracker : require("meteor-standalone-tracker");
-const Blaze = require("../blaze/index.js");
 Spacebars = {};
-module.exports = Spacebars;
 
 var tripleEquals = function (a, b) { return a === b; };
 
