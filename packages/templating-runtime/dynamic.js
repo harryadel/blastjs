@@ -1,6 +1,5 @@
-const Blaze = require("../blaze/index.js");
-Template = Blaze.Template;
-require("./dynamic.html.template.js");
+var Template = Blaze.Template;
+
 /**
  * @isTemplate true
  * @memberOf Template
