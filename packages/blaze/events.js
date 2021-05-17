@@ -1,4 +1,3 @@
-const Blaze = require('./preamble.js');
 var EventSupport = Blaze._EventSupport = {};
 
 var DOMBackend = Blaze._DOMBackend;

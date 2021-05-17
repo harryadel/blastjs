@@ -1,19 +1,12 @@
-const Blaze = require('./preamble.js');
 var DOMBackend = {};
 Blaze._DOMBackend = DOMBackend;
-const jQuery = require("jquery");
-document = window.document;
+
 var $jq = (typeof jQuery !== 'undefined' ? jQuery :
            (typeof Package !== 'undefined' ?
             Package.jquery && Package.jquery.jQuery : null));
 if (! $jq)
   throw new Error("jQuery not found");
 
-if (!$jq.event) {
-  $jq.event = {
-    special: {}
-  };
-}
 DOMBackend._$jq = $jq;
 
 DOMBackend.parseHTML = function (html) {

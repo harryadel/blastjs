@@ -1,6 +1,3 @@
-const Blaze = require('./preamble.js');
-const Tracker = typeof Package !== "undefined" && Package.tracker ? Package.tracker.Tracker : require("meteor-standalone-tracker");
-const { HTML } = require("meteor-blaze-common")
 // Turns HTMLjs into DOM nodes and DOMRanges.
 //
 // - `htmljs`: the value to materialize, which may be any of the htmljs
@@ -88,7 +85,7 @@ var materializeDOMInner = function (htmljs, intoArray, parentView, workStack) {
       }
     }
   }
-debugger;
+
   throw new Error("Unexpected object in htmljs: " + htmljs);
 };
 

@@ -1,5 +1,3 @@
-const Blaze = require('./preamble.js');
-const ReactiveVar = typeof Package !== "undefined" && Package["reactive-var"] ? Package["reactive-var"].ReactiveVar : require("meteor-standalone-reactive-var");
 UI = Blaze;
 
 Blaze.ReactiveVar = ReactiveVar;

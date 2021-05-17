@@ -1,9 +1,5 @@
-const Blaze = require('./preamble.js');
-const ReactiveVar = typeof Package !== "undefined" && Package["reactive-var"] ? Package["reactive-var"].ReactiveVar : require("meteor-standalone-reactive-var");
-const Tracker = typeof Package !== "undefined" && Package.tracker ? Package.tracker.Tracker : require("meteor-standalone-tracker");
-const ObserveSequence = require("../observe-sequence.js");
 Blaze._calculateCondition = function (cond) {
-  if (cond instanceof Array && cond.length === 0)
+  if (HTML.isArray(cond) && cond.length === 0)
     cond = false;
   return !! cond;
 };

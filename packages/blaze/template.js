@@ -1,5 +1,3 @@
-const Blaze = require('./preamble.js');
-const Tracker = typeof Package !== "undefined" && Package.tracker ? Package.tracker.Tracker : require("meteor-standalone-tracker");
 // [new] Blaze.Template([viewName], renderFunction)
 //
 // `Blaze.Template` is the class of templates, like `Template.foo` in

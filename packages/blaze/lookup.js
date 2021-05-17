@@ -1,4 +1,3 @@
-const Blaze = require('./preamble.js');
 Blaze._globalHelpers = {};
 
 // Documented as Template.registerHelper.

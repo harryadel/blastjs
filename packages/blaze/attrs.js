@@ -1,9 +1,3 @@
-const Blaze = require('./preamble.js');
-const _ = require("underscore");
-const obj = {
-  underscore: _
-};
-const OrderedDict = require("meteor-standalone-ordered-dict");
 var jsUrlsAllowed = false;
 Blaze._allowJavascriptUrls = function () {
   jsUrlsAllowed = true;
@@ -177,9 +171,7 @@ var StyleHandler = Blaze._DiffingAttributeHandler.extend({
         tokens.remove(match[1]);
       }
 
-      // XXX No `String.trim` on Safari 4. Swap out $.trim if we want to
-      // remove strong dep on jquery.
-      tokens.append(match[1], match[0].trim ? match[0].trim() : $.trim(match[0]));
+      tokens.append(match[1], match[0].trim());
 
       match = regex.exec(attrString);
     }
@@ -273,18 +265,18 @@ var isUrlAttribute = function (tagName, attrName) {
 // To get the protocol for a URL, we let the browser normalize it for
 // us, by setting it as the href for an anchor tag and then reading out
 // the 'protocol' property.
-if (typeof document !== "undefined" && document.createElement) {
+if (Meteor.isClient) {
   var anchorForNormalization = document.createElement('A');
 }
 
-  var getUrlProtocol = function (url) {
-    if (anchorForNormalization) {
-      anchorForNormalization.href = url;
-      return (anchorForNormalization.protocol || "").toLowerCase();
-    } else {
-      throw new Error('getUrlProtocol not implemented on the server');
-    }
-  };
+var getUrlProtocol = function (url) {
+  if (Meteor.isClient) {
+    anchorForNormalization.href = url;
+    return (anchorForNormalization.protocol || "").toLowerCase();
+  } else {
+    throw new Error('getUrlProtocol not implemented on the server');
+  }
+};
 
 // UrlHandler is an attribute handler for all HTML attributes that take
 // URL values. It disallows javascript: URLs, unless
