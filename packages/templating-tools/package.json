@@ -1,0 +1,8 @@
+{
+  "name": "templating-tools",
+  "description": "Tools to scan HTML and compile tags when building a templating package",
+  "version": "1.2.0",
+  "dependencies": {
+    "spacebars-compiler": "1.2.0"
+  }
+}

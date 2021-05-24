@@ -1,0 +1,28 @@
+{
+  "name": "spacebars",
+  "description": "Handlebars-like template language for Meteor",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "watch": "watch 'npm run build' src",
+    "clean": "rimraf ./dist",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir ./dist",
+    "prepublish": "npm run clean && npm run build"
+  },
+  "dependencies": {
+    "observe-sequence": "1.0.12",
+    "tracker": "1.1.0",
+    "htmljs": "1.1.0",
+    "blaze": "2.4.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.14.2",
+    "@babel/preset-env": "^7.14.2",
+    "cross-env": "^7.0.3",
+    "jest": "^26.6.3",
+    "rimraf": "^2.7.1",
+    "watch": "^0.13.0"
+  }
+}

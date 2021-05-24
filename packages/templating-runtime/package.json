@@ -1,0 +1,10 @@
+{
+  "name": "templating-runtime",
+  "description": "Runtime for compiled .html files",
+  "version": "1.4.0",
+  "dependencies": {
+    "blaze": "2.4.0",
+    "spacebars": "1.1.0",
+    "templating-compiler": "1.4.0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "spacebars-compiler",
+  "description": "Compiler for Spacebars template language",
+  "version": "1.2.1",
+  "main": "dist/preamble.js",
+  "dependencies": {
+    "uglify-js": "2.7.5",
+    "htmljs": "1.1.0",
+    "html-tools": "1.1.0",
+    "blaze-tools": "1.1.0"
+  }
+}

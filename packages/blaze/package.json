@@ -1,0 +1,14 @@
+{
+  "name": "blaze",
+  "summary": "Meteor Reactive Templating library",
+  "version": "2.4.0",
+  "git": "https://github.com/meteor/blaze.git",
+  "dependencies": {
+    "standalone-tracker": "^1.0.1",
+    "meteor-check": "1.0.1",
+    "observe-sequence": "0.1.0",
+    "reactive-var": "0.1.0",
+    "ordered-dict": "0.1.0",
+    "htmljs": "0.1.0"
+  }
+}

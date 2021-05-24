@@ -1,88 +1,87 @@
-const { HTML } = require("meteor-blaze-common");
-const HTMLTools = require("../src/html-tools/templatetag.js");
-Tinytest.add("htmljs - getTag", function (test) {
-  var FOO = HTML.getTag('foo');
-  test.isTrue(HTML.FOO === FOO);
-  var x = FOO();
+const { HTML } = require('meteor-blaze-common');
+const HTMLTools = require('../src/html-tools/templatetag.js');
 
-  test.equal(x.tagName, 'foo');
-  test.isTrue(x instanceof HTML.FOO);
-  test.isTrue(x instanceof HTML.Tag);
-  test.equal(x.children, []);
-  test.equal(x.attrs, null);
+test('htmljs - getTag', () => {
+  const FOO = HTML.getTag('foo');
+  expect(HTML.FOO === FOO).toBeTruthy();
+  const x = FOO();
 
-  test.isTrue((new FOO) instanceof HTML.FOO);
-  test.isTrue((new FOO) instanceof HTML.Tag);
-  test.isFalse((new HTML.P) instanceof HTML.FOO);
+  expect(x.tagName).toEqual('foo');
+  expect(x instanceof HTML.FOO).toBeTruthy();
+  expect(x instanceof HTML.Tag).toBeTruthy();
+  expect(x.children).toEqual([]);
+  expect(x.attrs).toEqual(null);
 
-  var result = HTML.ensureTag('Bar');
-  test.equal(typeof result, 'undefined');
-  var BAR = HTML.BAR;
-  test.equal(BAR().tagName, 'Bar');
+  expect((new FOO()) instanceof HTML.FOO).toBeTruthy();
+  expect((new FOO()) instanceof HTML.Tag).toBeTruthy();
+  expect((new HTML.P()) instanceof HTML.FOO).toBeFalsy();
+
+  const result = HTML.ensureTag('Bar');
+  expect(typeof result).toEqual('undefined');
+  const { BAR } = HTML;
+  expect(BAR().tagName).toEqual('Bar');
 });
 
-Tinytest.add("htmljs - construction", function (test) {
-  var A = HTML.getTag('a');
-  var B = HTML.getTag('b');
-  var C = HTML.getTag('c');
+test('htmljs - construction', () => {
+  const A = HTML.getTag('a');
+  const B = HTML.getTag('b');
+  const C = HTML.getTag('c');
 
-  var a = A(0, B({q:0}, C(A(B({})), 'foo')));
-  test.equal(a.tagName, 'a');
-  test.equal(a.attrs, null);
-  test.equal(a.children.length, 2);
-  test.equal(a.children[0], 0);
-  var b = a.children[1];
-  test.equal(b.tagName, 'b');
-  test.equal(b.attrs, {q:0});
-  test.equal(b.children.length, 1);
-  var c = b.children[0];
-  test.equal(c.tagName, 'c');
-  test.equal(c.attrs, null);
-  test.equal(c.children.length, 2);
-  test.equal(c.children[0].tagName, 'a');
-  test.equal(c.children[0].attrs, null);
-  test.equal(c.children[0].children.length, 1);
-  test.equal(c.children[0].children[0].tagName, 'b');
-  test.equal(c.children[0].children[0].children.length, 0);
-  test.equal(c.children[0].children[0].attrs, {});
-  test.equal(c.children[1], 'foo');
+  const a = A(0, B({ q: 0 }, C(A(B({})), 'foo')));
+  expect(a.tagName).toEqual('a');
+  expect(a.attrs).toEqual(null);
+  expect(a.children.length).toEqual(2);
+  expect(a.children[0]).toEqual(0);
+  const b = a.children[1];
+  expect(b.tagName).toEqual('b');
+  expect(b.attrs).toEqual({ q: 0 });
+  expect(b.children.length).toEqual(1);
+  const c = b.children[0];
+  expect(c.tagName).toEqual('c');
+  expect(c.attrs).toEqual(null);
+  expect(c.children.length).toEqual(2);
+  expect(c.children[0].tagName).toEqual('a');
+  expect(c.children[0].attrs).toEqual(null);
+  expect(c.children[0].children.length).toEqual(1);
+  expect(c.children[0].children[0].tagName).toEqual('b');
+  expect(c.children[0].children[0].children.length).toEqual(0);
+  expect(c.children[0].children[0].attrs).toEqual({});
+  expect(c.children[1]).toEqual('foo');
 
-  var a2 = new A({m:1}, {n:2}, B(), {o:3}, 'foo');
-  test.equal(a2.tagName, 'a');
-  test.equal(a2.attrs, {m:1});
-  test.equal(a2.children.length, 4);
-  test.equal(a2.children[0], {n:2});
-  test.equal(a2.children[1].tagName, 'b');
-  test.equal(a2.children[2], {o:3});
-  test.equal(a2.children[3], 'foo');
+  const a2 = new A({ m: 1 }, { n: 2 }, B(), { o: 3 }, 'foo');
+  expect(a2.tagName).toEqual('a');
+  expect(a2.attrs).toEqual({ m: 1 });
+  expect(a2.children.length).toEqual(4);
+  expect(a2.children[0]).toEqual({ n: 2 });
+  expect(a2.children[1].tagName).toEqual('b');
+  expect(a2.children[2]).toEqual({ o: 3 });
+  expect(a2.children[3]).toEqual('foo');
 
   // tests of HTML.isConstructedObject (indirectly)
-  test.equal(A({x:1}).children.length, 0);
-  var f = function () {};
-  test.equal(A(new f).children.length, 1);
-  test.equal(A(new Date).children.length, 1);
-  test.equal(A({constructor: 'blah'}).children.length, 0);
-  test.equal(A({constructor: Object}).children.length, 0);
+  expect(A({ x: 1 }).children.length).toEqual(0);
+  const f = function () {};
+  expect(A(new f()).children.length).toEqual(1);
+  expect(A(new Date()).children.length).toEqual(1);
+  expect(A({ constructor: 'blah' }).children.length).toEqual(0);
+  expect(A({ constructor: Object }).children.length).toEqual(0);
 
-  test.equal(HTML.toHTML(HTML.CharRef({html: '&amp;', str: '&'})), '&amp;');
-  test.throws(function () {
-    HTML.CharRef({html: '&amp;'}); // no 'str'
-  });
+  expect(HTML.toHTML(HTML.CharRef({ html: '&amp;', str: '&' }))).toEqual('&amp;');
+  expect(() => {
+    HTML.CharRef({ html: '&amp;' }); // no 'str'
+  }).toThrow();
 });
 
-Tinytest.add("htmljs - utils", function (test) {
+test('htmljs - utils', () => {
+  expect('\u00c9'.toLowerCase()).not.toBe('\u00c9');
+  expect(HTMLTools.asciiLowerCase('\u00c9')).toEqual('\u00c9');
 
-  test.notEqual("\u00c9".toLowerCase(), "\u00c9");
-  test.equal(HTMLTools.asciiLowerCase("\u00c9"), "\u00c9");
+  expect(HTMLTools.asciiLowerCase('Hello There')).toEqual('hello there');
 
-  test.equal(HTMLTools.asciiLowerCase("Hello There"), "hello there");
-
-  test.isTrue(HTML.isVoidElement("br"));
-  test.isFalse(HTML.isVoidElement("div"));
-  test.isTrue(HTML.isKnownElement("div"));
-
+  expect(HTML.isVoidElement('br')).toBeTruthy();
+  expect(HTML.isVoidElement('div')).toBeFalsy();
+  expect(HTML.isKnownElement('div')).toBeTruthy();
 });
 
-Tinytest.add("htmljs - details", function (test) {
-  test.equal(HTML.toHTML(false), "false");
+test('htmljs - details', () => {
+  expect(HTML.toHTML(false)).toEqual('false');
 });
