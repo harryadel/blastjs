@@ -107,7 +107,7 @@ class HtmlScan {
         tagAttribs[attrKey] = attrValue;
       }
 
-      if (! attr) { // didn't end on '>'
+      if (! attr) { // didn't end on '>'s
         this.throwCompileError("Parse error in tag");
       }
 

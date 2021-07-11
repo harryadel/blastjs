@@ -1,4 +1,4 @@
-import { SpacebarsCompiler } from 'meteor/spacebars-compiler';
+import { SpacebarsCompiler } from 'spacebars-compiler';
 import { generateBodyJS, generateTemplateJS } from './code-generation';
 import { throwCompileError } from './throw-compile-error';
 
