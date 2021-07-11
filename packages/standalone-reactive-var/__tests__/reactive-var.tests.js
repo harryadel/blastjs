@@ -1,5 +1,5 @@
-const { test } = require('@jest/globals');
-const { ReactiveVar } = require('../src/reactive-var')
+import { test } from '@jest/globals';
+import { ReactiveVar } from '../src/reactive-var';
 
 test('ReactiveVar - initialize with default Value', () => {
   const responsiveVar = new ReactiveVar('foo')

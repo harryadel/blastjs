@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-plusplus */
 
-const { suppressLog } = require('../src/debug');
-const { Tracker } = require('../src/tracker');
+import { suppressLog } from '../src/debug';
+import { Tracker } from '../src/tracker';
 
 test('computation - #flush', () => {
   let i = 0;
