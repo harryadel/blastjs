@@ -1,11 +1,11 @@
-import { HTMLTools } from 'meteor/html-tools';
-import { HTML } from 'meteor/htmljs';
-import { BlazeTools } from 'meteor/blaze-tools';
-import { SpacebarsCompiler } from 'meteor/spacebars-compiler';
+import { HTMLTools } from 'html-tools';
+import { HTML } from 'htmljs';
+import { BlazeTools } from 'blaze-tools';
+import { SpacebarsCompiler } from 'spacebars-compiler';
 import { runCompilerOutputTests } from './compiler_output_tests';
 
 
-Tinytest.add("spacebars-compiler - compiler output", function (test) {
+test("spacebars-compiler - compiler output", function (test) {
 
   var run = function (input, expected, whitespace = '') {
     if (expected.fail) {
@@ -56,7 +56,7 @@ Tinytest.add("spacebars-compiler - compiler output", function (test) {
 });
 
 
-Tinytest.add("spacebars-compiler - compiler errors", function (test) {
+test("spacebars-compiler - compiler errors", function (test) {
 
   var getError = function (input) {
     try {
@@ -97,8 +97,9 @@ Tinytest.add("spacebars-compiler - compiler errors", function (test) {
   isError("{{#foo 0 x=0}}{{/foo}}",
           "First argument must be a function");
 
-  _.each(['asdf</br>', '{{!foo}}</br>', '{{!foo}} </br>',
-          'asdf</a>', '{{!foo}}</a>', '{{!foo}} </a>'], function (badFrag) {
+  ['asdf</br>', '{{!foo}}</br>', '{{!foo}} </br>',
+          'asdf</a>', '{{!foo}}</a>', '{{!foo}} </a>'].forEach(
+            function (badFrag) {
             isError(badFrag, "Unexpected HTML close tag");
           });
 
