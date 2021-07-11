@@ -1,4 +1,4 @@
-import { HTMLTools } from 'meteor/html-tools';
+import { HTMLTools } from '../src/main';
 
 const { Scanner } = HTMLTools;
 const { getCharacterReference } = HTMLTools.Parse;

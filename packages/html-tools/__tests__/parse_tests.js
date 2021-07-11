@@ -1,6 +1,6 @@
-import { HTML } from 'meteor/htmljs';
-import { HTMLTools } from 'meteor/html-tools';
-import { BlazeTools } from 'meteor/blaze-tools';
+import { HTML } from 'htmljs';
+import { HTMLTools } from '../src/main';
+import { BlazeTools } from 'blaze-tools';
 
 const { Scanner } = HTMLTools;
 const { getContent } = HTMLTools.Parse;
