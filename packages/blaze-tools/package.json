@@ -1,7 +1,7 @@
 {
   "name": "blaze-tools",
   "description": "Compile-time tools for Blaze",
-  "main": "preamble.js",
+  "main": "./dist/preamble.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
     "clean": "rimraf lib",

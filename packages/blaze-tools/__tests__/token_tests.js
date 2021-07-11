@@ -1,5 +1,5 @@
-import { BlazeTools } from 'meteor/blaze-tools';
-import { HTMLTools } from 'meteor/html-tools';
+import { BlazeTools } from '../src/preamble';
+import { HTMLTools } from 'html-tools';
 
 test('blaze-tools - token parsers', () => {
   const run = function (func, input, expected) {
