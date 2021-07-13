@@ -2,6 +2,7 @@
   "description": "Observe changes to various sequence types such as arrays, cursors and objects",
   "version": "0.1.0",
   "name": "observe-sequence",
+  "main": "dist/observe-sequence",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
