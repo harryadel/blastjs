@@ -1,6 +1,6 @@
 {
   "name": "standalone-mongo-id",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "JS simulation of MongoDB ObjectIDs",
   "main": "lib/id.js",
   "scripts": {
