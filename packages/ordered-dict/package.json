@@ -1,7 +1,7 @@
 {
-  "name": "ordered-dict",
-  "main": "index.js",
+  "name": "standalone-ordered-dict",
   "version": "0.1.0",
+  "main": "dist/index",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
     "clean": "rimraf ./dist",

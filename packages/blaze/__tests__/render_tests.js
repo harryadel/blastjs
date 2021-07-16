@@ -637,7 +637,7 @@ test('blaze - render - reactive attributes 2', () => {
   };
   check('<span blah="bar"></span>');
 
-  expect(R1._numListeners().toEqual(1);
+  expect(R1._numListeners()).toEqual(1);
   expect(R2._numListeners()).toEqual(1);
 
   R2.set([[]]);

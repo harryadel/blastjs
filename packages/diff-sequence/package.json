@@ -2,7 +2,7 @@
   "description": "An implementation of a diff algorithm on arrays and objects.",
   "version": "0.1.0",
   "name": "diff-sequence",
-  "main": "src/diff.js",
+  "main": "dist/diff.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
     "clean": "rimraf ./dist",

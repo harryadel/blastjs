@@ -2,6 +2,7 @@
   "name": "blaze-tools",
   "description": "Compile-time tools for Blaze",
   "main": "./dist/preamble.js",
+  "version": "0.1.0",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
     "clean": "rimraf lib",
@@ -20,7 +21,7 @@
   },
   "dependencies": {
     "reactive-dict": "^1.0.9",
-    "standalone-mongo-id": "^0.1.1",
+    "standalone-mongo-id": "^0.1.2",
     "standalone-tracker": "^1.0.1"
   }
 }

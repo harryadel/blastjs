@@ -2,7 +2,7 @@
   "name": "standalone-reactive-var",
   "version": "1.0.1",
   "description": "[Source code of released version](https://github.com/meteor/meteor/tree/master/packages/reactive-var) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/reactive-var) ***",
-  "main": "src/reactive-var.js",
+  "main": "dist/reactive-var.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
     "clean": "rimraf lib",

@@ -1,6 +1,6 @@
 {
   "name": "htmljs",
-  "summary": "Small library for expressing HTML trees",
+  "description": "Small library for expressing HTML trees",
   "version": "0.1.0",
   "main": "dist/preamble.js",
   "scripts": {

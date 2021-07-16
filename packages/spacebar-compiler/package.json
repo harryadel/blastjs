@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "uglify-js": "2.7.5",
-    "htmljs": "1.1.0",
-    "html-tools": "1.1.0",
-    "blaze-tools": "1.1.0"
+    "htmljs": "0.1.0",
+    "html-tools": "0.1.1",
+    "blaze-tools": "0.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",

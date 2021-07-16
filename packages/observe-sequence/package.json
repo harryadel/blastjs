@@ -12,10 +12,10 @@
     "prepublish": "npm run clean && npm run build"
   },
   "dependencies": {
-    "standalone-tracker": "1.1.0",
-    "mongo-id": "1.0.5",
-    "diff-sequence": "1.0.6",
-    "random": "1.0.10"
+    "standalone-tracker": "1.0.1",
+    "standalone-mongo-id": "0.1.2",
+    "diff-sequence": "0.1.0",
+    "@reactioncommerce/random": "^1.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
