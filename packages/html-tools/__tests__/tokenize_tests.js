@@ -1,4 +1,4 @@
-import { HTMLTools } from 'meteor/html-tools';
+import { HTMLTools } from 'html-tools';
 
 const { Scanner } = HTMLTools;
 const { getComment } = HTMLTools.Parse;

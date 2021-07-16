@@ -1,7 +1,7 @@
-import { HTMLTools } from 'meteor/html-tools';
-import { HTML } from 'meteor/htmljs';
-import { BlazeTools } from 'meteor/blaze-tools';
-import { SpacebarsCompiler } from 'meteor/spacebars-compiler';
+import { HTMLTools } from 'html-tools';
+import { HTML } from 'htmljs';
+import { BlazeTools } from 'blaze-tools';
+import { SpacebarsCompiler } from 'spacebars-compiler';
 
 test("spacebars-compiler - stache tags", function (test) {
 

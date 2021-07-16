@@ -1,4 +1,4 @@
-import { HTML } from 'meteor/htmljs';
+import { HTML } from 'htmljs';
 
 export function EmitCode(value) {
   if (!(this instanceof EmitCode))

@@ -1,6 +1,6 @@
-import { HTMLTools } from 'meteor/html-tools';
-import { HTML } from 'meteor/htmljs';
-import { BlazeTools } from 'meteor/blaze-tools';
+import { HTMLTools } from 'html-tools';
+import { HTML } from 'htmljs';
+import { BlazeTools } from 'blaze-tools';
 
 // A TemplateTag is the result of parsing a single `{{...}}` tag.
 //

@@ -1,7 +1,6 @@
-import { Meteor } from 'meteor/meteor';
-import { HTMLTools } from 'meteor/html-tools';
-import { HTML } from 'meteor/htmljs';
-import { BlazeTools } from 'meteor/blaze-tools';
+import { HTMLTools } from 'html-tools';
+import { HTML } from 'htmljs';
+import { BlazeTools } from 'blaze-tools';
 import { CodeGen } from './codegen';
 import { optimize } from './optimizer';
 import { ReactComponentSiblingForbidder} from './react';
