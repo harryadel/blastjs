@@ -1,4 +1,4 @@
-import { HTMLTools } from 'html-tools';
+import { HTMLTools } from '../src/main';
 
 const { Scanner } = HTMLTools;
 const { getComment } = HTMLTools.Parse;
@@ -47,7 +47,7 @@ test('html-tools - comments', () => {
       error = e;
     }
     expect(error).toBeTruthy();
-    if (error) { expect(messageContains && error.message.indexOf(messageContains) >= 0, error.message).toBeTruthy(); }
+    if (error) { expect(messageContains && error.message.indexOf(messageContains) >= 0).toBeTruthy(); }
   };
 
   expect(getComment(new Scanner('<!-- hello -->'))).toEqual(
@@ -102,7 +102,7 @@ test('html-tools - doctype', () => {
       error = e;
     }
     expect(error).toBeTruthy();
-    if (messageContains) { expect(error.message.indexOf(messageContains) >= 0, error.message).toBeTruthy(); }
+    if (messageContains) { expect(error.message.indexOf(messageContains) >= 0).toBeTruthy(); }
   };
 
   expect(getDoctype(new Scanner('<!DOCTYPE html>x'))).toEqual(
@@ -231,7 +231,7 @@ test('html-tools - tokenize', () => {
       error = e;
     }
     expect(error).toBeTruthy();
-    if (messageContains) { expect(error.message.indexOf(messageContains) >= 0, error.message).toBeTruthy(); }
+    if (messageContains) { expect(error.message.indexOf(messageContains) >= 0).toBeTruthy(); }
   };
 
   expect(tokenize('')).toEqual([]);

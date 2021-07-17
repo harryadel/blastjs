@@ -47,7 +47,7 @@ test('html-tools - entities', () => {
       error = e;
     }
     expect(error).toBeTruthy();
-    if (error) { expect(messageContains && error.message.indexOf(messageContains) >= 0, error.message).toBeTruthy(); }
+    if (error) { expect(messageContains && error.message.indexOf(messageContains) >= 0).toBeTruthy(); }
   };
 
   ignore('a');
