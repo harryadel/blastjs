@@ -20,9 +20,10 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
+    "html-tools": "^0.1.1",
+    "htmljs": "^0.1.0",
     "reactive-dict": "^1.0.9",
     "standalone-mongo-id": "^0.1.2",
     "standalone-tracker": "^1.0.1"
   }
 }
-
