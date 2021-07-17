@@ -1,6 +1,7 @@
-import { ReactiveVar } from 'standalone-reactive-var'
+import { ReactiveVar } from 'standalone-reactive-var';
+import { HTML } from 'htmljs';
 
-test("blaze - view - callbacks", function (test) {
+test("blaze - view - callbacks", () => {
   var R = ReactiveVar('foo');
 
   var buf = '';
@@ -22,36 +23,42 @@ test("blaze - view - callbacks", function (test) {
     buf += 'd' + v.renderCount;
   });
 
-  test.equal(buf, '');
+  expect(buf).toEqual('');
 
   var div = document.createElement("DIV");
-  test.isFalse(v.isRendered);
-  test.isFalse(v._isAttached);
-  test.equal(canonicalizeHtml(div.innerHTML), "");
-  test.throws(function () { v.firstNode(); }, /View must be attached/);
-  test.throws(function () { v.lastNode(); }, /View must be attached/);
+  expect(v.isRendered).toBeFalsy();
+  expect(v._isAttached).toBeFalsy();
+  expect(canonicalizeHtml(div.innerHTML)).toEqual("");
+  expect(() => {
+    function () { v.firstNode(); }
+  }).toThrowError(/View must be attached/);
+
+  expect(() => {
+    function () { v.lastNode(); }
+  }).toThrowError(/View must be attached/);
+
   Blaze.render(v, div);
-  test.equal(buf, 'c0r1');
-  test.equal(typeof (v.firstNode().nodeType), "number");
-  test.equal(typeof (v.lastNode().nodeType), "number");
-  test.isTrue(v.isRendered);
-  test.isTrue(v._isAttached);
-  test.equal(buf, 'c0r1');
-  test.equal(canonicalizeHtml(div.innerHTML), "foo");
+  expect(buf).toEqual('c0r1');
+  expect(typeof (v.firstNode().nodeType)).toEqual("number");
+  expect(typeof (v.lastNode().nodeType)).toEqual("number");
+  expect(v.isRendered).toBeTruthy();
+  expect(v._isAttached).toBeTruthy();
+  expect(buf).toEqual('c0r1');
+  expect(canonicalizeHtml(div.innerHTML)).toEqual("foo");
   Tracker.flush();
-  test.equal(buf, 'c0r1y1');
+  expect(buf).toEqual('c0r1y1');
 
   R.set("bar");
   Tracker.flush();
-  test.equal(buf, 'c0r1y1r2y2');
-  test.equal(canonicalizeHtml(div.innerHTML), "bar");
+  expect(buf).toEqual('c0r1y1r2y2');
+  expect(canonicalizeHtml(div.innerHTML)).toEqual("bar");
 
   Blaze.remove(v);
-  test.equal(buf, 'c0r1y1r2y2d2');
-  test.equal(canonicalizeHtml(div.innerHTML), "");
+  expect(buf).toEqual('c0r1y1r2y2d2');
+  expect(canonicalizeHtml(div.innerHTML)).toEqual("");
 
   buf = "";
   R.set("baz");
   Tracker.flush();
-  test.equal(buf, "");
+  expect(buf).toEqual("");
 });

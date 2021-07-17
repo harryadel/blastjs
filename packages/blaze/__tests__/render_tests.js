@@ -1,4 +1,5 @@
-import { BlazeTools } from 'meteor/blaze-tools';
+import { BlazeTools } from 'blaze-tools';
+import { HTML } from 'htmljs';
 
 const toCode = BlazeTools.toJS;
 

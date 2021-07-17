@@ -2,7 +2,7 @@
  * @namespace Blaze
  * @summary The namespace for all Blaze-related methods and classes.
  */
-Blaze = {};
+const Blaze = {};
 
 // Utility to HTML-escape a string.  Included for legacy reasons.
 // TODO: Should be replaced with _.escape once underscore is upgraded to a newer
@@ -52,8 +52,7 @@ if (nativeBind) {
 
     return nativeBind.apply(func, args.slice(1));
   };
-}
-else {
+} else {
   // A slower but backwards compatible version.
   Blaze._bind = _.bind;
 }
