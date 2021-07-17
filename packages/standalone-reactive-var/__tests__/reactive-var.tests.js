@@ -1,4 +1,3 @@
-import { test } from '@jest/globals';
 import { ReactiveVar } from '../src/reactive-var';
 
 test('ReactiveVar - initialize with default Value', () => {
