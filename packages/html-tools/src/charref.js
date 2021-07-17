@@ -1,4 +1,4 @@
-import { makeRegexMatcher } from '../scanner';
+import { makeRegexMatcher } from './scanner';
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json
 

@@ -1,5 +1,5 @@
 import { asciiLowerCase, properCaseTagName, properCaseAttributeName } from './utils';
-import { TemplateTag } from './src/templatetag';
+import { TemplateTag } from './templatetag';
 import { getCharacterReference } from './charref';
 import { makeRegexMatcher } from './scanner';
 

@@ -1,13 +1,13 @@
 import { getCharacterReference } from './charref';
-import { asciiLowerCase, properCaseTagName, properCaseAttributeName } from '../utils';
+import { asciiLowerCase, properCaseTagName, properCaseAttributeName } from './utils';
 import { TemplateTag } from './templatetag';
-import { Scanner } from '../scanner';
+import { Scanner } from './scanner';
 import {
   parseFragment, codePointToString, getContent, getRCData,
-} from '../parse';
+} from './parse';
 import {
   getComment, getDoctype, getHTMLToken, getTagToken, TEMPLATE_TAG_POSITION,
-} from '../tokenize';
+} from './tokenize';
 
 const HTMLTools = {
   asciiLowerCase,
