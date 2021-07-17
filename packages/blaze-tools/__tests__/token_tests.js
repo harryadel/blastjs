@@ -1,5 +1,5 @@
-import { BlazeTools } from '../src/preamble';
 import { HTMLTools } from 'html-tools';
+import { BlazeTools } from '../src/preamble';
 
 test('blaze-tools - token parsers', () => {
   const run = function (func, input, expected) {
