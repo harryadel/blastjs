@@ -4,10 +4,10 @@
     "lint": "eslint .",
     "build": "lerna run build",
     "bootstrap": "lerna bootstrap && lerna run build",
+    "publish": "lerna publish --force-publish",
     "clean": "lerna clean --yes",
     "start": "cd example-apps/meteor-blaze-app && npm i && npm start",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "lerna run test"
   },
   "devDependencies": {
     "eslint": "^7.24.0",
