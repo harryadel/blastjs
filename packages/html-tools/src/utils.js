@@ -1,4 +1,4 @@
-import { HTML } from 'htmljs';
+import { HTML } from 'meteor/htmljs';
 
 export function asciiLowerCase (str) {
   return str.replace(/[A-Z]/g, function (c) {
