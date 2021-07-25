@@ -1,5 +1,3 @@
-import { HTMLTools } from 'html-tools';
-import { HTML } from 'htmljs';
 import { BlazeTools } from 'blaze-tools';
 import { SpacebarsCompiler } from 'spacebars-compiler';
 

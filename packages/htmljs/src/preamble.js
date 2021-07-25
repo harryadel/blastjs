@@ -30,8 +30,9 @@ import {
   ToTextVisitor,
   toHTML,
   TEXTMODE,
-  toText,
+  toText
 } from './visitors';
+
 
 // we're actually exporting the HTMLTags object.
 //  because it is dynamically altered by getTag/ensureTag

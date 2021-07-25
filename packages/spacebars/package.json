@@ -11,10 +11,10 @@
     "prepublish": "npm run clean && npm run build"
   },
   "dependencies": {
-    "observe-sequence": "0.1.0",
-    "standalone-tracker": "1.0.1",
-    "htmljs": "1.1.0",
-    "blaze": "2.4.0"
+    "observe-sequence": "^0.1.0",
+    "standalone-tracker": "^1.0.1",
+    "htmljs": "^1.1.0",
+    "blaze": "^2.4.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.16",

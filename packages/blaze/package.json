@@ -13,11 +13,11 @@
   },
   "dependencies": {
     "standalone-tracker": "^1.0.1",
-    "observe-sequence": "0.1.0",
-    "standalone-reactive-var": "1.0.1",
-    "standalone-ordered-dict": "0.1.0",
-    "htmljs": "0.1.0",
-    "blaze-tools": "0.1.0"
+    "observe-sequence": "^0.1.0",
+    "standalone-reactive-var": "^1.0.1",
+    "standalone-ordered-dict": "^0.1.0",
+    "htmljs": "^0.1.0",
+    "blaze-tools": "^0.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",

@@ -1,4 +1,4 @@
-import { HTML } from 'meteor/htmljs';
+import { HTML } from 'htmljs';
 import { Scanner } from './scanner';
 import { properCaseAttributeName } from './utils';
 import { getHTMLToken, isLookingAtEndTag } from './tokenize';

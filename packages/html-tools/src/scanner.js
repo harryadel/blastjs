@@ -9,7 +9,7 @@
 // * `scanner.isEOF()` - true if `pos` is at or beyond the end of `input`
 // * `scanner.fatal(msg)` - throw an error indicating a problem at `pos`
 
-export function Scanner (input) {
+export function Scanner(input) {
   this.input = input; // public, read-only
   this.pos = 0; // public, read-write
 }
@@ -40,7 +40,7 @@ Scanner.prototype.fatal = function (msg) {
     upcomingInput = upcomingInput.substring(0, CONTEXT_AMOUNT) + '...';
 
   var positionDisplay = ((pastInput + upcomingInput).replace(/\n/g, ' ') + '\n' +
-                         (new Array(pastInput.length + 1).join(' ')) + "^");
+    (new Array(pastInput.length + 1).join(' ')) + "^");
 
   var e = new Error(msg + "\n" + positionDisplay);
 
@@ -73,7 +73,7 @@ export function makeRegexMatcher(regex) {
   return function (scanner) {
     var match = regex.exec(scanner.rest());
 
-    if (! match)
+    if (!match)
       return null;
 
     scanner.pos += match[0].length;

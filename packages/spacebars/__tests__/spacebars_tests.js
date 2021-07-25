@@ -1,13 +1,15 @@
-Tinytest.add("spacebars - Spacebars.dot", function (test) {
-  test.equal(Spacebars.dot(null, 'foo'), null);
-  test.equal(Spacebars.dot('foo', 'foo'), undefined);
-  test.equal(Spacebars.dot({x:1}, 'x'), 1);
-  test.equal(Spacebars.dot(
-    {x:1, y: function () { return this.x+1; }}, 'y')(), 2);
-  test.equal(Spacebars.dot(
+import { Spacebars } from '../src/spacebars-runtime'; 
+
+test("spacebars - Spacebars.dot", function () {
+  expect(Spacebars.dot(null, 'foo')).toEqual(null);
+  expect(Spacebars.dot('foo', 'foo')).toEqual(undefined);
+  expect(Spacebars.dot({x:1}, 'x')).toEqual(1);
+  expect(Spacebars.dot(
+    {x:1, y: function () { return this.x+1; }}, 'y')()).toEqual(2);
+  expect(Spacebars.dot(
     function () {
       return {x:1, y: function () { return this.x+1; }};
-    }, 'y')(), 2);
+    }, 'y')()).toEqual(2);
 
   var m = 1;
   var mget = function () {
@@ -19,13 +21,13 @@ Tinytest.add("spacebars - Spacebars.dot", function (test) {
     };
   };
   var mgetDotAnswer = Spacebars.dot(mget, 'answer');
-  test.equal(mgetDotAnswer, 1);
+  expect(mgetDotAnswer).toEqual(1);
 
   m = 3;
   var mgetDotGetAnswer = Spacebars.dot(mget, 'getAnswer');
-  test.equal(mgetDotGetAnswer(), 3);
+  expect(mgetDotGetAnswer()).toEqual(3);
   m = 4;
-  test.equal(mgetDotGetAnswer(), 3);
+  expect(mgetDotGetAnswer()).toEqual(3);
 
   var closet = {
     mget: mget,
@@ -38,22 +40,22 @@ Tinytest.add("spacebars - Spacebars.dot", function (test) {
   var f1 = Spacebars.dot(closet, 'mget', 'answer');
   m = 6;
   var f2 = Spacebars.dot(closet, 'mget2', 'answer');
-  test.equal(f2, 6);
+  expect(f2).toEqual(6);
   m = 8;
   var f3 = Spacebars.dot(closet, 'mget2', 'getAnswer');
   m = 9;
-  test.equal(f3(), 8);
+  expect(f3()).toEqual(8);
 
-  test.equal(Spacebars.dot(0, 'abc', 'def'), 0);
-  test.equal(Spacebars.dot(function () { return null; }, 'abc', 'def'), null);
-  test.equal(Spacebars.dot(function () { return 0; }, 'abc', 'def'), 0);
+  expect(Spacebars.dot(0, 'abc', 'def')).toEqual(0);
+  expect(Spacebars.dot(function () { return null; }, 'abc', 'def')).toEqual(null);
+  expect(Spacebars.dot(function () { return 0; }, 'abc', 'def')).toEqual(0);
 
   // test that in `foo.bar`, `bar` may be a function that takes arguments.
-  test.equal(Spacebars.dot(
-    { one: 1, inc: function (x) { return this.one + x; } }, 'inc')(6), 7);
-  test.equal(Spacebars.dot(
+  expect(Spacebars.dot(
+    { one: 1, inc: function (x) { return this.one + x; } }, 'inc')(6)).toEqual(7);
+  expect(Spacebars.dot(
     function () {
       return { one: 1, inc: function (x) { return this.one + x; } };
-    }, 'inc')(8), 9);
+    }, 'inc')(8)).toEqual(9);
 
 });

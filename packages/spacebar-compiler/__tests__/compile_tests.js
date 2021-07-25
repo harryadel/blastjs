@@ -1,7 +1,4 @@
-import { HTMLTools } from 'html-tools';
-import { HTML } from 'htmljs';
-import { BlazeTools } from 'blaze-tools';
-import { SpacebarsCompiler } from 'spacebars-compiler';
+import { SpacebarsCompiler } from '../src/preamble';
 import { runCompilerOutputTests } from './compiler_output_tests';
 
 

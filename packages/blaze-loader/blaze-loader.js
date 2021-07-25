@@ -1,9 +1,9 @@
-const { TemplatingTools } = require("meteor-blaze-compiler");
+import { TemplatingTools } from "meteor-blaze-compiler";
 
-module.exports = function(contents) {
+module.exports = function (contents) {
   const tags = TemplatingTools.scanHtmlForTags({
     sourceName: "",
-    contents: contents,
+    contents,
     tagNames: ["body", "head", "template"]
   });
   const ret = TemplatingTools.compileTagsWithSpacebars(tags);

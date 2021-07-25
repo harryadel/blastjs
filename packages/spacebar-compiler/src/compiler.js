@@ -9,7 +9,7 @@ import { removeWhitespace } from './whitespace';
 
 var UglifyJSMinify = null;
 if (Meteor.isServer) {
-  UglifyJSMinify = Npm.require('uglify-js').minify;
+  UglifyJSMinify = require('uglify-js').minify;
 }
 
 export function parse(input) {
