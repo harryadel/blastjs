@@ -12,7 +12,7 @@ test('blaze-tools - token parsers', () => {
       expect(result).toEqual(null);
     } else {
       expect(scanner.isEOF()).toBeTruthy();
-      expect(result).toMatchObject(expected);
+      expect(result).toEqual(expected);
     }
   };
 

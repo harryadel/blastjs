@@ -23,22 +23,22 @@ var unicodeClass = function (abbrev) {
 // This is IdentifierStart+.
 var rIdentifierPrefix = new RegExp(
   "^([a-zA-Z$_]+|\\\\u[0-9a-fA-F]{4}|" +
-    [unicodeClass('Lu'), unicodeClass('Ll'), unicodeClass('Lt'),
-     unicodeClass('Lm'), unicodeClass('Lo'), unicodeClass('Nl')].join('|') +
-    ")+");
+  [unicodeClass('Lu'), unicodeClass('Ll'), unicodeClass('Lt'),
+  unicodeClass('Lm'), unicodeClass('Lo'), unicodeClass('Nl')].join('|') +
+  ")+");
 // Match one or more characters that can continue an identifier.
 // This is (IdentifierPart and not IdentifierStart)+.
 // To match a full identifier, match rIdentifierPrefix, then
 // match rIdentifierMiddle followed by rIdentifierPrefix until they both fail.
 var rIdentifierMiddle = new RegExp(
   "^([0-9]|" + [unicodeClass('Mn'), unicodeClass('Mc'), unicodeClass('Nd'),
-                unicodeClass('Pc')].join('|') + ")+");
+  unicodeClass('Pc')].join('|') + ")+");
 
 
 // See ECMA-262 spec, 3rd edition, Section 7.8.3
 var rHexLiteral = /^0[xX][0-9a-fA-F]+(?!\w)/;
 var rDecLiteral =
-      /^(((0|[1-9][0-9]*)(\.[0-9]*)?)|\.[0-9]+)([Ee][+-]?[0-9]+)?(?!\w)/;
+  /^(((0|[1-9][0-9]*)(\.[0-9]*)?)|\.[0-9]+)([Ee][+-]?[0-9]+)?(?!\w)/;
 
 // Section 7.8.4
 var rStringQuote = /^["']/;
@@ -46,42 +46,42 @@ var rStringQuote = /^["']/;
 var rStringMiddle = /^(?=.)[^"'\\]+?((?!.)|(?=["'\\]))/;
 // Match one escape sequence, including the backslash.
 var rEscapeSequence =
-      /^\\(['"\\bfnrtv]|0(?![0-9])|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|(?=.)[^ux0-9])/;
+  /^\\(['"\\bfnrtv]|0(?![0-9])|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|(?=.)[^ux0-9])/;
 // Match one ES5 line continuation
 var rLineContinuation =
-      /^\\(\r\n|[\u000A\u000D\u2028\u2029])/;
+  /^\\(\r\n|[\u000A\u000D\u2028\u2029])/;
 
 
-export function parseNumber (scanner) {
-  var startPos = scanner.pos;
+export function parseNumber(scanner) {
+  const startPos = scanner.pos;
 
-  var isNegative = false;
+  let isNegative = false;
   if (scanner.peek() === '-') {
     scanner.pos++;
     isNegative = true;
   }
   // Note that we allow `"-0xa"`, unlike `Number(...)`.
 
-  var rest = scanner.rest();
-  var match = rDecLiteral.exec(rest) || rHexLiteral.exec(rest);
-  if (! match) {
+  const rest = scanner.rest();
+  const match = rDecLiteral.exec(rest) || rHexLiteral.exec(rest);
+  if (!match) {
     scanner.pos = startPos;
     return null;
   }
-  var matchText = match[0];
+  const matchText = match[0];
   scanner.pos += matchText.length;
 
-  var text = (isNegative ? '-' : '') + matchText;
-  var value = Number(matchText);
-  value = (isNegative ? -value : value);
-  return { text: text, value: value };
+  const text = (isNegative ? '-' : '') + matchText;
+  let value = Number(matchText);
+  value = ((isNegative && value !== 0) ? -value : value);
+  return { text, value };
 }
 
-export function parseIdentifierName (scanner) {
+export function parseIdentifierName(scanner) {
   var startPos = scanner.pos;
   var rest = scanner.rest();
   var match = rIdentifierPrefix.exec(rest);
-  if (! match)
+  if (!match)
     return null;
   scanner.pos += match[0].length;
   rest = scanner.rest();
@@ -108,7 +108,7 @@ export function parseIdentifierName (scanner) {
   return scanner.input.substring(startPos, scanner.pos);
 }
 
-export function parseExtendedIdentifierName (scanner) {
+export function parseExtendedIdentifierName(scanner) {
   // parse an identifier name optionally preceded by '@'
   if (scanner.peek() === '@') {
     scanner.pos++;
@@ -124,11 +124,11 @@ export function parseExtendedIdentifierName (scanner) {
   }
 }
 
-export function parseStringLiteral (scanner) {
+export function parseStringLiteral(scanner) {
   var startPos = scanner.pos;
   var rest = scanner.rest();
   var match = rStringQuote.exec(rest);
-  if (! match)
+  if (!match)
     return null;
 
   var quote = match[0];
@@ -162,7 +162,7 @@ export function parseStringLiteral (scanner) {
           jsonLiteral += esc;
       } else {
         match = rLineContinuation.exec(rest);
-        if (! match) {
+        if (!match) {
           match = rStringQuote.exec(rest);
           if (match) {
             var c = match[0];
@@ -183,7 +183,7 @@ export function parseStringLiteral (scanner) {
     }
   }
 
-  if (! match || match[0] !== quote)
+  if (!match || match[0] !== quote)
     scanner.fatal("Unterminated string literal");
 
   jsonLiteral += '"';
