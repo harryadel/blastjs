@@ -5,15 +5,15 @@
   "main": "dist/preamble.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
-    "clean": "rimraf lib",
-    "build": "cross-env BABEL_ENV=production babel src --out-dir lib",
-    "prepublish": "npm run clean && npm run test && npm run build"
+    "clean": "rimraf ./dist",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir ./dist",
+    "prepublish": "npm run clean && npm run build"
   },
   "dependencies": {
     "uglify-js": "2.7.5",
-    "htmljs": "0.1.0",
-    "html-tools": "0.1.1",
-    "blaze-tools": "0.1.0"
+    "htmljs": "^0.1.0",
+    "html-tools": "^0.1.1",
+    "blaze-tools": "^0.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",

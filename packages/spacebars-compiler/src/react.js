@@ -1,6 +1,4 @@
-import { HTMLTools } from 'html-tools';
 import { HTML } from 'htmljs';
-import { BlazeTools } from 'blaze-tools';
 
 // A visitor to ensure that React components included via the `{{>
 // React}}` template defined in the react-template-helper package are

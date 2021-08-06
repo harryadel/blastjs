@@ -1,24 +1,24 @@
 import { BlazeTools } from 'blaze-tools';
-import { SpacebarsCompiler } from 'spacebars-compiler';
+import { SpacebarsCompiler } from '../src/preamble';
 
-test("spacebars-compiler - stache tags", function (test) {
+test("spacebars-compiler - stache tags", function () {
 
   var run = function (input, expected) {
     if (typeof expected === "string") {
       // test for error starting with string `expected`
       var msg = '';
-      test.throws(function () {
+      expect(function () {
         try {
           SpacebarsCompiler.TemplateTag.parse(input);
         } catch (e) {
           msg = e.message;
           throw e;
         }
-      });
-      test.equal(msg.slice(0, expected.length), expected);
+      }).toThrow();
+      expect(msg.slice(0, expected.length)).toEqual(expected);
     } else {
       var result = SpacebarsCompiler.TemplateTag.parse(input);
-      test.equal(result, expected);
+      expect(result).toEqual(expected);
     }
   };
 
@@ -254,7 +254,7 @@ test("spacebars-compiler - stache tags", function (test) {
 
 //////////////////////////////////////////////////
 
-test("spacebars-compiler - parse", function (test) {
+test("spacebars-compiler - parse", function () {
   expect(BlazeTools.toJS(SpacebarsCompiler.parse('{{foo}}'))).toEqual(
     'SpacebarsCompiler.TemplateTag({type: "DOUBLE", path: ["foo"]})');
 
@@ -307,11 +307,9 @@ test("spacebars-compiler - parse", function (test) {
     SpacebarsCompiler.parse('<a {{> x}}></a>');
   }).toThrow();
 
-  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<a {{! x--}} b=c{{! x}} {{! x}}></a>'))).toThrow(
-    'HTML.A({b: "c"})');
+  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<a {{! x--}} b=c{{! x}} {{! x}}></a>'))).toThrowError('HTML.A({b: "c"})');
 
-  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<a {{!-- x--}} b=c{{ !-- x --}} {{!-- x -- }}></a>'))).toThrow(
-    'HTML.A({b: "c"})');
+  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<a {{!-- x--}} b=c{{ !-- x --}} {{!-- x -- }}></a>'))).toThrow('HTML.A({b: "c"})');
 
   // currently, if there are only comments, the attribute is truthy.  This is
   // because comments are stripped during tokenization.  If we include

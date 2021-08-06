@@ -1,9 +1,9 @@
 import { CodeGen, builtInBlockHelpers, isReservedName } from './codegen';
 import { optimize } from './optimizer';
 import { parse, compile, codeGen, TemplateTagReplacer, beautify } from './compiler';
-import { TemplateTag } from '../templatetag';
+import { TemplateTag } from './templatetag';
 
-SpacebarsCompiler = {
+const SpacebarsCompiler = {
   CodeGen,
   _builtInBlockHelpers: builtInBlockHelpers,
   isReservedName,

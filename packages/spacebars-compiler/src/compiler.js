@@ -3,14 +3,11 @@ import { HTML } from 'htmljs';
 import { BlazeTools } from 'blaze-tools';
 import { CodeGen } from './codegen';
 import { optimize } from './optimizer';
-import { ReactComponentSiblingForbidder} from './react';
+import { ReactComponentSiblingForbidder } from './react';
 import { TemplateTag } from './templatetag';
 import { removeWhitespace } from './whitespace';
 
-var UglifyJSMinify = null;
-if (Meteor.isServer) {
-  UglifyJSMinify = require('uglify-js').minify;
-}
+var UglifyJSMinify = require('uglify-js').minify;
 
 export function parse(input) {
   return HTMLTools.parseFragment(
@@ -67,7 +64,7 @@ TemplateTagReplacer.def({
   }
 });
 
-export function codeGen (parseTree, options) {
+export function codeGen(parseTree, options) {
   // is this a template, rather than a block passed to
   // a block helper, say
   var isTemplate = (options && options.isTemplate);
@@ -88,12 +85,12 @@ export function codeGen (parseTree, options) {
   }
 
   // throws an error if using `{{> React}}` with siblings
-  new ReactComponentSiblingForbidder({sourceName: sourceName})
+  new ReactComponentSiblingForbidder({ sourceName: sourceName })
     .visit(tree);
 
   var codegen = new CodeGen;
   tree = (new TemplateTagReplacer(
-    {codegen: codegen})).visit(tree);
+    { codegen: codegen })).visit(tree);
 
   var code = '(function () { ';
   if (isTemplate || isBody) {
@@ -108,7 +105,7 @@ export function codeGen (parseTree, options) {
   return code;
 }
 
-export function beautify (code) {
+export function beautify(code) {
   if (!UglifyJSMinify) {
     return code;
   }
