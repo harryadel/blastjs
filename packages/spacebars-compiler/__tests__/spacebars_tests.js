@@ -307,20 +307,20 @@ test("spacebars-compiler - parse", function () {
     SpacebarsCompiler.parse('<a {{> x}}></a>');
   }).toThrow();
 
-  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<a {{! x--}} b=c{{! x}} {{! x}}></a>'))).toThrowError('HTML.A({b: "c"})');
+  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<a {{! x--}} b=c{{! x}} {{! x}}></a>'))).toEqual('HTML.A({b: "c"})');
 
-  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<a {{!-- x--}} b=c{{ !-- x --}} {{!-- x -- }}></a>'))).toThrow('HTML.A({b: "c"})');
+  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<a {{!-- x--}} b=c{{ !-- x --}} {{!-- x -- }}></a>'))).toEqual('HTML.A({b: "c"})');
 
   // currently, if there are only comments, the attribute is truthy.  This is
   // because comments are stripped during tokenization.  If we include
   // comments in the token stream, these cases will become falsy for selected.
-  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<input selected={{!foo}}>'))).toThrow(
+  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<input selected={{!foo}}>'))).toEqual(
     'HTML.INPUT({selected: ""})');
-  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<input selected={{!foo}}{{!bar}}>'))).toThrow(
+  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<input selected={{!foo}}{{!bar}}>'))).toEqual(
     'HTML.INPUT({selected: ""})');
-  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<input selected={{!--foo--}}>'))).toThrow(
+  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<input selected={{!--foo--}}>'))).toEqual(
     'HTML.INPUT({selected: ""})');
-  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<input selected={{!--foo--}}{{!--bar--}}>'))).toThrow(
+  expect(BlazeTools.toJS(SpacebarsCompiler.parse('<input selected={{!--foo--}}{{!--bar--}}>'))).toEqual(
     'HTML.INPUT({selected: ""})');
 
 });

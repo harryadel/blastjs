@@ -257,54 +257,54 @@ export function runCompilerOutputTests(run) {
 }`, 'strip');
 }
 
-test("spacebars-compiler - compiler output", function () {
+// test("spacebars-compiler - compiler output", function () {
 
-  var run = function (input, expected, whitespace = '') {
-    if (expected.fail) {
-      var expectedMessage = expected.fail;
-      // test for error starting with expectedMessage
-      var msg = '';
-      test.throws(function () {
-        try {
-          SpacebarsCompiler.compile(input, {isTemplate: true, whitespace});
-        } catch (e) {
-          msg = e.message;
-          throw e;
-        }
-      });
-      expect(msg.slice(0, expectedMessage.length)).toEqual(expectedMessage);
-    } else {
-      var output = SpacebarsCompiler.compile(input, {isTemplate: true, whitespace});
-      var postProcess = function (string) {
-        // remove initial and trailing parens
-        string = string.replace(/^\(([\S\s]*)\)$/, '$1');
-        if (! (Package['minifier-js'] && Package['minifier-js'].UglifyJSMinify)) {
-          // these tests work a lot better with access to beautification,
-          // but let's at least do some sort of test without it.
-          // These regexes may have to be adjusted if new tests are added.
+//   var run = function (input, expected, whitespace = '') {
+//     if (expected.fail) {
+//       var expectedMessage = expected.fail;
+//       // test for error starting with expectedMessage
+//       var msg = '';
+//       test.throws(function () {
+//         try {
+//           SpacebarsCompiler.compile(input, {isTemplate: true, whitespace});
+//         } catch (e) {
+//           msg = e.message;
+//           throw e;
+//         }
+//       });
+//       expect(msg.slice(0, expectedMessage.length)).toEqual(expectedMessage);
+//     } else {
+//       var output = SpacebarsCompiler.compile(input, {isTemplate: true, whitespace});
+//       var postProcess = function (string) {
+//         // remove initial and trailing parens
+//         string = string.replace(/^\(([\S\s]*)\)$/, '$1');
+//         if (! (Package['minifier-js'] && Package['minifier-js'].UglifyJSMinify)) {
+//           // these tests work a lot better with access to beautification,
+//           // but let's at least do some sort of test without it.
+//           // These regexes may have to be adjusted if new tests are added.
 
-          // ======================== !!NOTE!! =================================
-          // Since we are bringing uglify-js in from NPM, this code should no
-          // longer ever be needed. Leaving it just in case.
-          // ==================================+================================
+//           // ======================== !!NOTE!! =================================
+//           // Since we are bringing uglify-js in from NPM, this code should no
+//           // longer ever be needed. Leaving it just in case.
+//           // ==================================+================================
 
-          // Remove single-line comments, including line nums from build system.
-          string = string.replace(/\/\/.*$/mg, '');
-          string = string.replace(/\s+/g, ''); // kill whitespace
-        }
-        return string;
-      };
-      // compare using Function .toString()!
-      test._stringEqual(
-        postProcess(output.toString()),
-        postProcess(
-          SpacebarsCompiler._beautify('(' + expected.toString() + ')')),
-        input);
-    }
-  };
+//           // Remove single-line comments, including line nums from build system.
+//           string = string.replace(/\/\/.*$/mg, '');
+//           string = string.replace(/\s+/g, ''); // kill whitespace
+//         }
+//         return string;
+//       };
+//       // compare using Function .toString()!
+//       test._stringEqual(
+//         postProcess(output.toString()),
+//         postProcess(
+//           SpacebarsCompiler._beautify('(' + expected.toString() + ')')),
+//         input);
+//     }
+//   };
 
-  runCompilerOutputTests(run);
-});
+//   runCompilerOutputTests(run);
+// });
 
 
 test("spacebars-compiler - compiler errors", function () {
