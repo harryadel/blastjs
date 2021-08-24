@@ -1,3 +1,4 @@
+import isEmpty from 'lodash.isempty';
 import { SpacebarsCompiler } from 'spacebars-compiler';
 import { generateBodyJS, generateTemplateJS } from './code-generation';
 import { throwCompileError } from './throw-compile-error';
@@ -30,7 +31,7 @@ class SpacebarsTagCompiler {
     this.tag = tag;
 
     // do we have 1 or more attributes?
-    const hasAttribs = ! _.isEmpty(this.tag.attribs);
+    const hasAttribs = isEmpty(this.tag.attribs);
 
     if (this.tag.tagName === "head") {
       if (hasAttribs) {
@@ -48,7 +49,7 @@ class SpacebarsTagCompiler {
       if (this.tag.tagName === "template") {
         const name = this.tag.attribs.name;
 
-        if (! name) {
+        if (!name) {
           this.throwCompileError("Template has no 'name' attribute");
         }
 

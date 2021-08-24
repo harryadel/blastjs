@@ -22,10 +22,10 @@ class HtmlScan {
    * top level. If any other tag is encountered, an error is thrown.
    */
   constructor({
-        sourceName,
-        contents,
-        tagNames
-      }) {
+    sourceName,
+    contents,
+    tagNames
+  }) {
     this.sourceName = sourceName;
     this.contents = contents;
     this.tagNames = tagNames;
@@ -44,26 +44,26 @@ class HtmlScan {
 
       const match = openTagRegex.exec(this.rest);
 
-      if (! match) {
+      if (!match) {
         this.throwCompileError(`Expected one of: <${this.tagNames.join('>, <')}>`);
       }
 
       const matchToken = match[1];
-      const matchTokenTagName =  match[3];
+      const matchTokenTagName = match[3];
       const matchTokenComment = match[4];
       const matchTokenUnsupported = match[5];
 
       const tagStartIndex = this.index;
       this.advance(match.index + match[0].length);
 
-      if (! matchToken) {
+      if (!matchToken) {
         break; // matched $ (end of file)
       }
 
       if (matchTokenComment === '<!--') {
         // top-level HTML comment
         const commentEnd = /--\s*>/.exec(this.rest);
-        if (! commentEnd)
+        if (!commentEnd)
           this.throwCompileError("unclosed HTML comment in template file");
         this.advance(commentEnd.index + commentEnd[0].length);
         continue;
@@ -71,12 +71,12 @@ class HtmlScan {
 
       if (matchTokenUnsupported) {
         switch (matchTokenUnsupported.toLowerCase()) {
-        case '<!doctype':
-          this.throwCompileError(
-            "Can't set DOCTYPE here.  (Meteor sets <!DOCTYPE html> for you)");
-        case '{{!':
-          this.throwCompileError(
-            "Can't use '{{! }}' outside a template.  Use '<!-- -->'.");
+          case '<!doctype':
+            this.throwCompileError(
+              "Can't set DOCTYPE here.  (Meteor sets <!DOCTYPE html> for you)");
+          case '{{!':
+            this.throwCompileError(
+              "Can't use '{{! }}' outside a template.  Use '<!-- -->'.");
         }
 
         this.throwCompileError();
@@ -107,14 +107,14 @@ class HtmlScan {
         tagAttribs[attrKey] = attrValue;
       }
 
-      if (! attr) { // didn't end on '>'s
+      if (!attr) { // didn't end on '>'s
         this.throwCompileError("Parse error in tag");
       }
 
       // find </tag>
-      const end = (new RegExp('</'+tagName+'\\s*>', 'i')).exec(this.rest);
-      if (! end) {
-        this.throwCompileError("unclosed <"+tagName+">");
+      const end = (new RegExp('</' + tagName + '\\s*>', 'i')).exec(this.rest);
+      if (!end) {
+        this.throwCompileError("unclosed <" + tagName + ">");
       }
 
       const tagContents = this.rest.slice(0, end.index);

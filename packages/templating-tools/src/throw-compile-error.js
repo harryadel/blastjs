@@ -1,4 +1,4 @@
-export class CompileError {}
+export class CompileError { }
 
 export function throwCompileError(tag, message, overrideIndex) {
   const finalIndex = (typeof overrideIndex === 'number' ?

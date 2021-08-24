@@ -9,8 +9,8 @@
     "prepublish": "npm run clean && npm run test && npm run build"
   },
   "dependencies": {
-    "spacebars-compiler": "^1.2.1",
-    "lodash.isempty": "4.4.0"
+    "lodash.isempty": "4.4.0",
+    "spacebars-compiler": "^1.2.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
