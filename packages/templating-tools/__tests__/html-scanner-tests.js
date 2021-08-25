@@ -1,33 +1,6 @@
 import { TemplatingTools } from '../src/templating-tools';
 
 test("templating-tools - html scanner", function () {
-  var testInString = function (actualStr, wantedContents) {
-    if (!actualStr.indexOf(wantedContents) >= 0) {
-      throw new Error("Expected " + JSON.stringify(wantedContents) +
-        " in " + JSON.stringify(actualStr));
-    }
-  };
-
-  var checkError = function (f, msgText, lineNum) {
-    try {
-      f();
-    } catch (e) {
-      if (!e instanceof TemplatingTools.CompileError) {
-        throw e;
-      }
-
-      if (e.line === lineNum) {
-        // test.ok(); 
-      } else {
-        console.error("Error should have been on line " + lineNum + ", not " +
-          e.line);
-        testInString(e.message, msgText);
-        return;
-      }
-    }
-    throw new Error("Parse error didn't throw exception");
-  };
-
   // returns the appropriate code to put content in the body,
   // where content is something simple like the string "Hello"
   // (passed in as a source string including the quotes).
@@ -62,130 +35,145 @@ test("templating-tools - html scanner", function () {
     return TemplatingTools.compileTagsWithSpacebars(tags);
   }
 
-  checkError(function () {
+  expect(function () {
     return scanForTest("asdf");
-  }, "Expected one of: <body>, <head>, <template>", 1);
+  }).toThrowError("Expected one of: <body>, <head>, <template>");
 
   // body all on one line
   checkResults(
     scanForTest("<body>Hello</body>"),
-    simpleBody('"Hello"'));
+    simpleBody('"Hello"')
+  );
 
   // multi-line body, contents trimmed
   checkResults(
     scanForTest("\n\n\n<body>\n\nHello\n\n</body>\n\n\n"),
-    simpleBody('"Hello"'));
+    simpleBody('"Hello"')
+  );
 
   // same as previous, but with various HTML comments
   checkResults(
     scanForTest("\n<!--\n\nfoo\n-->\n<!-- -->\n" +
       "<body>\n\nHello\n\n</body>\n\n<!----\n>\n\n"),
-    simpleBody('"Hello"'));
+    simpleBody('"Hello"')
+  );
 
   // head and body
   checkResults(
     scanForTest("<head>\n<title>Hello</title>\n</head>\n\n<body>World</body>\n\n"),
     simpleBody('"World"'),
-    "<title>Hello</title>");
+    "<title>Hello</title>"
+  );
 
   // head and body with tag whitespace
   checkResults(
     scanForTest("<head\n>\n<title>Hello</title>\n</head  >\n\n<body>World</body\n\n>\n\n"),
     simpleBody('"World"'),
-    "<title>Hello</title>");
+    "<title>Hello</title>"
+  );
 
   // head, body, and template
   checkResults(
     scanForTest("<head>\n<title>Hello</title>\n</head>\n\n<body>World</body>\n\n" +
       '<template name="favoritefood">\n  pizza\n</template>\n'),
     simpleBody('"World"') + simpleTemplate('"favoritefood"', '"pizza"'),
-    "<title>Hello</title>");
+    "<title>Hello</title>"
+  );
 
   // one-line template
   checkResults(
     scanForTest('<template name="favoritefood">pizza</template>'),
-    simpleTemplate('"favoritefood"', '"pizza"'));
+    simpleTemplate('"favoritefood"', '"pizza"')
+  );
 
   // template with other attributes
   checkResults(
     scanForTest('<template foo="bar" name="favoritefood" baz="qux">' +
       'pizza</template>'),
-    simpleTemplate('"favoritefood"', '"pizza"'));
+    simpleTemplate('"favoritefood"', '"pizza"')
+  );
 
   // whitespace around '=' in attributes and at end of tag
   checkResults(
     scanForTest('<template foo = "bar" name  ="favoritefood" baz= "qux"  >' +
       'pizza</template\n\n>'),
-    simpleTemplate('"favoritefood"', '"pizza"'));
+    simpleTemplate('"favoritefood"', '"pizza"')
+  );
 
   // whitespace around template name
   checkResults(
     scanForTest('<template name=" favoritefood  ">pizza</template>'),
-    simpleTemplate('"favoritefood"', '"pizza"'));
+    simpleTemplate('"favoritefood"', '"pizza"')
+  );
 
   // single quotes around template name
   checkResults(
     scanForTest('<template name=\'the "cool" template\'>' +
       'pizza</template>'),
-    simpleTemplate('"the \\"cool\\" template"', '"pizza"'));
+    simpleTemplate('"the \\"cool\\" template"', '"pizza"')
+  );
 
-  checkResults(scanForTest('<body foo="bar">\n  Hello\n</body>'), simpleBody('"Hello"'), "", { foo: "bar" });
+  checkResults(
+    scanForTest('<body foo="bar">\n  Hello\n</body>'),
+    simpleBody('"Hello"'), "", { foo: "bar" }
+    );
 
   // error cases; exact line numbers are not critical, these just reflect
   // the current implementation
 
   // unclosed body (error mentions body)
-  checkError(function () {
+  expect(function () {
     return scanForTest("\n\n<body>\n  Hello\n</body");
-  }, "body", 3);
+  }).toThrowError("body");
 
   // bad open tag
-  checkError(function () {
+  expect(function () {
     return scanForTest("\n\n\n<bodyd>\n  Hello\n</body>");
-  }, "Expected one of: <body>, <head>, <template>", 4);
-  checkError(function () {
+  }).toThrowError("Expected one of: <body>, <head>, <template>");
+
+  expect(function () {
     return scanForTest("\n\n\n\n<body foo=>\n  Hello\n</body>");
-  }, "error in tag", 5);
+  }).toThrowError("error in tag");
 
   // unclosed tag
-  checkError(function () {
+  expect(function () {
     return scanForTest("\n<body>Hello");
-  }, "nclosed", 2);
+  }).toThrowError("nclosed");
 
   // unnamed template
-  checkError(function () {
+  expect(function () {
     return scanForTest(
       "\n\n<template>Hi</template>\n\n<template>Hi</template>");
-  }, "name", 3);
+  }).toThrowError("name");
 
   // helpful doctype message
-  checkError(function () {
+  expect(function () {
     return scanForTest(
       '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" ' +
       '"http://www.w3.org/TR/html4/strict.dtd">' +
       '\n\n<head>\n</head>');
-  }, "DOCTYPE", 1);
+  }).toThrowError("DOCTYPE");
 
   // lowercase basic doctype
-  checkError(function () {
+  expect(function () {
     return scanForTest(
       '<!doctype html>');
-  }, "DOCTYPE", 1);
+  }).toThrowError("DOCTYPE");
 
   // attributes on head not supported
-  checkError(function () {
+  expect(function () {
     return scanForTest('<head foo="bar">\n  Hello\n</head>');
-  }, "<head>", 1);
+  }).toThrowError("<head>");
 
   // can't mismatch quotes
-  checkError(function () {
+  expect(function () {
     return scanForTest('<template name="foo\'>' +
       'pizza</template>');
-  }, "error in tag", 1);
+  }).toThrowError("error in tag");
 
   // unexpected <html> at top level
-  checkError(function () {
+  expect(function () {
     return scanForTest('\n<html>\n</html>');
-  }, "Expected one of: <body>, <head>, <template>", 2);
+  }).toThrowError("Expected one of: <body>, <head>, <template>");
 
 });

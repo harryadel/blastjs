@@ -13,6 +13,7 @@ export function compileTagsWithSpacebars(tags, hmrAvailable) {
   return handler.getResults();
 }
 
+
 class SpacebarsTagCompiler {
   constructor() {
     this.results = {
@@ -31,7 +32,7 @@ class SpacebarsTagCompiler {
     this.tag = tag;
 
     // do we have 1 or more attributes?
-    const hasAttribs = isEmpty(this.tag.attribs);
+    const hasAttribs = !isEmpty(this.tag.attribs);
 
     if (this.tag.tagName === "head") {
       if (hasAttribs) {
@@ -49,7 +50,7 @@ class SpacebarsTagCompiler {
       if (this.tag.tagName === "template") {
         const name = this.tag.attribs.name;
 
-        if (!name) {
+        if (! name) {
           this.throwCompileError("Template has no 'name' attribute");
         }
 
