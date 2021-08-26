@@ -3,7 +3,7 @@
   "scripts": {
     "lint": "eslint .",
     "build": "lerna run build",
-    "bootstrap": "lerna bootstrap && lerna run build",
+    "bootstrap": "lerna bootstrap",
     "publish": "lerna publish --force-publish",
     "clean": "lerna clean --yes",
     "start": "cd example-apps/meteor-blaze-app && npm i && npm start",
