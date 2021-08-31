@@ -2,12 +2,11 @@
   "name": "standalone-mongo-id",
   "version": "0.1.2",
   "description": "JS simulation of MongoDB ObjectIDs",
-  "main": "lib/id.js",
+  "main": "dist/id.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
-    "test:watch": "jest --runInBand --detectOpenHandles --forceExit --watch __tests__/*",
-    "clean": "rimraf lib",
-    "build": "cross-env BABEL_ENV=production babel src --out-dir lib",
+    "clean": "rimraf ./dist",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir ./dist",
     "prepublish": "npm run clean && npm run build"
   },
   "dependencies": {
