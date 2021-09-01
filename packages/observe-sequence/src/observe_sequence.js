@@ -1,13 +1,6 @@
-var warn = function () {
-  if (ObserveSequence._suppressWarnings) {
-    ObserveSequence._suppressWarnings--;
-  } else {
-    if (typeof console !== 'undefined' && console.warn)
-      console.warn.apply(console, arguments);
-
-    ObserveSequence._loggedWarnings++;
-  }
-};
+import { MongoID } from "standalone-mongo-id";
+import { DiffSequence } from "diff-sequence";
+import { Random } from "@reactioncommerce/random";
 
 // isArray returns true for arrays of these types:
 // standard arrays: instanceof Array === true, _.isArray(arr) === true
@@ -15,13 +8,30 @@ var warn = function () {
 // subclassed arrays: instanceof Array === true, _.isArray(arr) === false
 // see specific tests
 function isArray(arr) {
-  return arr instanceof Array || _.isArray(arr);
+  return arr instanceof Array || Array.isArray(arr);
 }
 
-var idStringify = MongoID.idStringify;
-var idParse = MongoID.idParse;
+function isFunction(func) {
+  if (func && typeof func === "function") {
+    return true
+  }
+  return false
+}
 
-ObserveSequence = {
+function has(obj, key) {
+  const keyParts = key.split('.');
+
+  return !!obj && (
+    keyParts.length > 1
+      ? has(obj[key.split('.')[0]], keyParts.slice(1).join('.'))
+      : hasOwnProperty.call(obj, key)
+  );
+};
+
+const idStringify = MongoID.idStringify;
+const idParse = MongoID.idParse;
+
+export const ObserveSequence = {
   _suppressWarnings: 0,
   _loggedWarnings: 0,
 
@@ -94,8 +104,8 @@ ObserveSequence = {
         if (activeObserveHandle) {
           // If we were previously observing a cursor, replace lastSeqArray with
           // more up-to-date information.  Then stop the old observe.
-          lastSeqArray = _.map(lastSeq.fetch(), function (doc) {
-            return {_id: doc._id, item: doc};
+          lastSeqArray = lastSeq.fetch().map(function (doc) {
+            return { _id: doc._id, item: doc };
           });
           activeObserveHandle.stop();
           activeObserveHandle = null;
@@ -107,11 +117,11 @@ ObserveSequence = {
           seqArray = seqChangedToArray(lastSeqArray, seq, callbacks);
         } else if (isStoreCursor(seq)) {
           var result /* [seqArray, activeObserveHandle] */ =
-                seqChangedToCursor(lastSeqArray, seq, callbacks);
+            seqChangedToCursor(lastSeqArray, seq, callbacks);
           seqArray = result[0];
           activeObserveHandle = result[1];
         } else {
-          throw badSequenceError();
+          throw badSequenceError(seq);
         }
 
         diffArray(lastSeqArray, seqArray, callbacks);
@@ -140,26 +150,80 @@ ObserveSequence = {
     } else if (isStoreCursor(seq)) {
       return seq.fetch();
     } else {
-      throw badSequenceError();
+      throw badSequenceError(seq);
     }
   }
 };
 
-var badSequenceError = function () {
+function ellipsis(longStr, maxLength) {
+  if (!maxLength) maxLength = 100;
+  if (longStr.length < maxLength) return longStr;
+  return longStr.substr(0, maxLength - 1) + '…';
+}
+
+function arrayToDebugStr(value, maxLength) {
+  var out = '', sep = '';
+  for (var i = 0; i < value.length; i++) {
+    var item = value[i];
+    out += sep + toDebugStr(item, maxLength);
+    if (out.length > maxLength) return out;
+    sep = ', ';
+  }
+  return out;
+}
+
+function toDebugStr(value, maxLength) {
+  if (!maxLength) maxLength = 150;
+  const type = typeof value;
+  switch (type) {
+    case 'undefined':
+      return type;
+    case 'number':
+      return value.toString();
+    case 'string':
+      return JSON.stringify(value); // add quotes
+    case 'object':
+      if (value === null) {
+        return 'null';
+      } else if (Array.isArray(value)) {
+        return 'Array [' + arrayToDebugStr(value, maxLength) + ']';
+      } else if (Symbol.iterator in value) { // Map and Set are not handled by JSON.stringify
+        return value.constructor.name
+          + ' [' + arrayToDebugStr(Array.from(value), maxLength)
+          + ']'; // Array.from doesn't work in IE, but neither do iterators so it's unreachable
+      } else { // use JSON.stringify (sometimes toString can be better but we don't know)
+        return value.constructor.name + ' '
+          + ellipsis(JSON.stringify(value), maxLength);
+      }
+    default:
+      return type + ': ' + value.toString();
+  }
+}
+
+function sequenceGotValue(sequence) {
+  try {
+    return ' Got ' + toDebugStr(sequence);
+  } catch (e) {
+    return ''
+  }
+}
+
+const badSequenceError = function (sequence) {
   return new Error("{{#each}} currently only accepts " +
-                   "arrays, cursors or falsey values.");
+    "arrays, cursors or falsey values." +
+    sequenceGotValue(sequence));
 };
 
-var isStoreCursor = function (cursor) {
+const isStoreCursor = function (cursor) {
   return cursor && _.isObject(cursor) &&
-    _.isFunction(cursor.observe) && _.isFunction(cursor.fetch);
+    isFunction(cursor.observe) && isFunction(cursor.fetch);
 };
 
 // Calculates the differences between `lastSeqArray` and
 // `seqArray` and calls appropriate functions from `callbacks`.
 // Reuses Minimongo's diff algorithm implementation.
-var diffArray = function (lastSeqArray, seqArray, callbacks) {
-  var diffFn = Package['diff-sequence'].DiffSequence.diffQueryOrderedChanges;
+const diffArray = function (lastSeqArray, seqArray, callbacks) {
+  var diffFn = DiffSequence.diffQueryOrderedChanges;
   var oldIdObjects = [];
   var newIdObjects = [];
   var posOld = {}; // maps from idStringify'd ids
@@ -167,12 +231,12 @@ var diffArray = function (lastSeqArray, seqArray, callbacks) {
   var posCur = {};
   var lengthCur = lastSeqArray.length;
 
-  _.each(seqArray, function (doc, i) {
-    newIdObjects.push({_id: doc._id});
+  seqArray.forEach(function (doc, i) {
+    newIdObjects.push({ _id: doc._id });
     posNew[idStringify(doc._id)] = i;
   });
-  _.each(lastSeqArray, function (doc, i) {
-    oldIdObjects.push({_id: doc._id});
+  lastSeqArray.forEach(function (doc, i) {
+    oldIdObjects.push({ _id: doc._id });
     posOld[idStringify(doc._id)] = i;
     posCur[idStringify(doc._id)] = i;
   });
@@ -188,7 +252,7 @@ var diffArray = function (lastSeqArray, seqArray, callbacks) {
       if (before) {
         // If not adding at the end, we need to update indexes.
         // XXX this can still be improved greatly!
-        _.each(posCur, function (pos, id) {
+        posCur.forEach(function (pos, id) {
           if (pos >= position)
             posCur[id]++;
         });
@@ -231,7 +295,7 @@ var diffArray = function (lastSeqArray, seqArray, callbacks) {
       //   2. The element is moved back. Then the positions in between *and* the
       //   element that is currently standing on the moved element's future
       //   position are moved forward.
-      _.each(posCur, function (elCurPosition, id) {
+      posCur.forEach(function (elCurPosition, id) {
         if (oldPosition < elCurPosition && elCurPosition < newPosition)
           posCur[id]--;
         else if (newPosition <= elCurPosition && elCurPosition < oldPosition)
@@ -251,7 +315,7 @@ var diffArray = function (lastSeqArray, seqArray, callbacks) {
     removed: function (id) {
       var prevPosition = posCur[idStringify(id)];
 
-      _.each(posCur, function (pos, id) {
+      posCur.forEach(function (pos, id) {
         if (pos >= prevPosition)
           posCur[id]--;
       });
@@ -266,9 +330,9 @@ var diffArray = function (lastSeqArray, seqArray, callbacks) {
     }
   });
 
-  _.each(posNew, function (pos, idString) {
+  posNew.forEach(function (pos, idString) {
     var id = idParse(idString);
-    if (_.has(posOld, idString)) {
+    if (has(posOld, idString)) {
       // specifically for primitive types, compare equality before
       // firing the 'changedAt' callback. otherwise, always fire it
       // because doing a deep EJSON comparison is not guaranteed to
@@ -280,32 +344,32 @@ var diffArray = function (lastSeqArray, seqArray, callbacks) {
       var oldItem = lastSeqArray[posOld[idString]].item;
 
       if (typeof newItem === 'object' || newItem !== oldItem)
-          callbacks.changedAt(id, newItem, oldItem, pos);
-      }
+        callbacks.changedAt(id, newItem, oldItem, pos);
+    }
   });
 };
 
-seqChangedToEmpty = function (lastSeqArray, callbacks) {
+const seqChangedToEmpty = function (lastSeqArray, callbacks) {
   return [];
 };
 
-seqChangedToArray = function (lastSeqArray, array, callbacks) {
+const seqChangedToArray = function (lastSeqArray, array, callbacks) {
   var idsUsed = {};
-  var seqArray = _.map(array, function (item, index) {
+  var seqArray = array.map(function (item, index) {
     var id;
     if (typeof item === 'string') {
       // ensure not empty, since other layers (eg DomRange) assume this as well
       id = "-" + item;
     } else if (typeof item === 'number' ||
-               typeof item === 'boolean' ||
-               item === undefined ||
-               item === null) {
+      typeof item === 'boolean' ||
+      item === undefined ||
+      item === null) {
       id = item;
     } else if (typeof item === 'object') {
       id = (item && ('_id' in item)) ? item._id : index;
     } else {
       throw new Error("{{#each}} doesn't support arrays with " +
-                      "elements of type " + typeof item);
+        "elements of type " + typeof item);
     }
 
     var idString = idStringify(id);
@@ -323,7 +387,7 @@ seqChangedToArray = function (lastSeqArray, array, callbacks) {
   return seqArray;
 };
 
-seqChangedToCursor = function (lastSeqArray, cursor, callbacks) {
+const seqChangedToCursor = function (lastSeqArray, cursor, callbacks) {
   var initial = true; // are we observing initial data from cursor?
   var seqArray = [];
 
@@ -341,7 +405,7 @@ seqChangedToCursor = function (lastSeqArray, cursor, callbacks) {
     },
     changedAt: function (newDocument, oldDocument, atIndex) {
       callbacks.changedAt(newDocument._id, newDocument, oldDocument,
-                          atIndex);
+        atIndex);
     },
     removedAt: function (oldDocument, atIndex) {
       callbacks.removedAt(oldDocument._id, oldDocument, atIndex);
@@ -354,4 +418,16 @@ seqChangedToCursor = function (lastSeqArray, cursor, callbacks) {
   initial = false;
 
   return [seqArray, observeHandle];
+};
+
+
+const warn = function () {
+  if (ObserveSequence._suppressWarnings) {
+    ObserveSequence._suppressWarnings--;
+  } else {
+    if (typeof console !== 'undefined' && console.warn)
+      console.warn.apply(console, arguments);
+
+    ObserveSequence._loggedWarnings++;
+  }
 };
