@@ -1,21 +1,21 @@
 {
+  "name": "observe-sequence",
   "description": "Observe changes to various sequence types such as arrays, cursors and objects",
   "version": "0.1.0",
-  "name": "observe-sequence",
   "main": "dist/observe-sequence",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "watch": "watch 'npm run build' src",
+    "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
     "clean": "rimraf ./dist",
     "build": "cross-env BABEL_ENV=production babel src --out-dir ./dist",
     "prepublish": "npm run clean && npm run build"
   },
   "dependencies": {
-    "standalone-tracker": "1.0.1",
-    "standalone-mongo-id": "0.1.2",
+    "@reactioncommerce/random": "^1.0.2",
     "diff-sequence": "0.1.0",
-    "@reactioncommerce/random": "^1.0.2"
+    "lodash.isobject": "^3.0.2",
+    "meteor-standalone-tracker": "^1.0.97",
+    "standalone-mongo-id": "0.1.2",
+    "standalone-tracker": "1.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
