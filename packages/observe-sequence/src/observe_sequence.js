@@ -1,6 +1,9 @@
 import { MongoID } from "standalone-mongo-id";
+import { Tracker } from "standalone-tracker";
 import { DiffSequence } from "diff-sequence";
-import { Random } from "@reactioncommerce/random";
+import Random from "@reactioncommerce/random";
+import isObject from 'lodash.isobject';
+import forEach from 'lodash.foreach';
 
 // isArray returns true for arrays of these types:
 // standard arrays: instanceof Array === true, _.isArray(arr) === true
@@ -215,7 +218,7 @@ const badSequenceError = function (sequence) {
 };
 
 const isStoreCursor = function (cursor) {
-  return cursor && _.isObject(cursor) &&
+  return cursor && isObject(cursor) &&
     isFunction(cursor.observe) && isFunction(cursor.fetch);
 };
 
@@ -252,7 +255,7 @@ const diffArray = function (lastSeqArray, seqArray, callbacks) {
       if (before) {
         // If not adding at the end, we need to update indexes.
         // XXX this can still be improved greatly!
-        posCur.forEach(function (pos, id) {
+        forEach(posCur, function (pos, id) {
           if (pos >= position)
             posCur[id]++;
         });
@@ -295,7 +298,7 @@ const diffArray = function (lastSeqArray, seqArray, callbacks) {
       //   2. The element is moved back. Then the positions in between *and* the
       //   element that is currently standing on the moved element's future
       //   position are moved forward.
-      posCur.forEach(function (elCurPosition, id) {
+      forEach(posCur, function (elCurPosition, id) {
         if (oldPosition < elCurPosition && elCurPosition < newPosition)
           posCur[id]--;
         else if (newPosition <= elCurPosition && elCurPosition < oldPosition)
@@ -315,7 +318,7 @@ const diffArray = function (lastSeqArray, seqArray, callbacks) {
     removed: function (id) {
       var prevPosition = posCur[idStringify(id)];
 
-      posCur.forEach(function (pos, id) {
+      forEach(posCur, function (pos, id) {
         if (pos >= prevPosition)
           posCur[id]--;
       });
@@ -330,7 +333,7 @@ const diffArray = function (lastSeqArray, seqArray, callbacks) {
     }
   });
 
-  posNew.forEach(function (pos, idString) {
+  forEach(posNew, function (pos, idString) {
     var id = idParse(idString);
     if (has(posOld, idString)) {
       // specifically for primitive types, compare equality before

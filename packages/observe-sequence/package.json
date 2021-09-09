@@ -12,8 +12,10 @@
   "dependencies": {
     "@reactioncommerce/random": "^1.0.2",
     "diff-sequence": "0.1.0",
+    "ejson": "^2.2.1",
+    "lodash.foreach": "^4.5.0",
     "lodash.isobject": "^3.0.2",
-    "meteor-standalone-tracker": "^1.0.97",
+    "lodash.toarray": "^4.4.0",
     "standalone-mongo-id": "0.1.2",
     "standalone-tracker": "1.0.1"
   },
