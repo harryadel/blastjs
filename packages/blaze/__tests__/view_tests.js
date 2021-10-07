@@ -1,5 +1,5 @@
 import { ReactiveVar } from 'standalone-reactive-var';
-import { HTML } from 'htmljs';
+import { Blaze } from '../src/blaze';
 
 test("blaze - view - callbacks", () => {
   var R = ReactiveVar('foo');
@@ -30,11 +30,11 @@ test("blaze - view - callbacks", () => {
   expect(v._isAttached).toBeFalsy();
   expect(canonicalizeHtml(div.innerHTML)).toEqual("");
   expect(() => {
-    function () { v.firstNode(); }
+    const v = function () { v.firstNode(); }
   }).toThrowError(/View must be attached/);
 
   expect(() => {
-    function () { v.lastNode(); }
+    const v = function () { v.lastNode(); }
   }).toThrowError(/View must be attached/);
 
   Blaze.render(v, div);

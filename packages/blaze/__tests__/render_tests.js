@@ -1,5 +1,7 @@
+import { ReactiveVar } from 'standalone-reactive-var';
 import { BlazeTools } from 'blaze-tools';
 import { HTML } from 'htmljs';
+import { Blaze, Template } from '../src/preamble';
 
 const toCode = BlazeTools.toJS;
 
