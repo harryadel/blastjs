@@ -1,3 +1,5 @@
+import { Blaze } from './preamble';
+
 
 // A constant empty array (frozen if the JS engine supports it).
 var _emptyArray = Object.freeze ? Object.freeze([]) : [];

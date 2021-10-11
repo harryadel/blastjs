@@ -1,3 +1,6 @@
+import { OrderedDict } from 'standalone-ordered-dict';
+import { Blaze } from './preamble';
+
 var jsUrlsAllowed = false;
 Blaze._allowJavascriptUrls = function () {
   jsUrlsAllowed = true;
@@ -29,7 +32,7 @@ Blaze._javascriptUrlsAllowed = function () {
 // AttributeHandlers can't influence how attributes appear in rendered HTML,
 // only how they are updated after materialization as DOM.
 
-AttributeHandler = function (name, value) {
+const AttributeHandler = function (name, value) {
   this.name = name;
   this.value = value;
 };
@@ -52,7 +55,7 @@ AttributeHandler.extend = function (options) {
   subType.prototype = new curType;
   subType.extend = curType.extend;
   if (options)
-    _.extend(subType.prototype, options);
+   Object.assign(subType.prototype, options);
   return subType;
 };
 
@@ -114,7 +117,7 @@ var ClassHandler = Blaze._DiffingAttributeHandler.extend({
   parseValue: function (attrString) {
     var tokens = new OrderedDict();
 
-    _.each(attrString.split(' '), function(token) {
+    attrString.split(' ').forEach(function(token) {
       if (token) {
         // Ordered dict requires unique keys.
         if (! tokens.has(token)) {
@@ -259,18 +262,18 @@ var isUrlAttribute = function (tagName, attrName) {
   }
 
   var urlAttrNames = urlAttrs[tagName] || [];
-  return _.contains(urlAttrNames, attrName);
+  return urlAttrNames.includes(attrName);
 };
 
 // To get the protocol for a URL, we let the browser normalize it for
 // us, by setting it as the href for an anchor tag and then reading out
 // the 'protocol' property.
-if (Meteor.isClient) {
+if (typeof window === 'object') {
   var anchorForNormalization = document.createElement('A');
 }
 
 var getUrlProtocol = function (url) {
-  if (Meteor.isClient) {
+  if (typeof window === 'object') {
     anchorForNormalization.href = url;
     return (anchorForNormalization.protocol || "").toLowerCase();
   } else {
@@ -338,54 +341,4 @@ Blaze._makeAttributeHandler = function (elem, name, value) {
 
   // XXX will need one for 'style' on IE, though modern browsers
   // seem to handle setAttribute ok.
-};
-
-
-ElementAttributesUpdater = function (elem) {
-  this.elem = elem;
-  this.handlers = {};
-};
-
-// Update attributes on `elem` to the dictionary `attrs`, whose
-// values are strings.
-ElementAttributesUpdater.prototype.update = function(newAttrs) {
-  var elem = this.elem;
-  var handlers = this.handlers;
-
-  for (var k in handlers) {
-    if (! _.has(newAttrs, k)) {
-      // remove attributes (and handlers) for attribute names
-      // that don't exist as keys of `newAttrs` and so won't
-      // be visited when traversing it.  (Attributes that
-      // exist in the `newAttrs` object but are `null`
-      // are handled later.)
-      var handler = handlers[k];
-      var oldValue = handler.value;
-      handler.value = null;
-      handler.update(elem, oldValue, null);
-      delete handlers[k];
-    }
-  }
-
-  for (var k in newAttrs) {
-    var handler = null;
-    var oldValue = null;
-    var value = newAttrs[k];
-    if (! _.has(handlers, k)) {
-      if (value !== null) {
-        // make new handler
-        handler = Blaze._makeAttributeHandler(elem, k, value);
-        handlers[k] = handler;
-      }
-    } else {
-      handler = handlers[k];
-      oldValue = handler.value;
-    }
-    if (oldValue !== value) {
-      handler.value = value;
-      handler.update(elem, oldValue, value);
-      if (value === null)
-        delete handlers[k];
-    }
-  }
 };

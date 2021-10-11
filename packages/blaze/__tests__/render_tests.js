@@ -1,7 +1,9 @@
 import { ReactiveVar } from 'standalone-reactive-var';
 import { BlazeTools } from 'blaze-tools';
+import { Tracker } from 'standalone-tracker';
 import { HTML } from 'htmljs';
-import { Blaze, Template } from '../src/preamble';
+import $ from 'jquery';
+import { Blaze, canonicalizeHtml } from '../src/index';
 
 const toCode = BlazeTools.toJS;
 
@@ -504,7 +506,7 @@ test('blaze - render - templates and views', () => {
     );
 
     myTemplate.constructView = function (number) {
-      const view = Template.prototype.constructView.call(this);
+      const view = Blaze.Template.prototype.constructView.call(this);
       view.number = number;
       return view;
     };
@@ -518,7 +520,7 @@ test('blaze - render - templates and views', () => {
           parent.number}`);
       }
 
-      buf.push(`created ${Template.currentData()}`);
+      buf.push(`created ${Blaze.Template.currentData()}`);
     };
 
     myTemplate.onRendered(function () {
@@ -539,14 +541,14 @@ test('blaze - render - templates and views', () => {
       while (start !== end && !nodeDescr(start)) { start = start.nextSibling; }
       while (end !== start && !nodeDescr(end)) { end = end.previousSibling; }
 
-      buf.push(`dom-${Template.currentData()
+      buf.push(`dom-${Blaze.Template.currentData()
       } is ${nodeDescr(start)}..${
         nodeDescr(end)}`);
     });
 
     myTemplate.onDestroyed(() => {
       expect(Tracker.active).toBeFalsy();
-      buf.push(`destroyed ${Template.currentData()}`);
+      buf.push(`destroyed ${Blaze.Template.currentData()}`);
     });
 
     var makeView = function () {
@@ -601,7 +603,7 @@ test('blaze - render - findAll', () => {
   let found = null;
   let $found = null;
 
-  const myTemplate = new Template(
+  const myTemplate = new Blaze.Template(
     'findAllTest',
     (() => DIV([P('first'), P('second')])),
   );
@@ -615,8 +617,8 @@ test('blaze - render - findAll', () => {
   Blaze.render(myTemplate, div);
   Tracker.flush();
 
-  expect(_.isArray(found)).toEqual(true);
-  expect(_.isArray($found)).toEqual(false);
+  expect(Array.isArray(found)).toEqual(true);
+  expect(Array.isArray($found)).toEqual(false);
   expect(found.length).toEqual(2);
   expect($found.length).toEqual(2);
 });
@@ -778,7 +780,7 @@ if (typeof MutationObserver !== 'undefined') {
     expect(materializeCount).toEqual(1);
 
     // We have to wait a bit, for mutation observer to run.
-    Meteor.setTimeout(() => {
+    setTimeout(() => {
       // We do not update anything after initial rendering, so only one mutation is there.
       expect(observedMutations.length).toEqual(1);
 

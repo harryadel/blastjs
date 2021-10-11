@@ -1,3 +1,6 @@
+import has from 'lodash.has';
+import { Blaze } from './preamble';
+
 var EventSupport = Blaze._EventSupport = {};
 
 var DOMBackend = Blaze._DOMBackend;
@@ -57,7 +60,7 @@ var HandlerRec = function (elem, type, selector, handler, recipient) {
   // IE 8 doesn't support these events anyway.
 
   var tryCapturing = elem.addEventListener &&
-        (! _.has(eventsToDelegate,
+        (! has(eventsToDelegate,
                  DOMBackend.Events.parseEventType(type)));
 
   if (tryCapturing) {

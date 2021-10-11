@@ -1,3 +1,58 @@
+import has from 'lodash.has';
+import { HTML } from 'htmljs';
+import { Blaze } from './preamble';
+
+
+const ElementAttributesUpdater = function (elem) {
+  this.elem = elem;
+  this.handlers = {};
+};
+
+// Update attributes on `elem` to the dictionary `attrs`, whose
+// values are strings.
+ElementAttributesUpdater.prototype.update = function(newAttrs) {
+  var elem = this.elem;
+  var handlers = this.handlers;
+
+  for (var k in handlers) {
+    if (!has(newAttrs, k)) {
+      // remove attributes (and handlers) for attribute names
+      // that don't exist as keys of `newAttrs` and so won't
+      // be visited when traversing it.  (Attributes that
+      // exist in the `newAttrs` object but are `null`
+      // are handled later.)
+      var handler = handlers[k];
+      var oldValue = handler.value;
+      handler.value = null;
+      handler.update(elem, oldValue, null);
+      delete handlers[k];
+    }
+  }
+
+  for (var k in newAttrs) {
+    var handler = null;
+    var oldValue = null;
+    var value = newAttrs[k];
+    if (!has(handlers, k)) {
+      if (value !== null) {
+        // make new handler
+        handler = Blaze._makeAttributeHandler(elem, k, value);
+        handlers[k] = handler;
+      }
+    } else {
+      handler = handlers[k];
+      oldValue = handler.value;
+    }
+    if (oldValue !== value) {
+      handler.value = value;
+      handler.update(elem, oldValue, value);
+      if (value === null)
+        delete handlers[k];
+    }
+  }
+};
+
+
 // Turns HTMLjs into DOM nodes and DOMRanges.
 //
 // - `htmljs`: the value to materialize, which may be any of the htmljs
@@ -116,7 +171,7 @@ var materializeTag = function (tag, parentView, workStack) {
       throw new Error("Can't have reactive children of TEXTAREA node; " +
                       "use the 'value' attribute instead.");
     }
-    rawAttrs = _.extend({}, rawAttrs || null);
+    rawAttrs = Object.assign({}, rawAttrs || null);
     rawAttrs.value = Blaze._expand(children, parentView);
     children = [];
   }

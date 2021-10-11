@@ -1,3 +1,7 @@
+import { HTML } from 'htmljs';
+import { Tracker } from 'standalone-tracker';
+import { Blaze } from './preamble';
+
 /// [new] Blaze.View([name], renderMethod)
 ///
 /// Blaze.View is the building block of reactive DOM.  Views have
@@ -127,7 +131,7 @@ Blaze.View.prototype.removeViewDestroyedListener = function (cb) {
   var destroyed = this._callbacks.destroyed;
   if (! destroyed)
     return;
-  var index = _.lastIndexOf(destroyed, cb);
+  var index = destroyed.lastIndexOf(cb);
   if (index !== -1) {
     // XXX You'd think the right thing to do would be splice, but _fireCallbacks
     // gets sad if you remove callbacks while iterating over the list.  Should

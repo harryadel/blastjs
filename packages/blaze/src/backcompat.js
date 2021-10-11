@@ -1,18 +1,21 @@
-UI = Blaze;
+import { Blaze } from './preamble';
+import { ReactiveVar } from 'standalone-reactive-var';
 
-Blaze.ReactiveVar = ReactiveVar;
-UI._templateInstance = Blaze.Template.instance;
+// const UI = Blaze;
 
-Handlebars = {};
-Handlebars.registerHelper = Blaze.registerHelper;
+// Blaze.ReactiveVar = ReactiveVar;
+// UI._templateInstance = Blaze.Template.instance;
 
-Handlebars._escape = Blaze._escape;
+// Handlebars = {};
+// Handlebars.registerHelper = Blaze.registerHelper;
 
-// Return these from {{...}} helpers to achieve the same as returning
-// strings from {{{...}}} helpers
-Handlebars.SafeString = function(string) {
-  this.string = string;
-};
-Handlebars.SafeString.prototype.toString = function() {
-  return this.string.toString();
-};
+// Handlebars._escape = Blaze._escape;
+
+// // Return these from {{...}} helpers to achieve the same as returning
+// // strings from {{{...}}} helpers
+// Handlebars.SafeString = function(string) {
+//   this.string = string;
+// };
+// Handlebars.SafeString.prototype.toString = function() {
+//   return this.string.toString();
+// };

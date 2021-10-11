@@ -1,9 +1,9 @@
+import { Blaze } from './preamble';
+import $jq from 'jquery';
+
 var DOMBackend = {};
 Blaze._DOMBackend = DOMBackend;
 
-var $jq = (typeof jQuery !== 'undefined' ? jQuery :
-           (typeof Package !== 'undefined' ?
-            Package.jquery && Package.jquery.jQuery : null));
 if (! $jq)
   throw new Error("jQuery not found");
 

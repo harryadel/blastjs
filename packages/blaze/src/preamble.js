@@ -2,7 +2,7 @@
  * @namespace Blaze
  * @summary The namespace for all Blaze-related methods and classes.
  */
-const Blaze = {};
+export const Blaze = {};
 
 // Utility to HTML-escape a string.  Included for legacy reasons.
 // TODO: Should be replaced with _.escape once underscore is upgraded to a newer

@@ -1,3 +1,5 @@
+import { Blaze } from './preamble';
+
 var debugFunc;
 
 // We call into user code in many places, and it's nice to catch exceptions

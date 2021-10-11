@@ -1,3 +1,9 @@
+import { Tracker } from 'standalone-tracker';
+import { ReactiveVar } from 'standalone-reactive-var';
+import { HTML } from 'htmljs';
+import { Blaze } from './preamble';
+
+
 Blaze._calculateCondition = function (cond) {
   if (HTML.isArray(cond) && cond.length === 0)
     cond = false;

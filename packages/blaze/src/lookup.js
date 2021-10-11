@@ -1,3 +1,5 @@
+import { Blaze } from './preamble';
+
 Blaze._globalHelpers = {};
 
 // Documented as Template.registerHelper.

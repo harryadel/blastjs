@@ -1,3 +1,6 @@
+import { Tracker } from 'standalone-tracker';
+import { Blaze } from './preamble';
+
 // [new] Blaze.Template([viewName], renderFunction)
 //
 // `Blaze.Template` is the class of templates, like `Template.foo` in
@@ -144,7 +147,7 @@ Template.prototype.constructView = function (contentFunc, elseFunc) {
         Template.prototype.events.call(self, self.events);
       }
 
-      _.each(self.__eventMaps, (m) => {
+      self.__eventMaps.forEach((m) => {
         Blaze._addEventMap(view, m, view);
       });
     });
