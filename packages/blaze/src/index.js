@@ -12,7 +12,7 @@ import './exceptions';
 import './materializer';
 import './view';
 import './lookup';
-import './template';
+import { Template } from './template';
 import canonicalizeHtml from './canonicalizeHtml';
 
-export { Blaze, canonicalizeHtml };
+export { Blaze, canonicalizeHtml, Template };

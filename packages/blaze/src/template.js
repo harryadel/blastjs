@@ -41,7 +41,7 @@ Blaze.Template = function (viewName, renderFunction) {
     destroyed: [],
   };
 };
-const { Template } = Blaze;
+export const { Template } = Blaze;
 
 var HelperMap = function () {};
 HelperMap.prototype.get = function (name) {

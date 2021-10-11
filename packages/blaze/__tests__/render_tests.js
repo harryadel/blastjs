@@ -3,7 +3,7 @@ import { BlazeTools } from 'blaze-tools';
 import { Tracker } from 'standalone-tracker';
 import { HTML } from 'htmljs';
 import $ from 'jquery';
-import { Blaze, canonicalizeHtml } from '../src/index';
+import { Blaze, canonicalizeHtml, Template } from '../src/index';
 
 const toCode = BlazeTools.toJS;
 
@@ -497,7 +497,7 @@ test('blaze - render - templates and views', () => {
     let counter = 1;
     const buf = [];
 
-    const myTemplate = Blaze.Template(
+    const myTemplate = Template(
       'myTemplate',
       function () {
         return [String(this.number),
@@ -506,7 +506,7 @@ test('blaze - render - templates and views', () => {
     );
 
     myTemplate.constructView = function (number) {
-      const view = Blaze.Template.prototype.constructView.call(this);
+      const view = Template.prototype.constructView.call(this);
       view.number = number;
       return view;
     };
@@ -520,7 +520,7 @@ test('blaze - render - templates and views', () => {
           parent.number}`);
       }
 
-      buf.push(`created ${Blaze.Template.currentData()}`);
+      buf.push(`created ${Template.currentData()}`);
     };
 
     myTemplate.onRendered(function () {
@@ -541,14 +541,14 @@ test('blaze - render - templates and views', () => {
       while (start !== end && !nodeDescr(start)) { start = start.nextSibling; }
       while (end !== start && !nodeDescr(end)) { end = end.previousSibling; }
 
-      buf.push(`dom-${Blaze.Template.currentData()
+      buf.push(`dom-${Template.currentData()
       } is ${nodeDescr(start)}..${
         nodeDescr(end)}`);
     });
 
     myTemplate.onDestroyed(() => {
       expect(Tracker.active).toBeFalsy();
-      buf.push(`destroyed ${Blaze.Template.currentData()}`);
+      buf.push(`destroyed ${Template.currentData()}`);
     });
 
     var makeView = function () {
@@ -603,7 +603,7 @@ test('blaze - render - findAll', () => {
   let found = null;
   let $found = null;
 
-  const myTemplate = new Blaze.Template(
+  const myTemplate = new Template(
     'findAllTest',
     (() => DIV([P('first'), P('second')])),
   );
