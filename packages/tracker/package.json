@@ -1,5 +1,5 @@
 {
-  "name": "standalone-tracker",
+  "name": "@blastjs/tracker",
   "version": "1.0.1",
   "description": "NPM version of Meteor [Tracker](https://github.com/meteor/meteor/tree/devel/packages/tracker)",
   "main": "lib/tracker.js",
