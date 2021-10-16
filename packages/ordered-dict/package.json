@@ -1,5 +1,5 @@
 {
-  "name": "standalone-ordered-dict",
+  "name": "@blastjs/ordered-dict",
   "version": "0.1.0",
   "main": "dist/index",
   "scripts": {
