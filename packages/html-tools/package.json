@@ -1,5 +1,5 @@
 {
-  "name": "html-tools",
+  "name": "@blastjs/html-tools",
   "description": "Standards-compliant HTML tools",
   "version": "0.1.1",
   "main": "dist/main.js",
@@ -11,6 +11,9 @@
     "build": "cross-env BABEL_ENV=production babel src --out-dir ./dist",
     "prepublish": "npm run clean && npm run build"
   },
+  "dependencies": {
+    "@blastjs/htmljs": "^0.1.0"
+  },
   "devDependencies": {
     "@babel/cli": "^7.13.16",
     "@babel/core": "^7.14.2",
@@ -20,7 +23,10 @@
     "rimraf": "^2.7.1",
     "watch": "^0.13.0"
   },
-  "dependencies": {
-    "htmljs": "^0.1.0"
-  }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/html-tools"
+  },
+  "author": "Harry Adel <harryadelb@gmail.com>",
+  "license": "GPLV3"
 }

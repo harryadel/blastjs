@@ -1,6 +1,6 @@
 {
-  "name": "blaze-tools",
-  "description": "Compile-time tools for Blaze",
+  "name": "@blastjs/blast-tools",
+  "description": "Compile-time tools for Blast",
   "main": "./dist/preamble.js",
   "version": "0.1.0",
   "scripts": {
@@ -9,14 +9,12 @@
     "build": "cross-env BABEL_ENV=production babel src --out-dir ./dist",
     "prepublish": "npm run clean && npm run build"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "html-tools": "^0.1.1",
-    "htmljs": "^0.1.0",
-    "reactive-dict": "^1.0.9",
-    "standalone-mongo-id": "^0.1.2",
-    "standalone-tracker": "^1.0.1"
+    "@blastjs/html-tools": "^0.1.1",
+    "@blastjs/htmljs": "^0.1.0",
+    "@blastjs/reactive-dict": "^1.0.9",
+    "@blastjs/mongo-id": "^0.1.2",
+    "@blastjs/tracker": "^1.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
@@ -25,5 +23,11 @@
     "cross-env": "^7.0.3",
     "jest": "^26.6.3",
     "rimraf": "^3.0.2"
-  } 
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/blast-tools"
+  },
+  "author": "Harry Adel <harryadelb@gmail.com>",
+  "license": "GPLV3"
 }

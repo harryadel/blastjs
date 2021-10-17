@@ -1,5 +1,5 @@
 {
-  "name": "observe-sequence",
+  "name": "@blastjs/observe-sequence",
   "description": "Observe changes to various sequence types such as arrays, cursors and objects",
   "version": "0.1.0",
   "main": "dist/observe-sequence",
@@ -11,13 +11,13 @@
   },
   "dependencies": {
     "@reactioncommerce/random": "^1.0.2",
-    "diff-sequence": "0.1.0",
+    "@blastjs/diff-sequence": "0.1.0",
     "ejson": "^2.2.1",
     "lodash.foreach": "^4.5.0",
     "lodash.isobject": "^3.0.2",
     "lodash.toarray": "^4.4.0",
-    "standalone-mongo-id": "0.1.2",
-    "standalone-tracker": "1.0.1"
+    "@blastjs/mongo-id": "0.1.2",
+    "@blastjs/tracker": "1.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
@@ -26,5 +26,11 @@
     "cross-env": "^7.0.3",
     "jest": "^26.6.3",
     "rimraf": "^3.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/observe-sequence"
+  },
+  "author": "Harry Adel <harryadelb@gmail.com>",
+  "license": "GPLV3"
 }

@@ -1,5 +1,5 @@
 {
-  "name": "htmljs",
+  "name": "@blastjs/htmljs",
   "description": "Small library for expressing HTML trees",
   "version": "0.1.0",
   "main": "dist/preamble.js",
@@ -19,5 +19,11 @@
     "jest": "^26.6.3",
     "rimraf": "^2.7.1",
     "watch": "^0.13.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/htmljs"
+  },
+  "author": "Harry Adel <harryadelb@gmail.com>",
+  "license": "GPLV3"
 }

@@ -1,7 +1,7 @@
 {
+  "name": "@blastjs/diff-sequence",
   "description": "An implementation of a diff algorithm on arrays and objects.",
   "version": "0.1.0",
-  "name": "diff-sequence",
   "main": "dist/diff.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
@@ -19,5 +19,11 @@
     "cross-env": "^7.0.3",
     "jest": "^26.6.3",
     "rimraf": "^3.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/diff-sequence"
+  },
+  "author": "Harry Adel <harryadelb@gmail.com>",
+  "license": "GPLV3"
 }

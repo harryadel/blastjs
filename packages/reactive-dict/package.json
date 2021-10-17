@@ -1,25 +1,23 @@
 {
-  "name": "reactive-dict",
+  "name": "@blastjs/reactive-dict",
   "version": "1.0.9",
   "description": "[Source code of released version](https://github.com/meteor/meteor/tree/master/packages/reactive-dict) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/reactive-dict) ***",
-  "main": "./lib/reactive-dict.js",
+  "main": "./dist/reactive-dict.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
-    "clean": "rimraf lib",
-    "build": "cross-env BABEL_ENV=production babel src --out-dir lib",
+    "clean": "rimraf dist",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir dist",
     "prepublish": "npm run clean && npm run test && npm run build"
   },
   "files": [
-    "lib",
+    "dist",
     "src"
   ],
-  "author": "Harry Adel <harryadelb@gmail.com>",
-  "license": "MIT",
   "dependencies": {
     "@reactioncommerce/random": "^1.0.2",
     "ejson": "^2.2.1",
-    "standalone-mongo-id": "^0.1.2",
-    "standalone-tracker": "^1.0.1"
+    "@blastjs/mongo-id": "^0.1.2",
+    "@blastjs/tracker": "^1.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
@@ -29,5 +27,10 @@
     "jest": "^26.6.3",
     "rimraf": "^3.0.2"
   },
-  "gitHead": "d4707c98c046f9f4171eed2d76439e55d40c2691"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/reactive-dict"
+  },
+  "author": "Harry Adel <harryadelb@gmail.com>",
+  "license": "GPLV3"
 }

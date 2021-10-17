@@ -1,16 +1,17 @@
 {
-  "name": "templating-tools",
+  "name": "@blastjs/templating-tools",
   "description": "Tools to scan HTML and compile tags when building a templating package",
   "version": "1.2.0",
+  "main": "dist/templating-tools.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
-    "clean": "rimraf lib",
-    "build": "cross-env BABEL_ENV=production babel src --out-dir lib",
+    "clean": "rimraf dist",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir dist",
     "prepublish": "npm run clean && npm run test && npm run build"
   },
   "dependencies": {
     "lodash.isempty": "4.4.0",
-    "spacebars-compiler": "^1.2.1"
+    "@blastjs/spacebars-compiler": "^1.2.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
@@ -18,5 +19,11 @@
     "@babel/preset-env": "^7.13.15",
     "cross-env": "^7.0.3",
     "jest": "^26.6.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/templating-tools"
+  },
+  "author": "Harry Adel <harryadelb@gmail.com>",
+  "license": "GPLV3"
 }

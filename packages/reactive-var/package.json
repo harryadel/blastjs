@@ -2,17 +2,15 @@
   "name": "@blastjs/reactive-var",
   "version": "1.0.1",
   "description": "[Source code of released version](https://github.com/meteor/meteor/tree/master/packages/reactive-var) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/reactive-var) ***",
-  "main": "lib/reactive-var.js",
+  "main": "dist/reactive-var.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
-    "clean": "rimraf lib",
-    "build": "cross-env BABEL_ENV=production babel src --out-dir lib",
+    "clean": "rimraf dist",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir dist",
     "prepublish": "npm run clean && npm run test && npm run build"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "standalone-tracker": "^1.0.1"
+    "@blastjs/tracker": "^1.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
@@ -21,5 +19,10 @@
     "cross-env": "^7.0.3",
     "jest": "^26.6.3"
   },
-  "gitHead": "d4707c98c046f9f4171eed2d76439e55d40c2691"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/reactive-var"
+  },
+  "author": "Harry Adel <harryadelb@gmail.com>",
+  "license": "GPLV3"
 }
