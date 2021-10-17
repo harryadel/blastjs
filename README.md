@@ -1,4 +1,4 @@
-# Blaze
+# Blast
 
 The aim of this project is to extract Blaze and all of its associated packages to NPM so it can be used outside of Meteor.
 
