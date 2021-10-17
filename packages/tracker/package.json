@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/tracker",
   "version": "1.0.1",
-  "description": "NPM version of Meteor [Tracker](https://github.com/meteor/meteor/tree/devel/packages/tracker)",
+  "description": "Create reactive data sources with ease",
   "main": "lib/tracker.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
@@ -27,13 +27,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/harryadel/tracker.git"
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/tracker"
   },
   "author": "Harry Adel <harryadelb@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/harryadel/tracker/issues"
-  },
-  "homepage": "https://github.com/harryadel/tracker#readme",
-  "gitHead": "d4707c98c046f9f4171eed2d76439e55d40c2691"
+  "license": "GPLV3"
 }
