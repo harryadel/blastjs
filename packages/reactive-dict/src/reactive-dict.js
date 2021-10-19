@@ -3,6 +3,8 @@ import { Tracker } from '@blastjs/tracker';
 import EJSON from 'ejson';
 import { MongoID } from '@blastjs/mongo-id';
 
+EJSON.addType('oid', (str) => new MongoID.ObjectID(str));
+
 const hasOwn = Object.prototype.hasOwnProperty;
 
 // XXX come up with a serialization method which canonicalizes object key
