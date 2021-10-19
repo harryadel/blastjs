@@ -498,7 +498,7 @@ test('observe-sequence - array to null', () => {
 //   }, [
 //     // this case must not fire spurious calls as the array to array
 //     // case does. otherwise, the entire power of cursors is lost in
-//     // blaze.
+//     // blast.
 //     { addedAt: ["13", { _id: "13", rank: 1 }, 0, null] },
 //     { addedAt: ["37", { _id: "37", rank: 2 }, 1, null] },
 //     { addedAt: ["77", { _id: "77", rank: 3 }, 2, null] },
