@@ -1,11 +1,11 @@
-import { ReactiveVar } from 'standalone-reactive-var';
-import { BlazeTools } from 'blaze-tools';
-import { Tracker } from 'standalone-tracker';
-import { HTML } from 'htmljs';
+import { ReactiveVar } from '@blastjs/reactive-var';
+import { BlastTools } from '@blastjs/blast-tools';
+import { Tracker } from '@blastjs/tracker';
+import { HTML } from '@blastjs/htmljs';
 import $ from 'jquery';
 import { Blaze, canonicalizeHtml, Template } from '../src/index';
 
-const toCode = BlazeTools.toJS;
+const toCode = BlastTools.toJS;
 
 const { P } = HTML;
 const { CharRef } = HTML;
@@ -722,7 +722,8 @@ test('ui - attributes', () => {
   const amp = HTML.CharRef({ html: '&amp;', str: '&' });
 
   expect(HTML.toHTML(SPAN({ title: ['M', amp, 'Ms'] }, 'M', amp, 'M candies'))).toEqual(
-    '<span title="M&amp;Ms">M&amp;M candies</span>');
+    '<span title="M&amp;Ms">M&amp;M candies</span>',
+  );
 });
 
 if (typeof MutationObserver !== 'undefined') {

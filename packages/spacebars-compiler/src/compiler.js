@@ -1,54 +1,52 @@
-import { HTMLTools } from 'html-tools';
-import { HTML } from 'htmljs';
-import { BlazeTools } from 'blaze-tools';
+import { HTMLTools } from '@blastjs/html-tools';
+import { HTML } from '@blastjs/htmljs';
+import { BlastTools } from '@blastjs/blast-tools';
 import { CodeGen } from './codegen';
 import { optimize } from './optimizer';
 import { ReactComponentSiblingForbidder } from './react';
 import { TemplateTag } from './templatetag';
 import { removeWhitespace } from './whitespace';
 
-var UglifyJSMinify = require('uglify-js').minify;
+const UglifyJSMinify = require('uglify-js').minify;
 
 export function parse(input) {
   return HTMLTools.parseFragment(
     input,
-    { getTemplateTag: TemplateTag.parseCompleteTag });
+    { getTemplateTag: TemplateTag.parseCompleteTag },
+  );
 }
 
 export function compile(input, options) {
-  var tree = parse(input);
+  const tree = parse(input);
   return codeGen(tree, options);
 }
 
 export const TemplateTagReplacer = HTML.TransformingVisitor.extend();
 TemplateTagReplacer.def({
-  visitObject: function (x) {
+  visitObject(x) {
     if (x instanceof HTMLTools.TemplateTag) {
-
       // Make sure all TemplateTags in attributes have the right
       // `.position` set on them.  This is a bit of a hack
       // (we shouldn't be mutating that here), but it allows
       // cleaner codegen of "synthetic" attributes like TEXTAREA's
       // "value", where the template tags were originally not
       // in an attribute.
-      if (this.inAttributeValue)
-        x.position = HTMLTools.TEMPLATE_TAG_POSITION.IN_ATTRIBUTE;
+      if (this.inAttributeValue) x.position = HTMLTools.TEMPLATE_TAG_POSITION.IN_ATTRIBUTE;
 
       return this.codegen.codeGenTemplateTag(x);
     }
 
     return HTML.TransformingVisitor.prototype.visitObject.call(this, x);
   },
-  visitAttributes: function (attrs) {
-    if (attrs instanceof HTMLTools.TemplateTag)
-      return this.codegen.codeGenTemplateTag(attrs);
+  visitAttributes(attrs) {
+    if (attrs instanceof HTMLTools.TemplateTag) return this.codegen.codeGenTemplateTag(attrs);
 
     // call super (e.g. for case where `attrs` is an array)
     return HTML.TransformingVisitor.prototype.visitAttributes.call(this, attrs);
   },
-  visitAttribute: function (name, value, tag) {
+  visitAttribute(name, value, tag) {
     this.inAttributeValue = true;
-    var result = this.visit(value);
+    const result = this.visit(value);
     this.inAttributeValue = false;
 
     if (result !== value) {
@@ -58,21 +56,21 @@ TemplateTagReplacer.def({
       // `{id: Blaze.View(...)}` as an attributes dict because the View
       // would be rendered more than once; you need to wrap it in a function
       // so that it's a different View each time.
-      return BlazeTools.EmitCode(this.codegen.codeGenBlock(result));
+      return BlastTools.EmitCode(this.codegen.codeGenBlock(result));
     }
     return result;
-  }
+  },
 });
 
 export function codeGen(parseTree, options) {
   // is this a template, rather than a block passed to
   // a block helper, say
-  var isTemplate = (options && options.isTemplate);
-  var isBody = (options && options.isBody);
-  var whitespace = (options && options.whitespace)
-  var sourceName = (options && options.sourceName);
+  const isTemplate = (options && options.isTemplate);
+  const isBody = (options && options.isBody);
+  const whitespace = (options && options.whitespace);
+  const sourceName = (options && options.sourceName);
 
-  var tree = parseTree;
+  let tree = parseTree;
 
   // The flags `isTemplate` and `isBody` are kind of a hack.
   if (isTemplate || isBody) {
@@ -85,19 +83,20 @@ export function codeGen(parseTree, options) {
   }
 
   // throws an error if using `{{> React}}` with siblings
-  new ReactComponentSiblingForbidder({ sourceName: sourceName })
+  new ReactComponentSiblingForbidder({ sourceName })
     .visit(tree);
 
-  var codegen = new CodeGen;
+  const codegen = new CodeGen();
   tree = (new TemplateTagReplacer(
-    { codegen: codegen })).visit(tree);
+    { codegen },
+  )).visit(tree);
 
-  var code = '(function () { ';
+  let code = '(function () { ';
   if (isTemplate || isBody) {
     code += 'var view = this; ';
   }
   code += 'return ';
-  code += BlazeTools.toJS(tree);
+  code += BlastTools.toJS(tree);
   code += '; })';
 
   code = beautify(code);
@@ -110,18 +109,18 @@ export function beautify(code) {
     return code;
   }
 
-  var result = UglifyJSMinify(code, {
+  const result = UglifyJSMinify(code, {
     fromString: true,
     mangle: false,
     compress: false,
     output: {
       beautify: true,
       indent_level: 2,
-      width: 80
-    }
+      width: 80,
+    },
   });
 
-  var output = result.code;
+  let output = result.code;
   // Uglify interprets our expression as a statement and may add a semicolon.
   // Strip trailing semicolon.
   output = output.replace(/;$/, '');

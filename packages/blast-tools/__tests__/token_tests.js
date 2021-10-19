@@ -1,12 +1,12 @@
-import { HTMLTools } from 'html-tools';
-import { BlazeTools } from '../src/preamble';
+import { HTMLTools } from '@blastjs/html-tools';
+import { BlastTools } from '../src/preamble';
 
-test('blaze-tools - token parsers', () => {
-  var run = function (func, input, expected) {
-    var scanner = new HTMLTools.Scanner('z' + input);
+test('blast-tools - token parsers', () => {
+  const run = function (func, input, expected) {
+    const scanner = new HTMLTools.Scanner(`z${input}`);
     // make sure the parse function respects `scanner.pos`
     scanner.pos = 1;
-    var result = func(scanner);
+    const result = func(scanner);
     if (expected === null) {
       expect(scanner.pos).toEqual(1);
       expect(result).toEqual(null);
@@ -26,39 +26,39 @@ test('blaze-tools - token parsers', () => {
     run(func, input, expected);
   };
 
-  const { parseNumber } = BlazeTools;
-  const { parseIdentifierName } = BlazeTools;
-  const { parseExtendedIdentifierName } = BlazeTools;
-  const { parseStringLiteral } = BlazeTools;
+  const { parseNumber } = BlastTools;
+  const { parseIdentifierName } = BlastTools;
+  const { parseExtendedIdentifierName } = BlastTools;
+  const { parseStringLiteral } = BlastTools;
 
-  runValue(parseNumber, "0", 0);
-  runValue(parseNumber, "-0", 0);
-  runValue(parseNumber, "-", null);
-  runValue(parseNumber, ".a", null);
-  runValue(parseNumber, ".1", 0.1);
-  runValue(parseNumber, "1.", 1);
-  runValue(parseNumber, "1.1", 1.1);
-  runValue(parseNumber, "0x", null);
-  runValue(parseNumber, "0xa", 10);
-  runValue(parseNumber, "-0xa", -10);
-  runValue(parseNumber, "1e+1", 10);
+  runValue(parseNumber, '0', 0);
+  runValue(parseNumber, '-0', 0);
+  runValue(parseNumber, '-', null);
+  runValue(parseNumber, '.a', null);
+  runValue(parseNumber, '.1', 0.1);
+  runValue(parseNumber, '1.', 1);
+  runValue(parseNumber, '1.1', 1.1);
+  runValue(parseNumber, '0x', null);
+  runValue(parseNumber, '0xa', 10);
+  runValue(parseNumber, '-0xa', -10);
+  runValue(parseNumber, '1e+1', 10);
 
-  [parseIdentifierName, parseExtendedIdentifierName].forEach(function (f) {
-    run(f, "a", "a");
-    run(f, "true", "true");
-    run(f, "null", "null");
-    run(f, "if", "if");
-    run(f, "1", null);
-    run(f, "1a", null);
-    run(f, "+a", null);
-    run(f, "a1", "a1");
-    run(f, "a1a", "a1a");
-    run(f, "_a8f_f8d88_", "_a8f_f8d88_");
+  [parseIdentifierName, parseExtendedIdentifierName].forEach((f) => {
+    run(f, 'a', 'a');
+    run(f, 'true', 'true');
+    run(f, 'null', 'null');
+    run(f, 'if', 'if');
+    run(f, '1', null);
+    run(f, '1a', null);
+    run(f, '+a', null);
+    run(f, 'a1', 'a1');
+    run(f, 'a1a', 'a1a');
+    run(f, '_a8f_f8d88_', '_a8f_f8d88_');
   });
-  run(parseIdentifierName, "@index", null);
-  run(parseExtendedIdentifierName, "@index", "@index");
-  run(parseExtendedIdentifierName, "@something", "@something");
-  run(parseExtendedIdentifierName, "@", null);
+  run(parseIdentifierName, '@index', null);
+  run(parseExtendedIdentifierName, '@index', '@index');
+  run(parseExtendedIdentifierName, '@something', '@something');
+  run(parseExtendedIdentifierName, '@', null);
 
   runValue(parseStringLiteral, '"a"', 'a');
   runValue(parseStringLiteral, '"\'"', "'");

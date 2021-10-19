@@ -27,7 +27,7 @@ test('html-tools - parser getContent', () => {
     const scanner = new Scanner(input.replace('^^^', ''));
     const result = getContent(scanner);
     expect(scanner.pos).toEqual(endPos);
-    // expect(BlazeTools.toJS(result)).toEqual(BlazeTools.toJS(expected));
+    // expect(BlastTools.toJS(result)).toEqual(BlastTools.toJS(expected));
   };
 
   const fatal = function (input, messageContains) {
@@ -192,8 +192,8 @@ test('html-tools - parser getContent', () => {
 });
 
 test('html-tools - parseFragment', () => {
-  // expect(BlazeTools.toJS(HTMLTools.parseFragment('<div><p id=foo>Hello</p></div>'))).toEqual(
-  //   BlazeTools.toJS(DIV(P({ id: 'foo' }, 'Hello'))),
+  // expect(BlastTools.toJS(HTMLTools.parseFragment('<div><p id=foo>Hello</p></div>'))).toEqual(
+  //   BlastTools.toJS(DIV(P({ id: 'foo' }, 'Hello'))),
   // );
 
   ['asdf</br>', '{{!foo}}</br>', '{{!foo}} </br>',
@@ -298,7 +298,7 @@ test('html-tools - getTemplateTag', () => {
       result = String(e);
     }
     expect(scanner.pos).toEqual(endPos);
-    // expect(BlazeTools.toJS(result)).toEqual(BlazeTools.toJS(expected));
+    // expect(BlastTools.toJS(result)).toEqual(BlastTools.toJS(expected));
   };
 
   const fatal = function (input, messageContains) {

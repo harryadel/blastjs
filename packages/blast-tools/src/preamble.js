@@ -1,20 +1,19 @@
-
 import {
   EmitCode,
   toJSLiteral,
   toObjectLiteralKey,
   ToJSVisitor,
-  toJS
+  toJS,
 } from './tojs';
 
 import {
   parseNumber,
   parseIdentifierName,
   parseExtendedIdentifierName,
-  parseStringLiteral
+  parseStringLiteral,
 } from './tokens';
 
-const BlazeTools = {
+const BlastTools = {
   EmitCode,
   toJSLiteral,
   toObjectLiteralKey,
@@ -23,7 +22,7 @@ const BlazeTools = {
   parseNumber,
   parseIdentifierName,
   parseExtendedIdentifierName,
-  parseStringLiteral
+  parseStringLiteral,
 };
 
-export { BlazeTools };
+export { BlastTools };
