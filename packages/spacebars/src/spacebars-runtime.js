@@ -1,3 +1,5 @@
+import { Blast, Handlebars } from '@blastjs/blast';
+
 export const Spacebars = {};
 
 const tripleEquals = function (a, b) { return a === b; };
@@ -142,10 +144,10 @@ Spacebars.kw = function (hash) {
 // Call this as `Spacebars.SafeString("some HTML")`.  The return value
 // is `instanceof Spacebars.SafeString` (and `instanceof Handlebars.SafeString).
 Spacebars.SafeString = function (html) {
-  if (!(this instanceof Spacebars.SafeString))
+  if (!(this instanceof Spacebars.SafeString)) {
   // called without new; call with new
-  { return new Spacebars.SafeString(html); }
-
+    return new Spacebars.SafeString(html);
+  }
   return new Handlebars.SafeString(html);
 };
 Spacebars.SafeString.prototype = Handlebars.SafeString.prototype;

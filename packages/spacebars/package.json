@@ -3,18 +3,18 @@
   "description": "Handlebars-like template language for Meteor",
   "version": "0.1.0",
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
     "test:watch": "jest --watch",
     "watch": "watch 'npm run build' src",
     "clean": "rimraf ./dist",
     "build": "cross-env BABEL_ENV=production babel src --out-dir ./dist",
-    "prepublish": "npm run clean && npm run build"
+    "prepublish": "npm run test && npm run clean && npm run build"
   },
   "dependencies": {
     "@blastjs/observe-sequence": "^0.1.0",
     "@blastjs/tracker": "^1.0.1",
-    "@blastjs/htmljs": "^1.1.0",
-    "@blastjs/blast": "^2.4.0"
+    "@blastjs/htmljs": "^0.1.0",
+    "@blastjs/blast": "^2.4.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.16",
