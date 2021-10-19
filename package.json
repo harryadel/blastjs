@@ -1,5 +1,5 @@
 {
-  "name": "root",
+  "name": "blastjs",
   "scripts": {
     "lint": "eslint .",
     "build": "lerna run build",
