@@ -1,7 +1,7 @@
 import { Blast } from './preamble';
 
 import './attrs';
-import './backcompat';
+import { Handlebars } from './backcompat';
 import './builtins';
 import './dombackend';
 import './domrange';
@@ -13,4 +13,6 @@ import './lookup';
 import { Template } from './template';
 import canonicalizeHtml from './canonicalizeHtml';
 
-export { Blast, canonicalizeHtml, Template };
+export {
+  Blast, canonicalizeHtml, Template, Handlebars,
+};
