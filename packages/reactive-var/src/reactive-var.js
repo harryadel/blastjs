@@ -1,4 +1,4 @@
-const { Tracker } = require('standalone-tracker')
+const { Tracker } = require('@blastjs/tracker');
 
 /*
  * ## [new] ReactiveVar(initialValue, [equalsFunc])
@@ -29,7 +29,7 @@ const { Tracker } = require('standalone-tracker')
  */
 
 /**
- * @class 
+ * @class
  * @instanceName reactiveVar
  * @summary Constructor for a ReactiveVar, which represents a single reactive variable.
  * @locus Client
@@ -38,23 +38,22 @@ const { Tracker } = require('standalone-tracker')
  */
 const ReactiveVar = function (initialValue, equalsFunc) {
   if (!(this instanceof ReactiveVar))
-    // called without `new`
-    return new ReactiveVar(initialValue, equalsFunc);
+  // called without `new`
+  { return new ReactiveVar(initialValue, equalsFunc); }
 
   this.curValue = initialValue;
   this.equalsFunc = equalsFunc;
-  this.dep = new Tracker.Dependency;
+  this.dep = new Tracker.Dependency();
 };
 
 ReactiveVar._isEqual = function (oldValue, newValue) {
-  var a = oldValue, b = newValue;
+  const a = oldValue; const
+    b = newValue;
   // Two values are "equal" here if they are `===` and are
   // number, boolean, string, undefined, or null.
-  if (a !== b)
-    return false;
-  else
-    return ((!a) || (typeof a === 'number') || (typeof a === 'boolean') ||
-      (typeof a === 'string'));
+  if (a !== b) return false;
+  return ((!a) || (typeof a === 'number') || (typeof a === 'boolean')
+      || (typeof a === 'string'));
 };
 
 /**
@@ -62,8 +61,7 @@ ReactiveVar._isEqual = function (oldValue, newValue) {
  * @locus Client
  */
 ReactiveVar.prototype.get = function () {
-  if (Tracker.active)
-    this.dep.depend();
+  if (Tracker.active) { this.dep.depend(); }
 
   return this.curValue;
 };
@@ -74,27 +72,26 @@ ReactiveVar.prototype.get = function () {
  * @param {Any} newValue
  */
 ReactiveVar.prototype.set = function (newValue) {
-  var oldValue = this.curValue;
+  const oldValue = this.curValue;
 
   if ((this.equalsFunc || ReactiveVar._isEqual)(oldValue, newValue))
-    // value is same as last time
-    return;
+  // value is same as last time
+  { return; }
 
   this.curValue = newValue;
   this.dep.changed();
 };
 
 ReactiveVar.prototype.toString = function () {
-  return 'ReactiveVar{' + this.get() + '}';
+  return `ReactiveVar{${this.get()}}`;
 };
 
 ReactiveVar.prototype._numListeners = function () {
   // Tests want to know.
   // Accesses a private field of Tracker.Dependency.
-  var count = 0;
-  for (var id in this.dep._dependentsById)
-    count++;
+  let count = 0;
+  for (const id in this.dep._dependentsById) { count++; }
   return count;
 };
 
-module.exports = { ReactiveVar }
+module.exports = { ReactiveVar };
