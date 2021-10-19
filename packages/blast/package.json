@@ -1,8 +1,8 @@
 {
   "name": "@blastjs/blast",
   "summary": "Reactive Templating library",
-  "version": "2.4.1",
-  "main": "./dist/blast.js",
+  "version": "2.4.2",
+  "main": "./dist/index.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
     "test:watch": "jest --watch",

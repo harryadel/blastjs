@@ -1,10 +1,10 @@
 import { ReactiveVar } from '@blastjs/reactive-var';
 import { Blast } from './preamble';
 
-const UI = Blast;
+// const UI = Blast;
 
 Blast.ReactiveVar = ReactiveVar;
-UI._templateInstance = Blast.Template.instance;
+// UI._templateInstance = Blast.Template.instance;
 
 export const Handlebars = {};
 Handlebars.registerHelper = Blast.registerHelper;
