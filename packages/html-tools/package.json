@@ -4,12 +4,12 @@
   "version": "0.1.1",
   "main": "dist/main.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
     "test:watch": "jest --watch",
     "watch": "watch 'npm run build' src",
     "clean": "rimraf ./dist",
     "build": "cross-env BABEL_ENV=production babel src --out-dir ./dist",
-    "prepublish": "npm run clean && npm run build"
+    "prepublish": "npm run test && npm run clean && npm run build"
   },
   "dependencies": {
     "@blastjs/htmljs": "^0.1.0"
