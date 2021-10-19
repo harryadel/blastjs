@@ -1,4 +1,4 @@
-import { Tracker } from 'standalone-tracker';
+import { Tracker } from '@blastjs/tracker';
 import { Blaze } from './preamble';
 
 // [new] Blaze.Template([viewName], renderFunction)

@@ -1,5 +1,5 @@
-import { Tracker } from 'standalone-tracker';
-import { MongoID } from 'standalone-mongo-id';
+import { Tracker } from '@blastjs/tracker';
+import { MongoID } from '@blastjs/mongo-id';
 import { Session } from '../src/session';
 
 test('session - setDefault', () => {

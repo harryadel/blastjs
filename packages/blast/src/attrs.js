@@ -1,7 +1,7 @@
-import { OrderedDict } from 'standalone-ordered-dict';
+import { OrderedDict } from '@blastjs/ordered-dict';
 import { Blaze } from './preamble';
 
-var jsUrlsAllowed = false;
+let jsUrlsAllowed = false;
 Blaze._allowJavascriptUrls = function () {
   jsUrlsAllowed = true;
 };
@@ -40,22 +40,20 @@ Blaze._AttributeHandler = AttributeHandler;
 
 AttributeHandler.prototype.update = function (element, oldValue, value) {
   if (value === null) {
-    if (oldValue !== null)
-      element.removeAttribute(this.name);
+    if (oldValue !== null) { element.removeAttribute(this.name); }
   } else {
     element.setAttribute(this.name, value);
   }
 };
 
 AttributeHandler.extend = function (options) {
-  var curType = this;
-  var subType = function AttributeHandlerSubtype(/*arguments*/) {
+  const curType = this;
+  const subType = function AttributeHandlerSubtype(/* arguments */) {
     AttributeHandler.apply(this, arguments);
   };
-  subType.prototype = new curType;
+  subType.prototype = new curType();
   subType.extend = curType.extend;
-  if (options)
-   Object.assign(subType.prototype, options);
+  if (options) { Object.assign(subType.prototype, options); }
   return subType;
 };
 
@@ -69,20 +67,19 @@ AttributeHandler.extend = function (options) {
 // Extended below to support classes, SVG elements and styles.
 
 Blaze._DiffingAttributeHandler = AttributeHandler.extend({
-  update: function (element, oldValue, value) {
-    if (!this.getCurrentValue || !this.setValue || !this.parseValue || !this.joinValues)
-      throw new Error("Missing methods in subclass of 'DiffingAttributeHandler'");
+  update(element, oldValue, value) {
+    if (!this.getCurrentValue || !this.setValue || !this.parseValue || !this.joinValues) throw new Error("Missing methods in subclass of 'DiffingAttributeHandler'");
 
-    var oldAttrsMap = oldValue ? this.parseValue(oldValue) : new OrderedDict();
-    var attrsMap = value ? this.parseValue(value) : new OrderedDict();
+    const oldAttrsMap = oldValue ? this.parseValue(oldValue) : new OrderedDict();
+    const attrsMap = value ? this.parseValue(value) : new OrderedDict();
 
     // the current attributes on the element, which we will mutate.
 
-    var currentAttrString = this.getCurrentValue(element);
-    var currentAttrsMap = currentAttrString ? this.parseValue(currentAttrString) : new OrderedDict();
+    const currentAttrString = this.getCurrentValue(element);
+    const currentAttrsMap = currentAttrString ? this.parseValue(currentAttrString) : new OrderedDict();
 
     // Any outside changes to attributes we add at the end.
-    currentAttrsMap.forEach(function (value, key, i) {
+    currentAttrsMap.forEach((value, key, i) => {
       // If the key already exists, we do not use the current value, but the new value.
       if (attrsMap.has(key)) {
         return;
@@ -97,55 +94,55 @@ Blaze._DiffingAttributeHandler = AttributeHandler.extend({
       attrsMap.append(key, value);
     });
 
-    var values = [];
-    attrsMap.forEach(function (value, key, i) {
+    const values = [];
+    attrsMap.forEach((value, key, i) => {
       values.push(value);
     });
 
     this.setValue(element, this.joinValues(values));
-  }
+  },
 });
 
-var ClassHandler = Blaze._DiffingAttributeHandler.extend({
+const ClassHandler = Blaze._DiffingAttributeHandler.extend({
   // @param rawValue {String}
-  getCurrentValue: function (element) {
+  getCurrentValue(element) {
     return element.className;
   },
-  setValue: function (element, className) {
+  setValue(element, className) {
     element.className = className;
   },
-  parseValue: function (attrString) {
-    var tokens = new OrderedDict();
+  parseValue(attrString) {
+    const tokens = new OrderedDict();
 
-    attrString.split(' ').forEach(function(token) {
+    attrString.split(' ').forEach((token) => {
       if (token) {
         // Ordered dict requires unique keys.
-        if (! tokens.has(token)) {
+        if (!tokens.has(token)) {
           tokens.append(token, token);
         }
       }
     });
     return tokens;
   },
-  joinValues: function (values) {
+  joinValues(values) {
     return values.join(' ');
-  }
+  },
 });
 
-var SVGClassHandler = ClassHandler.extend({
-  getCurrentValue: function (element) {
+const SVGClassHandler = ClassHandler.extend({
+  getCurrentValue(element) {
     return element.className.baseVal;
   },
-  setValue: function (element, className) {
+  setValue(element, className) {
     element.setAttribute('class', className);
-  }
+  },
 });
 
-var StyleHandler = Blaze._DiffingAttributeHandler.extend({
-  getCurrentValue: function (element) {
+const StyleHandler = Blaze._DiffingAttributeHandler.extend({
+  getCurrentValue(element) {
     return element.getAttribute('style');
   },
-  setValue: function (element, style) {
+  setValue(element, style) {
     if (style === '') {
       element.removeAttribute('style');
     } else {
@@ -157,13 +154,13 @@ var StyleHandler = Blaze._DiffingAttributeHandler.extend({
   //
   // Example:
   // "color:red; foo:12px" produces a token {color: "color:red", foo:"foo:12px"}
-  parseValue: function (attrString) {
-    var tokens = new OrderedDict();
+  parseValue(attrString) {
+    const tokens = new OrderedDict();
 
     // Regex for parsing a css attribute declaration, taken from css-parse:
     // https://github.com/reworkcss/css-parse/blob/7cef3658d0bba872cde05a85339034b187cb3397/index.js#L219
-    var regex = /(\*?[-#\/\*\\\w]+(?:\[[0-9a-z_-]+\])?)\s*:\s*(?:\'(?:\\\'|.)*?\'|"(?:\\"|.)*?"|\([^\)]*?\)|[^};])+[;\s]*/g;
-    var match = regex.exec(attrString);
+    const regex = /(\*?[-#\/\*\\\w]+(?:\[[0-9a-z_-]+\])?)\s*:\s*(?:\'(?:\\\'|.)*?\'|"(?:\\"|.)*?"|\([^\)]*?\)|[^};])+[;\s]*/g;
+    let match = regex.exec(attrString);
     while (match) {
       // match[0] = entire matching string
       // match[1] = css property
@@ -182,56 +179,53 @@ var StyleHandler = Blaze._DiffingAttributeHandler.extend({
     return tokens;
   },
 
-  joinValues: function (values) {
+  joinValues(values) {
     // TODO: Assure that there is always ; between values. But what is an example where it breaks?
     return values.join(' ');
-  }
+  },
 });
 
-var BooleanHandler = AttributeHandler.extend({
-  update: function (element, oldValue, value) {
-    var name = this.name;
+const BooleanHandler = AttributeHandler.extend({
+  update(element, oldValue, value) {
+    const { name } = this;
     if (value == null) {
-      if (oldValue != null)
-        element[name] = false;
+      if (oldValue != null) element[name] = false;
     } else {
       element[name] = true;
     }
-  }
+  },
 });
 
-var DOMPropertyHandler = AttributeHandler.extend({
-  update: function (element, oldValue, value) {
-    var name = this.name;
-    if (value !== element[name])
-      element[name] = value;
-  }
+const DOMPropertyHandler = AttributeHandler.extend({
+  update(element, oldValue, value) {
+    const { name } = this;
+    if (value !== element[name]) element[name] = value;
+  },
 });
 
 // attributes of the type 'xlink:something' should be set using
 // the correct namespace in order to work
-var XlinkHandler = AttributeHandler.extend({
-  update: function(element, oldValue, value) {
-    var NS = 'http://www.w3.org/1999/xlink';
+const XlinkHandler = AttributeHandler.extend({
+  update(element, oldValue, value) {
+    const NS = 'http://www.w3.org/1999/xlink';
     if (value === null) {
-      if (oldValue !== null)
-        element.removeAttributeNS(NS, this.name);
+      if (oldValue !== null) element.removeAttributeNS(NS, this.name);
     } else {
       element.setAttributeNS(NS, this.name, this.value);
     }
-  }
+  },
 });
 
 // cross-browser version of `instanceof SVGElement`
-var isSVGElement = function (elem) {
+const isSVGElement = function (elem) {
   return 'ownerSVGElement' in elem;
 };
 
-var isUrlAttribute = function (tagName, attrName) {
+const isUrlAttribute = function (tagName, attrName) {
   // Compiled from http://www.w3.org/TR/REC-html40/index/attributes.html
   // and
   // http://www.w3.org/html/wg/drafts/html/master/index.html#attributes-1
-  var urlAttrs = {
+  const urlAttrs = {
     FORM: ['action'],
     BODY: ['background'],
     BLOCKQUOTE: ['cite'],
@@ -254,14 +248,14 @@ var isUrlAttribute = function (tagName, attrName) {
     BASE: ['href'],
     MENUITEM: ['icon'],
     HTML: ['manifest'],
-    VIDEO: ['poster']
+    VIDEO: ['poster'],
   };
 
   if (attrName === 'itemid') {
     return true;
   }
 
-  var urlAttrNames = urlAttrs[tagName] || [];
+  const urlAttrNames = urlAttrs[tagName] || [];
   return urlAttrNames.includes(attrName);
 };
 
@@ -272,13 +266,12 @@ if (typeof window === 'object') {
   var anchorForNormalization = document.createElement('A');
 }
 
-var getUrlProtocol = function (url) {
+const getUrlProtocol = function (url) {
   if (typeof window === 'object') {
     anchorForNormalization.href = url;
-    return (anchorForNormalization.protocol || "").toLowerCase();
-  } else {
-    throw new Error('getUrlProtocol not implemented on the server');
+    return (anchorForNormalization.protocol || '').toLowerCase();
   }
+  throw new Error('getUrlProtocol not implemented on the server');
 };
 
 // UrlHandler is an attribute handler for all HTML attributes that take
@@ -286,28 +279,28 @@ var getUrlProtocol = function (url) {
 // Blaze._allowJavascriptUrls() has been called. To detect javascript:
 // urls, we set the attribute on a dummy anchor element and then read
 // out the 'protocol' property of the attribute.
-var origUpdate = AttributeHandler.prototype.update;
-var UrlHandler = AttributeHandler.extend({
-  update: function (element, oldValue, value) {
-    var self = this;
-    var args = arguments;
+const origUpdate = AttributeHandler.prototype.update;
+const UrlHandler = AttributeHandler.extend({
+  update(element, oldValue, value) {
+    const self = this;
+    const args = arguments;
 
     if (Blaze._javascriptUrlsAllowed()) {
       origUpdate.apply(self, args);
     } else {
-      var isJavascriptProtocol = (getUrlProtocol(value) === "javascript:");
-      var isVBScriptProtocol   = (getUrlProtocol(value) === "vbscript:");
+      const isJavascriptProtocol = (getUrlProtocol(value) === 'javascript:');
+      const isVBScriptProtocol = (getUrlProtocol(value) === 'vbscript:');
       if (isJavascriptProtocol || isVBScriptProtocol) {
-        Blaze._warn("URLs that use the 'javascript:' or 'vbscript:' protocol are not " +
-                    "allowed in URL attribute values. " +
-                    "Call Blaze._allowJavascriptUrls() " +
-                    "to enable them.");
+        Blaze._warn("URLs that use the 'javascript:' or 'vbscript:' protocol are not "
+                    + 'allowed in URL attribute values. '
+                    + 'Call Blaze._allowJavascriptUrls() '
+                    + 'to enable them.');
         origUpdate.apply(self, [element, oldValue, null]);
       } else {
         origUpdate.apply(self, args);
       }
     }
-  }
+  },
 });
 
 // XXX make it possible for users to register attribute handlers!
@@ -317,27 +310,25 @@ Blaze._makeAttributeHandler = function (elem, name, value) {
   if (name === 'class') {
     if (isSVGElement(elem)) {
       return new SVGClassHandler(name, value);
-    } else {
-      return new ClassHandler(name, value);
     }
-  } else if (name === 'style') {
+    return new ClassHandler(name, value);
+  } if (name === 'style') {
     return new StyleHandler(name, value);
-  } else if ((elem.tagName === 'OPTION' && name === 'selected') ||
-             (elem.tagName === 'INPUT' && name === 'checked') ||
-             (elem.tagName === 'VIDEO' && name === 'muted')) {
+  } if ((elem.tagName === 'OPTION' && name === 'selected')
+             || (elem.tagName === 'INPUT' && name === 'checked')
+             || (elem.tagName === 'VIDEO' && name === 'muted')) {
     return new BooleanHandler(name, value);
-  } else if ((elem.tagName === 'TEXTAREA' || elem.tagName === 'INPUT')
+  } if ((elem.tagName === 'TEXTAREA' || elem.tagName === 'INPUT')
              && name === 'value') {
     // internally, TEXTAREAs tracks their value in the 'value'
     // attribute just like INPUTs.
     return new DOMPropertyHandler(name, value);
-  } else if (name.substring(0,6) === 'xlink:') {
+  } if (name.substring(0, 6) === 'xlink:') {
     return new XlinkHandler(name.substring(6), value);
-  } else if (isUrlAttribute(elem.tagName, name)) {
+  } if (isUrlAttribute(elem.tagName, name)) {
     return new UrlHandler(name, value);
-  } else {
-    return new AttributeHandler(name, value);
   }
+  return new AttributeHandler(name, value);
 
   // XXX will need one for 'style' on IE, though modern browsers
   // seem to handle setAttribute ok.

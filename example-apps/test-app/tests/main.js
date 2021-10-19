@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 import { expect } from 'chai';
 import { Tracker as _Tracker } from 'meteor/tracker';
-import { Tracker } from 'standalone-tracker';
+import { Tracker } from '@blastjs/tracker';
 import { suppressLog } from 'standalone-tracker/src/debug';
 
 it('is not equal Meteor Tracker', () => {

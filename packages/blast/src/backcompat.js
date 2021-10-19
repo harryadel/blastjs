@@ -1,5 +1,5 @@
+import { ReactiveVar } from '@blastjs/reactive-var';
 import { Blaze } from './preamble';
-import { ReactiveVar } from 'standalone-reactive-var';
 
 // const UI = Blaze;
 

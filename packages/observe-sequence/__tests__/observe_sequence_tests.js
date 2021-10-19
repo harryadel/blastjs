@@ -1,7 +1,7 @@
-import { Tracker } from "standalone-tracker";
-import { ObserveSequence } from '../src/observe_sequence'
+import { Tracker } from '@blastjs/tracker';
 import EJSON from 'ejson';
 import toArray from 'lodash.toarray';
+import { ObserveSequence } from '../src/observe_sequence';
 
 // Run a function named `run` which modifies a sequence. While it
 // executes, observe changes to the sequence and accumulate them in an
@@ -18,16 +18,15 @@ import toArray from 'lodash.toarray';
 //     elements are objects eg {addedAt: [array of arguments]}
 // @param numExpectedWarnings {Number}
 const runOneObserveSequenceTestCase = function (test, sequenceFunc, run, expectedCallbacks, numExpectedWarnings) {
-  if (numExpectedWarnings)
-    ObserveSequence._suppressWarnings += numExpectedWarnings;
+  if (numExpectedWarnings) { ObserveSequence._suppressWarnings += numExpectedWarnings; }
 
-  var firedCallbacks = [];
-  var handle = ObserveSequence.observe(sequenceFunc, {
-    addedAt: function () {
+  const firedCallbacks = [];
+  const handle = ObserveSequence.observe(sequenceFunc, {
+    addedAt() {
       firedCallbacks.push({ addedAt: toArray(arguments) });
     },
-    changedAt: function () {
-      var obj = { changedAt: toArray(arguments) };
+    changedAt() {
+      const obj = { changedAt: toArray(arguments) };
 
       // Browsers are inconsistent about the order in which 'changedAt'
       // callbacks fire. To ensure consistent behavior of these tests,
@@ -36,24 +35,21 @@ const runOneObserveSequenceTestCase = function (test, sequenceFunc, run, expecte
       // to place `obj` in a canonical position within the chunk of
       // contiguously recently fired 'changedAt' callbacks.
       for (var i = firedCallbacks.length; i > 0; i--) {
+        const compareTo = firedCallbacks[i - 1];
+        if (!compareTo.changedAt) break;
 
-        var compareTo = firedCallbacks[i - 1];
-        if (!compareTo.changedAt)
-          break;
-
-        if (EJSON.stringify(compareTo, { canonical: true }) <
-          EJSON.stringify(obj, { canonical: true }))
-          break;
+        if (EJSON.stringify(compareTo, { canonical: true })
+          < EJSON.stringify(obj, { canonical: true })) break;
       }
 
       firedCallbacks.splice(i, 0, obj);
     },
-    removedAt: function () {
+    removedAt() {
       firedCallbacks.push({ removedAt: toArray(arguments) });
     },
-    movedTo: function () {
+    movedTo() {
       firedCallbacks.push({ movedTo: toArray(arguments) });
-    }
+    },
   });
 
   run();
@@ -69,31 +65,32 @@ const runOneObserveSequenceTestCase = function (test, sequenceFunc, run, expecte
   // assert non-equality and then replace the appropriate entries in
   // the 'firedCallbacks' array with `{NOT: "foo"}` before calling
   // `test.equal` below.
-  var commonLength = Math.min(firedCallbacks.length, expectedCallbacks.length);
+  const commonLength = Math.min(firedCallbacks.length, expectedCallbacks.length);
   for (var i = 0; i < commonLength; i++) {
-    var callback = expectedCallbacks[i];
-    if (Object.keys(callback).length !== 1)
-      throw new Error("Callbacks should be objects with one key, eg `addedAt`");
+    const callback = expectedCallbacks[i];
+    if (Object.keys(callback).length !== 1) { throw new Error('Callbacks should be objects with one key, eg `addedAt`'); }
     var callbackName = Object.keys(callback)[0];
-    var args = Object.values(callback)[0];
-    args.forEach(function (arg, argIndex) {
-      if (arg && typeof arg === 'object' &&
-        'NOT' in arg &&
-        firedCallbacks[i][callbackName]) {
+    const args = Object.values(callback)[0];
+    args.forEach((arg, argIndex) => {
+      if (arg && typeof arg === 'object'
+        && 'NOT' in arg
+        && firedCallbacks[i][callbackName]) {
         expect(firedCallbacks[i][callbackName][argIndex]).not.toEqual(
-          arg.NOT, "Should be NOT " + arg.NOT);
+          arg.NOT, `Should be NOT ${arg.NOT}`,
+        );
         firedCallbacks[i][callbackName][argIndex] = arg;
       }
     });
   }
 
-  var compress = function (str) {
-    return str.replace(/\[\n\s*/gm, "[").replace(/\{\n\s*/gm, "{").
-      replace(/\n\s*\]/gm, "]").replace(/\n\s*\}/gm, "}");
+  const compress = function (str) {
+    return str.replace(/\[\n\s*/gm, '[').replace(/\{\n\s*/gm, '{')
+      .replace(/\n\s*\]/gm, ']').replace(/\n\s*\}/gm, '}');
   };
 
   expect(compress(EJSON.stringify(firedCallbacks, { canonical: true, indent: true }))).toEqual(
-    compress(EJSON.stringify(expectedCallbacks, { canonical: true, indent: true })));
+    compress(EJSON.stringify(expectedCallbacks, { canonical: true, indent: true })),
+  );
 };
 
 // ArraySubClass return an array that is a sub-class
@@ -118,21 +115,21 @@ const ArraySubclass = (function (superClass) {
   }
 
   return ArraySubclass;
-
-})(Array);
+}(Array));
 
 // runInVM creates returns the result of an eval in another
 // context (iframe).  Used to return a 'new Array(1,2,3)' that
 // is not an instanceof Array in the global context.
 function runInVM(code) {
-  var iframe = document.createElement('iframe');
+  const iframe = document.createElement('iframe');
   if (!iframe.style) iframe.style = {};
   iframe.style.display = 'none';
 
   document.body.appendChild(iframe);
 
-  var win = iframe.contentWindow;
-  var wEval = win.eval, wExecScript = win.execScript;
+  const win = iframe.contentWindow;
+  let wEval = win.eval; const
+    wExecScript = win.execScript;
 
   if (!wEval && wExecScript) {
     // win.eval() magically appears when this is called in IE:
@@ -140,7 +137,7 @@ function runInVM(code) {
     wEval = win.eval;
   }
 
-  var res = wEval.call(win, code);
+  const res = wEval.call(win, code);
 
   document.body.removeChild(iframe);
 
@@ -210,210 +207,208 @@ function runInVM(code) {
 //   ], /*numExpectedWarnings = */1);
 // });
 
-test('observe-sequence - array to other array', function () {
-  var dep = new Tracker.Dependency;
-  var seq = [{ _id: "13", foo: 1 }, { _id: "37", bar: 2 }];
+test('observe-sequence - array to other array', () => {
+  const dep = new Tracker.Dependency();
+  let seq = [{ _id: '13', foo: 1 }, { _id: '37', bar: 2 }];
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
-    seq = [{ _id: "13", foo: 1 }, { _id: "38", bar: 2 }];
+  }, () => {
+    seq = [{ _id: '13', foo: 1 }, { _id: '38', bar: 2 }];
     dep.changed();
   }, [
-    { addedAt: ["13", { _id: "13", foo: 1 }, 0, null] },
-    { addedAt: ["37", { _id: "37", bar: 2 }, 1, null] },
-    { removedAt: ["37", { _id: "37", bar: 2 }, 1] },
-    { addedAt: ["38", { _id: "38", bar: 2 }, 1, null] },
-    { changedAt: ["13", { _id: "13", foo: 1 }, { _id: "13", foo: 1 }, 0] }
+    { addedAt: ['13', { _id: '13', foo: 1 }, 0, null] },
+    { addedAt: ['37', { _id: '37', bar: 2 }, 1, null] },
+    { removedAt: ['37', { _id: '37', bar: 2 }, 1] },
+    { addedAt: ['38', { _id: '38', bar: 2 }, 1, null] },
+    { changedAt: ['13', { _id: '13', foo: 1 }, { _id: '13', foo: 1 }, 0] },
   ]);
 });
 
-test('observe-sequence - array to other array, strings', function () {
-  var dep = new Tracker.Dependency;
-  var seq = ["A", "B"];
+test('observe-sequence - array to other array, strings', () => {
+  const dep = new Tracker.Dependency();
+  let seq = ['A', 'B'];
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
-    seq = ["B", "C"];
+  }, () => {
+    seq = ['B', 'C'];
     dep.changed();
   }, [
-    { addedAt: ["-A", "A", 0, null] },
-    { addedAt: ["-B", "B", 1, null] },
-    { removedAt: ["-A", "A", 0] },
-    { addedAt: ["-C", "C", 1, null] }
+    { addedAt: ['-A', 'A', 0, null] },
+    { addedAt: ['-B', 'B', 1, null] },
+    { removedAt: ['-A', 'A', 0] },
+    { addedAt: ['-C', 'C', 1, null] },
   ]);
 });
 
-test('observe-sequence - bug #7850 array with null values', function () {
-  runOneObserveSequenceTestCase(test, function () {
-    return [1, null];
-  }, function () { }, [
+test('observe-sequence - bug #7850 array with null values', () => {
+  runOneObserveSequenceTestCase(test, () => [1, null], () => { }, [
     { addedAt: [1, 1, 0, null] },
-    { addedAt: [null, null, 1, null] }
+    { addedAt: [null, null, 1, null] },
   ]);
 });
 
-test('observe-sequence - array to other array, objects without ids', function () {
-  var dep = new Tracker.Dependency;
-  var seq = [{ foo: 1 }, { bar: 2 }];
+test('observe-sequence - array to other array, objects without ids', () => {
+  const dep = new Tracker.Dependency();
+  let seq = [{ foo: 1 }, { bar: 2 }];
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
+  }, () => {
     seq = [{ foo: 2 }];
     dep.changed();
   }, [
     { addedAt: [0, { foo: 1 }, 0, null] },
     { addedAt: [1, { bar: 2 }, 1, null] },
     { removedAt: [1, { bar: 2 }, 1] },
-    { changedAt: [0, { foo: 2 }, { foo: 1 }, 0] }
+    { changedAt: [0, { foo: 2 }, { foo: 1 }, 0] },
   ]);
 });
 
-test('observe-sequence - array to other array, changes', function () {
-  var dep = new Tracker.Dependency;
-  var seq = [{ _id: "13", foo: 1 }, { _id: "37", bar: 2 }, { _id: "42", baz: 42 }];
+test('observe-sequence - array to other array, changes', () => {
+  const dep = new Tracker.Dependency();
+  let seq = [{ _id: '13', foo: 1 }, { _id: '37', bar: 2 }, { _id: '42', baz: 42 }];
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
-    seq = [{ _id: "13", foo: 1 }, { _id: "38", bar: 2 }, { _id: "42", baz: 43 }];
+  }, () => {
+    seq = [{ _id: '13', foo: 1 }, { _id: '38', bar: 2 }, { _id: '42', baz: 43 }];
     dep.changed();
   }, [
-    { addedAt: ["13", { _id: "13", foo: 1 }, 0, null] },
-    { addedAt: ["37", { _id: "37", bar: 2 }, 1, null] },
-    { addedAt: ["42", { _id: "42", baz: 42 }, 2, null] },
-    { removedAt: ["37", { _id: "37", bar: 2 }, 1] },
-    { addedAt: ["38", { _id: "38", bar: 2 }, 1, "42"] },
+    { addedAt: ['13', { _id: '13', foo: 1 }, 0, null] },
+    { addedAt: ['37', { _id: '37', bar: 2 }, 1, null] },
+    { addedAt: ['42', { _id: '42', baz: 42 }, 2, null] },
+    { removedAt: ['37', { _id: '37', bar: 2 }, 1] },
+    { addedAt: ['38', { _id: '38', bar: 2 }, 1, '42'] },
     // change fires for all elements, because we don't diff the actual
     // objects.
-    { changedAt: ["13", { _id: "13", foo: 1 }, { _id: "13", foo: 1 }, 0] },
-    { changedAt: ["42", { _id: "42", baz: 43 }, { _id: "42", baz: 42 }, 2] }
+    { changedAt: ['13', { _id: '13', foo: 1 }, { _id: '13', foo: 1 }, 0] },
+    { changedAt: ['42', { _id: '42', baz: 43 }, { _id: '42', baz: 42 }, 2] },
   ]);
 });
 
-test('observe-sequence - array to other array, movedTo', function () {
-  var dep = new Tracker.Dependency;
-  var seq = [{ _id: "13", foo: 1 }, { _id: "37", bar: 2 }, { _id: "42", baz: 42 }, { _id: "43", baz: 43 }];
+test('observe-sequence - array to other array, movedTo', () => {
+  const dep = new Tracker.Dependency();
+  let seq = [{ _id: '13', foo: 1 }, { _id: '37', bar: 2 }, { _id: '42', baz: 42 }, { _id: '43', baz: 43 }];
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
-    seq = [{ _id: "43", baz: 43 }, { _id: "37", bar: 2 }, { _id: "42", baz: 42 }, { _id: "13", foo: 1 }];
+  }, () => {
+    seq = [{ _id: '43', baz: 43 }, { _id: '37', bar: 2 }, { _id: '42', baz: 42 }, { _id: '13', foo: 1 }];
     dep.changed();
   }, [
-    { addedAt: ["13", { _id: "13", foo: 1 }, 0, null] },
-    { addedAt: ["37", { _id: "37", bar: 2 }, 1, null] },
-    { addedAt: ["42", { _id: "42", baz: 42 }, 2, null] },
-    { addedAt: ["43", { _id: "43", baz: 43 }, 3, null] },
+    { addedAt: ['13', { _id: '13', foo: 1 }, 0, null] },
+    { addedAt: ['37', { _id: '37', bar: 2 }, 1, null] },
+    { addedAt: ['42', { _id: '42', baz: 42 }, 2, null] },
+    { addedAt: ['43', { _id: '43', baz: 43 }, 3, null] },
 
-    { movedTo: ["43", { _id: "43", baz: 43 }, 3, 1, "37"] },
-    { movedTo: ["13", { _id: "13", foo: 1 }, 0, 3, null] },
+    { movedTo: ['43', { _id: '43', baz: 43 }, 3, 1, '37'] },
+    { movedTo: ['13', { _id: '13', foo: 1 }, 0, 3, null] },
 
-    { changedAt: ["13", { _id: "13", foo: 1 }, { _id: "13", foo: 1 }, 3] },
-    { changedAt: ["37", { _id: "37", bar: 2 }, { _id: "37", bar: 2 }, 1] },
-    { changedAt: ["42", { _id: "42", baz: 42 }, { _id: "42", baz: 42 }, 2] },
-    { changedAt: ["43", { _id: "43", baz: 43 }, { _id: "43", baz: 43 }, 0] }
+    { changedAt: ['13', { _id: '13', foo: 1 }, { _id: '13', foo: 1 }, 3] },
+    { changedAt: ['37', { _id: '37', bar: 2 }, { _id: '37', bar: 2 }, 1] },
+    { changedAt: ['42', { _id: '42', baz: 42 }, { _id: '42', baz: 42 }, 2] },
+    { changedAt: ['43', { _id: '43', baz: 43 }, { _id: '43', baz: 43 }, 0] },
   ]);
 });
 
-test('observe-sequence - array to other array, movedTo the end', function () {
-  var dep = new Tracker.Dependency;
-  var seq = [{ _id: "0" }, { _id: "1" }, { _id: "2" }, { _id: "3" }];
+test('observe-sequence - array to other array, movedTo the end', () => {
+  const dep = new Tracker.Dependency();
+  let seq = [{ _id: '0' }, { _id: '1' }, { _id: '2' }, { _id: '3' }];
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
-    seq = [{ _id: "0" }, { _id: "2" }, { _id: "3" }, { _id: "1" }];
+  }, () => {
+    seq = [{ _id: '0' }, { _id: '2' }, { _id: '3' }, { _id: '1' }];
     dep.changed();
   }, [
-    { addedAt: ["0", { _id: "0" }, 0, null] },
-    { addedAt: ["1", { _id: "1" }, 1, null] },
-    { addedAt: ["2", { _id: "2" }, 2, null] },
-    { addedAt: ["3", { _id: "3" }, 3, null] },
+    { addedAt: ['0', { _id: '0' }, 0, null] },
+    { addedAt: ['1', { _id: '1' }, 1, null] },
+    { addedAt: ['2', { _id: '2' }, 2, null] },
+    { addedAt: ['3', { _id: '3' }, 3, null] },
 
-    { movedTo: ["1", { _id: "1" }, 1, 3, null] },
-    { changedAt: ["0", { _id: "0" }, { _id: "0" }, 0] },
-    { changedAt: ["1", { _id: "1" }, { _id: "1" }, 3] },
-    { changedAt: ["2", { _id: "2" }, { _id: "2" }, 1] },
-    { changedAt: ["3", { _id: "3" }, { _id: "3" }, 2] }
+    { movedTo: ['1', { _id: '1' }, 1, 3, null] },
+    { changedAt: ['0', { _id: '0' }, { _id: '0' }, 0] },
+    { changedAt: ['1', { _id: '1' }, { _id: '1' }, 3] },
+    { changedAt: ['2', { _id: '2' }, { _id: '2' }, 1] },
+    { changedAt: ['3', { _id: '3' }, { _id: '3' }, 2] },
   ]);
 });
 
-test('observe-sequence - array to other array, movedTo later position but not the latest #2845', function () {
-  var dep = new Tracker.Dependency;
-  var seq = [{ _id: "0" }, { _id: "1" }, { _id: "2" }, { _id: "3" }];
+test('observe-sequence - array to other array, movedTo later position but not the latest #2845', () => {
+  const dep = new Tracker.Dependency();
+  let seq = [{ _id: '0' }, { _id: '1' }, { _id: '2' }, { _id: '3' }];
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
-    seq = [{ _id: "1" }, { _id: "2" }, { _id: "0" }, { _id: "3" }];
+  }, () => {
+    seq = [{ _id: '1' }, { _id: '2' }, { _id: '0' }, { _id: '3' }];
     dep.changed();
   }, [
-    { addedAt: ["0", { _id: "0" }, 0, null] },
-    { addedAt: ["1", { _id: "1" }, 1, null] },
-    { addedAt: ["2", { _id: "2" }, 2, null] },
-    { addedAt: ["3", { _id: "3" }, 3, null] },
+    { addedAt: ['0', { _id: '0' }, 0, null] },
+    { addedAt: ['1', { _id: '1' }, 1, null] },
+    { addedAt: ['2', { _id: '2' }, 2, null] },
+    { addedAt: ['3', { _id: '3' }, 3, null] },
 
-    { movedTo: ["0", { _id: "0" }, 0, 2, "3"] },
+    { movedTo: ['0', { _id: '0' }, 0, 2, '3'] },
 
-    { changedAt: ["0", { _id: "0" }, { _id: "0" }, 2] },
-    { changedAt: ["1", { _id: "1" }, { _id: "1" }, 0] },
-    { changedAt: ["2", { _id: "2" }, { _id: "2" }, 1] },
-    { changedAt: ["3", { _id: "3" }, { _id: "3" }, 3] }
+    { changedAt: ['0', { _id: '0' }, { _id: '0' }, 2] },
+    { changedAt: ['1', { _id: '1' }, { _id: '1' }, 0] },
+    { changedAt: ['2', { _id: '2' }, { _id: '2' }, 1] },
+    { changedAt: ['3', { _id: '3' }, { _id: '3' }, 3] },
   ]);
 });
 
-test('observe-sequence - array to other array, movedTo earlier position but not the first', function () {
-  var dep = new Tracker.Dependency;
-  var seq = [{ _id: "0" }, { _id: "1" }, { _id: "2" }, { _id: "3" }, { _id: "4" }];
+test('observe-sequence - array to other array, movedTo earlier position but not the first', () => {
+  const dep = new Tracker.Dependency();
+  let seq = [{ _id: '0' }, { _id: '1' }, { _id: '2' }, { _id: '3' }, { _id: '4' }];
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
-    seq = [{ _id: "0" }, { _id: "4" }, { _id: "1" }, { _id: "2" }, { _id: "3" }];
+  }, () => {
+    seq = [{ _id: '0' }, { _id: '4' }, { _id: '1' }, { _id: '2' }, { _id: '3' }];
     dep.changed();
   }, [
-    { addedAt: ["0", { _id: "0" }, 0, null] },
-    { addedAt: ["1", { _id: "1" }, 1, null] },
-    { addedAt: ["2", { _id: "2" }, 2, null] },
-    { addedAt: ["3", { _id: "3" }, 3, null] },
-    { addedAt: ["4", { _id: "4" }, 4, null] },
+    { addedAt: ['0', { _id: '0' }, 0, null] },
+    { addedAt: ['1', { _id: '1' }, 1, null] },
+    { addedAt: ['2', { _id: '2' }, 2, null] },
+    { addedAt: ['3', { _id: '3' }, 3, null] },
+    { addedAt: ['4', { _id: '4' }, 4, null] },
 
-    { movedTo: ["4", { _id: "4" }, 4, 1, "1"] },
+    { movedTo: ['4', { _id: '4' }, 4, 1, '1'] },
 
-    { changedAt: ["0", { _id: "0" }, { _id: "0" }, 0] },
-    { changedAt: ["1", { _id: "1" }, { _id: "1" }, 2] },
-    { changedAt: ["2", { _id: "2" }, { _id: "2" }, 3] },
-    { changedAt: ["3", { _id: "3" }, { _id: "3" }, 4] },
-    { changedAt: ["4", { _id: "4" }, { _id: "4" }, 1] }
+    { changedAt: ['0', { _id: '0' }, { _id: '0' }, 0] },
+    { changedAt: ['1', { _id: '1' }, { _id: '1' }, 2] },
+    { changedAt: ['2', { _id: '2' }, { _id: '2' }, 3] },
+    { changedAt: ['3', { _id: '3' }, { _id: '3' }, 4] },
+    { changedAt: ['4', { _id: '4' }, { _id: '4' }, 1] },
   ]);
 });
 
-test('observe-sequence - array to null', function () {
-  var dep = new Tracker.Dependency;
-  var seq = [{ _id: "13", foo: 1 }, { _id: "37", bar: 2 }];
+test('observe-sequence - array to null', () => {
+  const dep = new Tracker.Dependency();
+  let seq = [{ _id: '13', foo: 1 }, { _id: '37', bar: 2 }];
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
+  }, () => {
     seq = null;
     dep.changed();
   }, [
-    { addedAt: ["13", { _id: "13", foo: 1 }, 0, null] },
-    { addedAt: ["37", { _id: "37", bar: 2 }, 1, null] },
-    { removedAt: ["13", { _id: "13", foo: 1 }, 0] },
-    { removedAt: ["37", { _id: "37", bar: 2 }, 0] }
+    { addedAt: ['13', { _id: '13', foo: 1 }, 0, null] },
+    { addedAt: ['37', { _id: '37', bar: 2 }, 1, null] },
+    { removedAt: ['13', { _id: '13', foo: 1 }, 0] },
+    { removedAt: ['37', { _id: '37', bar: 2 }, 0] },
   ]);
 });
 
@@ -439,7 +434,6 @@ test('observe-sequence - array to null', function () {
 //     { changedAt: ["13", { _id: "13", foo: 1 }, { _id: "13", foo: 1 }, 0] }
 //   ]);
 // });
-
 
 // test('observe-sequence - cursor to null', function () {
 //   var dep = new Tracker.Dependency;
@@ -640,14 +634,14 @@ test('observe-sequence - array to null', function () {
 //   ]);
 // });
 
-test('observe-sequence - subclassed number arrays', function () {
-  var seq = new ArraySubclass(1, 1, 2);
-  var dep = new Tracker.Dependency;
+test('observe-sequence - subclassed number arrays', () => {
+  let seq = new ArraySubclass(1, 1, 2);
+  const dep = new Tracker.Dependency();
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
+  }, () => {
     seq = new ArraySubclass(1, 3, 2, 3);
     dep.changed();
   }, [
@@ -656,18 +650,18 @@ test('observe-sequence - subclassed number arrays', function () {
     { addedAt: [2, 2, 2, null] },
     { removedAt: [{ NOT: 1 }, 1, 1] },
     { addedAt: [3, 3, 1, 2] },
-    { addedAt: [{ NOT: 3 }, 3, 3, null] }
+    { addedAt: [{ NOT: 3 }, 3, 3, null] },
   ]);
 });
 
-test('observe-sequence - vm generated number arrays', function () {
-  var seq = runInVM('new Array(1, 1, 2)');
-  var dep = new Tracker.Dependency;
+test('observe-sequence - vm generated number arrays', () => {
+  let seq = runInVM('new Array(1, 1, 2)');
+  const dep = new Tracker.Dependency();
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
+  }, () => {
     seq = runInVM('new Array(1, 3, 2, 3)');
     dep.changed();
   }, [
@@ -676,23 +670,23 @@ test('observe-sequence - vm generated number arrays', function () {
     { addedAt: [2, 2, 2, null] },
     { removedAt: [{ NOT: 1 }, 1, 1] },
     { addedAt: [3, 3, 1, 2] },
-    { addedAt: [{ NOT: 3 }, 3, 3, null] }
+    { addedAt: [{ NOT: 3 }, 3, 3, null] },
   ]);
 });
 
-test('observe-sequence - number arrays, _id:0 correctly handled, no duplicate ids warning #4049', function () {
-  var seq = Array.from({length: 3}, (_, i) => i).map(function (i) { return { _id: i }; });
-  var dep = new Tracker.Dependency;
+test('observe-sequence - number arrays, _id:0 correctly handled, no duplicate ids warning #4049', () => {
+  let seq = Array.from({ length: 3 }, (_, i) => i).map((i) => ({ _id: i }));
+  const dep = new Tracker.Dependency();
 
-  runOneObserveSequenceTestCase(test, function () {
+  runOneObserveSequenceTestCase(test, () => {
     dep.depend();
     return seq;
-  }, function () {
+  }, () => {
     // There was a bug before fixing #4049 that 0 wouldn't be handled well as an
     // _id. An expression like `(item && item._id) || index` would incorrectly
     // return '2' for the last item because the _id is falsy (although it is not
     // undefined, but 0!).
-    seq = [1, 2, 0].map(function (i) { return { _id: i }; });
+    seq = [1, 2, 0].map((i) => ({ _id: i }));
     dep.changed();
   }, [
     { addedAt: [0, { _id: 0 }, 0, null] },
@@ -701,7 +695,7 @@ test('observe-sequence - number arrays, _id:0 correctly handled, no duplicate id
     { movedTo: [0, { _id: 0 }, 0, 2, null] },
     { changedAt: [0, { _id: 0 }, { _id: 0 }, 2] },
     { changedAt: [1, { _id: 1 }, { _id: 1 }, 0] },
-    { changedAt: [2, { _id: 2 }, { _id: 2 }, 1] }
+    { changedAt: [2, { _id: 2 }, { _id: 2 }, 1] },
   ]);
 });
 

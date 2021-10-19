@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
-import { Tracker } from 'standalone-tracker';
+import { Tracker } from '@blastjs/tracker';
 import EJSON from 'ejson';
-import { MongoID } from 'standalone-mongo-id';
+import { MongoID } from '@blastjs/mongo-id';
 
 EJSON.addType('oid', (str) => new MongoID.ObjectID(str));
 
