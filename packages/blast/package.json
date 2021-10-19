@@ -1,8 +1,7 @@
 {
   "name": "@blastjs/blast",
-  "summary": "Meteor Reactive Templating library",
+  "summary": "Reactive Templating library",
   "version": "2.4.0",
-  "git": "https://github.com/meteor/blaze.git",
   "main": "./dist/blast.js",
   "scripts": {
     "test": "jest",
