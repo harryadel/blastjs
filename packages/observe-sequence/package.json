@@ -16,8 +16,8 @@
     "lodash.foreach": "^4.5.0",
     "lodash.isobject": "^3.0.2",
     "lodash.toarray": "^4.4.0",
-    "@blastjs/mongo-id": "0.1.2",
-    "@blastjs/tracker": "1.0.1"
+    "@blastjs/mongo-id": "^0.1.2",
+    "@blastjs/tracker": "^1.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
