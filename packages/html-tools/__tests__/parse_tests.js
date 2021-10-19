@@ -1,4 +1,4 @@
-import { HTML } from 'htmljs';
+import { HTML } from '@blastjs/htmljs';
 import { HTMLTools } from '../src/main';
 
 const { Scanner } = HTMLTools;

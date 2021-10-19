@@ -1,7 +1,7 @@
 # HTMLjs
 
 HTMLjs is a small library for expressing HTML trees with a concise
-syntax.  It is used to render content in Blaze and to represent
+syntax.  It is used to render content in Blast and to represent
 templates during compilation.
 
 ```
@@ -24,7 +24,7 @@ The functions `UL`, `LI`, and `B` are constructors which
 return instances of `HTML.Tag`.  These tag objects can
 then be converted to an HTML string or directly into DOM nodes.
 
-The flexible structure of HTMLjs allows different kinds of Blaze
+The flexible structure of HTMLjs allows different kinds of Blast
 directives to be embedded in the tree.  HTMLjs does not know about
 these directives, which are considered "foreign objects."
 

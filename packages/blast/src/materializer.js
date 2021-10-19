@@ -1,5 +1,5 @@
 import has from 'lodash.has';
-import { HTML } from 'htmljs';
+import { HTML } from '@blastjs/htmljs';
 import { Blast } from './preamble';
 
 const ElementAttributesUpdater = function (elem) {
