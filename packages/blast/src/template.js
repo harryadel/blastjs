@@ -1,9 +1,9 @@
 import { Tracker } from '@blastjs/tracker';
-import { Blaze } from './preamble';
+import { Blast } from './preamble';
 
-// [new] Blaze.Template([viewName], renderFunction)
+// [new] Blast.Template([viewName], renderFunction)
 //
-// `Blaze.Template` is the class of templates, like `Template.foo` in
+// `Blast.Template` is the class of templates, like `Template.foo` in
 // Meteor, which is `instanceof Template`.
 //
 // `viewKind` is a string that looks like "Template.foo" for templates
@@ -16,10 +16,10 @@ import { Blaze } from './preamble';
  * @param {String} [viewName] Optional.  A name for Views constructed by this Template.  See [`view.name`](#view_name).
  * @param {Function} renderFunction A function that returns [*renderable content*](#Renderable-Content).  This function is used as the `renderFunction` for Views constructed by this Template.
  */
-Blaze.Template = function (viewName, renderFunction) {
-  if (!(this instanceof Blaze.Template))
+Blast.Template = function (viewName, renderFunction) {
+  if (!(this instanceof Blast.Template))
   // called without `new`
-  { return new Blaze.Template(viewName, renderFunction); }
+  { return new Blast.Template(viewName, renderFunction); }
 
   if (typeof viewName === 'function') {
     // omitted "viewName" argument
@@ -41,7 +41,7 @@ Blaze.Template = function (viewName, renderFunction) {
     destroyed: [],
   };
 };
-export const { Template } = Blaze;
+export const { Template } = Blast;
 
 var HelperMap = function () {};
 HelperMap.prototype.get = function (name) {
@@ -59,8 +59,8 @@ HelperMap.prototype.has = function (name) {
  * @locus Client
  * @param {Any} value The value to test.
  */
-Blaze.isTemplate = function (t) {
-  return (t instanceof Blaze.Template);
+Blast.isTemplate = function (t) {
+  return (t instanceof Blast.Template);
 };
 
 /**
@@ -125,7 +125,7 @@ const fireCallbacks = function (callbacks, template) {
 
 Template.prototype.constructView = function (contentFunc, elseFunc) {
   const self = this;
-  const view = Blaze.View(self.viewName, self.renderFunction);
+  const view = Blast.View(self.viewName, self.renderFunction);
   view.template = self;
 
   view.templateContentBlock = (
@@ -148,12 +148,12 @@ Template.prototype.constructView = function (contentFunc, elseFunc) {
       }
 
       self.__eventMaps.forEach((m) => {
-        Blaze._addEventMap(view, m, view);
+        Blast._addEventMap(view, m, view);
       });
     });
   }
 
-  view._templateInstance = new Blaze.TemplateInstance(view);
+  view._templateInstance = new Blast.TemplateInstance(view);
   view.templateInstance = function () {
     // Update data, firstNode, and lastNode, and return the TemplateInstance
     // object.
@@ -161,12 +161,12 @@ Template.prototype.constructView = function (contentFunc, elseFunc) {
 
     /**
      * @instance
-     * @memberOf Blaze.TemplateInstance
+     * @memberOf Blast.TemplateInstance
      * @name  data
      * @summary The data context of this instance's latest invocation.
      * @locus Client
      */
-    inst.data = Blaze.getData(view);
+    inst.data = Blast.getData(view);
 
     if (view._domrange && !view.isDestroyed) {
       inst.firstNode = view._domrange.firstNode();
@@ -228,32 +228,32 @@ Template.prototype.constructView = function (contentFunc, elseFunc) {
 /**
  * @class
  * @summary The class for template instances
- * @param {Blaze.View} view
+ * @param {Blast.View} view
  * @instanceName template
  */
-Blaze.TemplateInstance = function (view) {
-  if (!(this instanceof Blaze.TemplateInstance))
+Blast.TemplateInstance = function (view) {
+  if (!(this instanceof Blast.TemplateInstance))
   // called without `new`
-  { return new Blaze.TemplateInstance(view); }
+  { return new Blast.TemplateInstance(view); }
 
-  if (!(view instanceof Blaze.View)) { throw new Error('View required'); }
+  if (!(view instanceof Blast.View)) { throw new Error('View required'); }
 
   view._templateInstance = this;
 
   /**
    * @name view
-   * @memberOf Blaze.TemplateInstance
+   * @memberOf Blast.TemplateInstance
    * @instance
    * @summary The [View](../api/blaze.html#Blaze-View) object for this invocation of the template.
    * @locus Client
-   * @type {Blaze.View}
+   * @type {Blast.View}
    */
   this.view = view;
   this.data = null;
 
   /**
    * @name firstNode
-   * @memberOf Blaze.TemplateInstance
+   * @memberOf Blast.TemplateInstance
    * @instance
    * @summary The first top-level DOM node in this template instance.
    * @locus Client
@@ -263,7 +263,7 @@ Blaze.TemplateInstance = function (view) {
 
   /**
    * @name lastNode
-   * @memberOf Blaze.TemplateInstance
+   * @memberOf Blast.TemplateInstance
    * @instance
    * @summary The last top-level DOM node in this template instance.
    * @locus Client
@@ -288,7 +288,7 @@ Blaze.TemplateInstance = function (view) {
  * @param {String} selector The CSS selector to match, scoped to the template contents.
  * @returns {DOMNode[]}
  */
-Blaze.TemplateInstance.prototype.$ = function (selector) {
+Blast.TemplateInstance.prototype.$ = function (selector) {
   const { view } = this;
   if (!view._domrange) { throw new Error("Can't use $ on template instance with no DOM"); }
   return view._domrange.$(selector);
@@ -300,7 +300,7 @@ Blaze.TemplateInstance.prototype.$ = function (selector) {
  * @param {String} selector The CSS selector to match, scoped to the template contents.
  * @returns {DOMElement[]}
  */
-Blaze.TemplateInstance.prototype.findAll = function (selector) {
+Blast.TemplateInstance.prototype.findAll = function (selector) {
   return Array.prototype.slice.call(this.$(selector));
 };
 
@@ -310,7 +310,7 @@ Blaze.TemplateInstance.prototype.findAll = function (selector) {
  * @param {String} selector The CSS selector to match, scoped to the template contents.
  * @returns {DOMElement}
  */
-Blaze.TemplateInstance.prototype.find = function (selector) {
+Blast.TemplateInstance.prototype.find = function (selector) {
   const result = this.$(selector);
   return result[0] || null;
 };
@@ -320,7 +320,7 @@ Blaze.TemplateInstance.prototype.find = function (selector) {
  * @locus Client
  * @param {Function} runFunc The function to run. It receives one argument: a Tracker.Computation object.
  */
-Blaze.TemplateInstance.prototype.autorun = function (f) {
+Blast.TemplateInstance.prototype.autorun = function (f) {
   return this.view.autorun(f);
 };
 
@@ -343,7 +343,7 @@ Blaze.TemplateInstance.prototype.autorun = function (f) {
  * @param {DDP.Connection} [options.connection] The connection on which to make the
  * subscription.
  */
-Blaze.TemplateInstance.prototype.subscribe = function (/* arguments */) {
+Blast.TemplateInstance.prototype.subscribe = function (/* arguments */) {
   const self = this;
 
   const subHandles = self._subscriptionHandles;
@@ -423,7 +423,7 @@ Blaze.TemplateInstance.prototype.subscribe = function (/* arguments */) {
  * @return {Boolean} True if all subscriptions on this template instance are
  * ready.
  */
-Blaze.TemplateInstance.prototype.subscriptionsReady = function () {
+Blast.TemplateInstance.prototype.subscriptionsReady = function () {
   this._allSubsReadyDep.depend();
 
   this._allSubsReady = _.all(this._subscriptionHandles, (handle) => handle.ready());
@@ -461,7 +461,7 @@ const canUseGetters = (function () {
 }());
 
 if (canUseGetters) {
-  // Like Blaze.currentView but for the template instance. A function
+  // Like Blast.currentView but for the template instance. A function
   // rather than a value so that not all helpers are implicitly dependent
   // on the current template instance's `data` property, which would make
   // them dependent on the data context of the template inclusion.
@@ -523,10 +523,10 @@ Template.prototype.events = function (eventMap) {
     eventMap2[k] = (function (k, v) {
       return function (event/* , ... */) {
         const view = this; // passed by EventAugmenter
-        let data = Blaze.getData(event.currentTarget);
+        let data = Blast.getData(event.currentTarget);
         if (data == null) { data = {}; }
         const args = Array.prototype.slice.call(arguments);
-        const tmplInstanceFunc = Blaze._bind(view.templateInstance, view);
+        const tmplInstanceFunc = Blast._bind(view.templateInstance, view);
         args.splice(1, 0, tmplInstanceFunc());
 
         return Template._withTemplateInstanceFunc(tmplInstanceFunc, () => v.apply(data, args));
@@ -543,7 +543,7 @@ Template.prototype.events = function (eventMap) {
  * @memberOf Template
  * @summary The [template instance](#Template-instances) corresponding to the current template helper, event handler, callback, or autorun.  If there isn't one, `null`.
  * @locus Client
- * @returns {Blaze.TemplateInstance}
+ * @returns {Blast.TemplateInstance}
  * @importFromPackage templating
  */
 Template.instance = function () {
@@ -552,7 +552,7 @@ Template.instance = function () {
 };
 
 // Note: Template.currentData() is documented to take zero arguments,
-// while Blaze.getData takes up to one.
+// while Blast.getData takes up to one.
 
 /**
  * @summary
@@ -569,7 +569,7 @@ Template.instance = function () {
  * @function
  * @importFromPackage templating
  */
-Template.currentData = Blaze.getData;
+Template.currentData = Blast.getData;
 
 /**
  * @summary Accesses other data contexts that enclose the current data context.
@@ -578,7 +578,7 @@ Template.currentData = Blaze.getData;
  * @param {Integer} [numLevels] The number of levels beyond the current data context to look. Defaults to 1.
  * @importFromPackage templating
  */
-Template.parentData = Blaze._parentData;
+Template.parentData = Blast._parentData;
 
 /**
  * @summary Defines a [helper function](#Template-helpers) which can be used from all templates.
@@ -588,7 +588,7 @@ Template.parentData = Blaze._parentData;
  * @param {Function} function The helper function itself.
  * @importFromPackage templating
  */
-Template.registerHelper = Blaze.registerHelper;
+Template.registerHelper = Blast.registerHelper;
 
 /**
  * @summary Removes a global [helper function](#Template-helpers).
@@ -597,4 +597,4 @@ Template.registerHelper = Blaze.registerHelper;
  * @param {String} name The name of the helper function you are defining.
  * @importFromPackage templating
  */
-Template.deregisterHelper = Blaze.deregisterHelper;
+Template.deregisterHelper = Blast.deregisterHelper;

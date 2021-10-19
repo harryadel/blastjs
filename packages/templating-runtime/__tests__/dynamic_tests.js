@@ -184,7 +184,7 @@ test(
     for (let i = 0; i < 3; i++) {
       var tmpl = Template[tmplPrefix + i];
       expect(() => {
-        Blaze._throwNextException = true;
+        Blast._throwNextException = true;
         const div = renderToDiv(tmpl);
       }).toThrow();
     }
@@ -206,7 +206,7 @@ test(
     });
     const div = renderToDiv(tmpl);
 
-    // Because `this` can only be an object, Blaze normalizes falsey
+    // Because `this` can only be an object, Blast normalizes falsey
     // data contexts to {}.
     expect(subtmplContext).toEqual({});
   },

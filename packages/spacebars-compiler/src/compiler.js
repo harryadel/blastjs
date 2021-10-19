@@ -53,7 +53,7 @@ TemplateTagReplacer.def({
       // some template tags must have been replaced, because otherwise
       // we try to keep things `===` when transforming.  Wrap the code
       // in a function as per the rules.  You can't have
-      // `{id: Blaze.View(...)}` as an attributes dict because the View
+      // `{id: Blast.View(...)}` as an attributes dict because the View
       // would be rendered more than once; you need to wrap it in a function
       // so that it's a different View each time.
       return BlastTools.EmitCode(this.codegen.codeGenBlock(result));

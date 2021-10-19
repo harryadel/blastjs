@@ -1,13 +1,13 @@
 import { ReactiveVar } from '@blastjs/reactive-var';
 import { Tracker } from '@blastjs/tracker';
-import { Blaze, canonicalizeHtml } from '../src/index';
+import { Blast, canonicalizeHtml } from '../src/index';
 
-test('blaze - view - callbacks', () => {
+test('blast - view - callbacks', () => {
   const R = ReactiveVar('foo');
 
   let buf = '';
 
-  const v = Blaze.View(() => R.get());
+  const v = Blast.View(() => R.get());
 
   v.onViewCreated(() => {
     buf += `c${v.renderCount}`;
@@ -36,7 +36,7 @@ test('blaze - view - callbacks', () => {
   //   const v = function () { v.lastNode(); }
   // }).toThrowError(/View must be attached/);
 
-  Blaze.render(v, div);
+  Blast.render(v, div);
   expect(buf).toEqual('c0r1');
   expect(typeof (v.firstNode().nodeType)).toEqual('number');
   expect(typeof (v.lastNode().nodeType)).toEqual('number');
@@ -52,7 +52,7 @@ test('blaze - view - callbacks', () => {
   expect(buf).toEqual('c0r1y1r2y2');
   expect(canonicalizeHtml(div.innerHTML)).toEqual('bar');
 
-  Blaze.remove(v);
+  Blast.remove(v);
   expect(buf).toEqual('c0r1y1r2y2d2');
   expect(canonicalizeHtml(div.innerHTML)).toEqual('');
 

@@ -1,4 +1,3 @@
-
 // Packages and apps add templates on to this object.
 
 /**
@@ -6,27 +5,26 @@
  * @class
  * @instanceName Template.myTemplate
  */
-Template = Blaze.Template;
+Template = Blast.Template;
 
-var RESERVED_TEMPLATE_NAMES = "__proto__ name".split(" ");
+const RESERVED_TEMPLATE_NAMES = '__proto__ name'.split(' ');
 
 // Check for duplicate template names and illegal names that won't work.
 Template.__checkName = function (name) {
   // Some names can't be used for Templates. These include:
-  //  - Properties Blaze sets on the Template object.
+  //  - Properties Blast sets on the Template object.
   //  - Properties that some browsers don't let the code to set.
   //    These are specified in RESERVED_TEMPLATE_NAMES.
   if (name in Template || _.contains(RESERVED_TEMPLATE_NAMES, name)) {
-    if ((Template[name] instanceof Template) && name !== "body")
-      throw new Error("There are multiple templates named '" + name + "'. Each template needs a unique name.");
-    throw new Error("This template name is reserved: " + name);
+    if ((Template[name] instanceof Template) && name !== 'body') { throw new Error(`There are multiple templates named '${name}'. Each template needs a unique name.`); }
+    throw new Error(`This template name is reserved: ${name}`);
   }
 };
 
 // XXX COMPAT WITH 0.8.3
 Template.__define__ = function (name, renderFunc) {
   Template.__checkName(name);
-  Template[name] = new Template("Template." + name, renderFunc);
+  Template[name] = new Template(`Template.${name}`, renderFunc);
   // Exempt packages built pre-0.9.0 from warnings about using old
   // helper syntax, because we can.  It's not very useful to get a
   // warning about someone else's code (like a package on Atmosphere),
@@ -45,12 +43,10 @@ Template.__define__ = function (name, renderFunc) {
  * @locus Client
  */
 Template.body = new Template('body', function () {
-  var view = this;
-  return _.map(Template.body.contentRenderFuncs, function (func) {
-    return func.apply(view);
-  });
+  const view = this;
+  return _.map(Template.body.contentRenderFuncs, (func) => func.apply(view));
 });
-Template.body.contentRenderFuncs = []; // array of Blaze.Views
+Template.body.contentRenderFuncs = []; // array of Blast.Views
 Template.body.view = null;
 
 Template.body.addContent = function (renderFunc) {
@@ -61,16 +57,15 @@ Template.body.addContent = function (renderFunc) {
 // as `Meteor.startup(Template.body.renderIntoDocument)`.
 Template.body.renderToDocument = function () {
   // Only do it once.
-  if (Template.body.view)
-    return;
+  if (Template.body.view) { return; }
 
-  var view = Blaze.render(Template.body, document.body);
+  const view = Blast.render(Template.body, document.body);
   Template.body.view = view;
 };
 
-Template.__pendingReplacement = []
+Template.__pendingReplacement = [];
 
-var updateTimeout = null;
+let updateTimeout = null;
 
 // Simple HMR integration to re-render all of the root views
 // when a template is modified. This function can be overridden to provide
@@ -81,23 +76,23 @@ Template._applyHmrChanges = function (templateName) {
   }
 
   // debounce so we only re-render once per rebuild
-  updateTimeout = setTimeout(function () {
+  updateTimeout = setTimeout(() => {
     updateTimeout = null;
 
     for (var i = 0; i < Template.__pendingReplacement.length; i++) {
-      delete Template[Template.__pendingReplacement[i]]
+      delete Template[Template.__pendingReplacement[i]];
     }
 
     Template.__pendingReplacement = [];
 
-    var views = Blaze.__rootViews.slice();
-    for(var i = 0; i < views.length; i++) {
-      var view = views[i];
+    const views = Blast.__rootViews.slice();
+    for (var i = 0; i < views.length; i++) {
+      const view = views[i];
       if (view.destroyed) {
         continue;
       }
 
-      var renderFunc = view._render;
+      const renderFunc = view._render;
       var parentEl;
       if (view._domrange && view._domrange.parentElement) {
         parentEl = view._domrange.parentElement;
@@ -109,8 +104,8 @@ Template._applyHmrChanges = function (templateName) {
       if (view._hmrAfter) {
         comment = view._hmrAfter;
       } else {
-        var first = view._domrange.firstNode();
-        comment = document.createComment('Blaze HMR PLaceholder');
+        const first = view._domrange.firstNode();
+        comment = document.createComment('Blast HMR PLaceholder');
         parentEl.insertBefore(comment, first);
       }
 
@@ -118,27 +113,27 @@ Template._applyHmrChanges = function (templateName) {
       view._hmrParent = null;
 
       if (view._domrange) {
-        Blaze.remove(view);
+        Blast.remove(view);
       }
 
       try {
         if (view === Template.body.view) {
-          var newView = Blaze.render(Template.body, document.body, comment);
+          const newView = Blast.render(Template.body, document.body, comment);
           Template.body.view = newView;
         } else if (view.dataVar) {
-          Blaze.renderWithData(renderFunc, view.dataVar.curValue, parentEl, comment);
+          Blast.renderWithData(renderFunc, view.dataVar.curValue, parentEl, comment);
         } else {
-          Blaze.render(renderFunc, parentEl, comment);
+          Blast.render(renderFunc, parentEl, comment);
         }
 
         parentEl.removeChild(comment);
       } catch (e) {
-        console.log('[Blaze HMR] Error re-rending template:');
+        console.log('[Blast HMR] Error re-rending template:');
         console.error(e);
 
         // Record where the view should have been so we can still render it
         // during the next update
-        var newestRoot = Blaze.__rootViews[Blaze.__rootViews.length - 1];
+        const newestRoot = Blast.__rootViews[Blast.__rootViews.length - 1];
         if (newestRoot && newestRoot.isCreated && !newestRoot.isRendered) {
           newestRoot._hmrAfter = comment;
           newestRoot._hmrParent = parentEl;
@@ -146,11 +141,11 @@ Template._applyHmrChanges = function (templateName) {
       }
     }
   });
-}
+};
 
 Template._migrateTemplate = function (templateName, newTemplate, migrate) {
-  var oldTemplate = Template[templateName];
-  var migrate = Template.__pendingReplacement.indexOf(templateName) > -1
+  const oldTemplate = Template[templateName];
+  var migrate = Template.__pendingReplacement.indexOf(templateName) > -1;
 
   if (oldTemplate && migrate) {
     newTemplate.__helpers = oldTemplate.__helpers;
@@ -162,12 +157,11 @@ Template._migrateTemplate = function (templateName, newTemplate, migrate) {
     Template._applyHmrChanges(templateName);
   }
 
-
   if (migrate) {
     Template.__pendingReplacement.splice(
       Template.__pendingReplacement.indexOf(templateName),
-      1
-    )
+      1,
+    );
   }
 
   Template.__checkName(templateName);

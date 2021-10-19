@@ -1,6 +1,6 @@
 import { HTMLTools } from '@blastjs/html-tools';
 import { HTML } from '@blastjs/htmljs';
-import { BlastTools } from '@blastjs/blaze-tools';
+import { BlastTools } from '@blastjs/blast-tools';
 
 // A TemplateTag is the result of parsing a single `{{...}}` tag.
 //

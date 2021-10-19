@@ -11,11 +11,11 @@ import { codeGen } from './compiler';
 export function CodeGen() {}
 
 export const builtInBlockHelpers = {
-  if: 'Blaze.If',
-  unless: 'Blaze.Unless',
+  if: 'Blast.If',
+  unless: 'Blast.Unless',
   with: 'Spacebars.With',
-  each: 'Blaze.Each',
-  let: 'Blaze.Let',
+  each: 'Blast.Each',
+  let: 'Blast.Let',
 };
 
 // Mapping of "macros" which, when preceded by `Template.`, expand
@@ -80,7 +80,7 @@ Object.assign(CodeGen.prototype, {
         // Reactive attributes are already wrapped in a function,
         // and there's no fine-grained reactivity.
         // Anywhere else, we need to create a View.
-        code = `Blaze.View(${
+        code = `Blast.View(${
           BlastTools.toJSLiteral(`lookup:${tag.path.join('.')}`)}, `
             + `function () { return ${code}; })`;
       }
@@ -189,7 +189,7 @@ Object.assign(CodeGen.prototype, {
       // -- but it's what we shipped for 0.8.0.  The rationale is that
       // `{{#foo bar}}` is sugar for `{{#with bar}}{{#foo}}...`.
       if (dataCode) {
-        includeCode = `Blaze._TemplateWith(${dataCode}, function () { return ${
+        includeCode = `Blast._TemplateWith(${dataCode}, function () { return ${
           includeCode}; })`;
       }
 
@@ -197,7 +197,7 @@ Object.assign(CodeGen.prototype, {
       if ((path[0] === 'UI' || path[0] === 'Template')
               && (path[1] === 'contentBlock' || path[1] === 'elseBlock')) {
         // Call contentBlock and elseBlock in the appropriate scope
-        includeCode = `Blaze._InOuterTemplateScope(view, function () { return ${
+        includeCode = `Blast._InOuterTemplateScope(view, function () { return ${
           includeCode}; })`;
       }
 

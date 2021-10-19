@@ -1,6 +1,4 @@
-
-
-import { Blaze } from "./preamble";
+import { Blast } from './preamble';
 
 import './attrs';
 import './backcompat';
@@ -15,4 +13,4 @@ import './lookup';
 import { Template } from './template';
 import canonicalizeHtml from './canonicalizeHtml';
 
-export { Blaze, canonicalizeHtml, Template };
+export { Blast, canonicalizeHtml, Template };

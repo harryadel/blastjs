@@ -3,7 +3,7 @@ import { BlastTools } from '@blastjs/blast-tools';
 import { Tracker } from '@blastjs/tracker';
 import { HTML } from '@blastjs/htmljs';
 import $ from 'jquery';
-import { Blaze, canonicalizeHtml, Template } from '../src/index';
+import { Blast, canonicalizeHtml, Template } from '../src/index';
 
 const toCode = BlastTools.toJS;
 
@@ -27,12 +27,12 @@ const materialize = function (content, parent) {
       return content;
     };
   }
-  Blaze.render(func, parent);
+  Blast.render(func, parent);
 };
 
-const { toHTML } = Blaze;
+const { toHTML } = Blast;
 
-test('blaze - render - basic', () => {
+test('blast - render - basic', () => {
   const run = function (input, expectedInnerHTML, expectedHTML, expectedCode) {
     const div = document.createElement('DIV');
     materialize(input, div);
@@ -100,8 +100,8 @@ test('blaze - render - basic', () => {
   'HTML.BR({a: [[""]]})');
 
   run(BR({
-    x() { return Blaze.View(() => Blaze.View(() => [])); },
-    a() { return Blaze.View(() => Blaze.View(() => '')); },
+    x() { return Blast.View(() => Blast.View(() => [])); },
+    a() { return Blast.View(() => Blast.View(() => '')); },
   }),
   '<br a="">',
   '<br a="">');
@@ -110,7 +110,7 @@ test('blaze - render - basic', () => {
 // test that we correctly update the 'value' property on input fields
 // rather than the 'value' attribute. the 'value' attribute only sets
 // the initial value.
-test('blaze - render - input - value', () => {
+test('blast - render - input - value', () => {
   const R = ReactiveVar('hello');
   const div = document.createElement('DIV');
   materialize(INPUT({ value() { return R.get(); } }), div);
@@ -125,7 +125,7 @@ test('blaze - render - input - value', () => {
 // test that we correctly update the 'checked' property rather than
 // the 'checked' attribute on input fields of type 'checkbox'. the
 // 'checked' attribute only sets the initial value.
-test('blaze - render - input - checked', () => {
+test('blast - render - input - checked', () => {
   const R = ReactiveVar(null);
   const div = document.createElement('DIV');
   materialize(INPUT({ type: 'checkbox', checked() { return R.get(); } }), div);
@@ -140,7 +140,7 @@ test('blaze - render - input - checked', () => {
   expect(inputEl.checked).toEqual(false);
 });
 
-test('blaze - render - textarea', () => {
+test('blast - render - textarea', () => {
   const run = function (optNode, text, html, code) {
     if (typeof optNode === 'string') {
       // called with args (text, html, code)
@@ -178,7 +178,7 @@ test('blaze - render - textarea', () => {
     '<textarea>&amp;</textarea>',
     'HTML.TEXTAREA({value: HTML.CharRef({html: "&amp;", str: "&"})})');
 
-  run(() => ['a', Blaze.View(() => 'b'), 'c'],
+  run(() => ['a', Blast.View(() => 'b'), 'c'],
     'abc',
     '<textarea>abc</textarea>');
 
@@ -188,7 +188,7 @@ test('blaze - render - textarea', () => {
     const div = document.createElement('DIV');
     const node = TEXTAREA({
       value() {
-        return Blaze.View(() => R.get());
+        return Blast.View(() => R.get());
       },
     });
     materialize(node, div);
@@ -204,7 +204,7 @@ test('blaze - render - textarea', () => {
   (function () {
     const R = ReactiveVar('one');
     const div = document.createElement('DIV');
-    const node = TEXTAREA([Blaze.View(() => R.get())]);
+    const node = TEXTAREA([Blast.View(() => R.get())]);
     materialize(node, div);
     const textarea = div.querySelector('textarea');
     expect(textarea.value).toEqual('one');
@@ -214,12 +214,12 @@ test('blaze - render - textarea', () => {
   }());
 });
 
-test('blaze - render - view isolation', () => {
+test('blast - render - view isolation', () => {
   // Reactively change a text node
   (function () {
     const R = ReactiveVar('Hello');
     const test1 = function () {
-      return P(Blaze.View(() => R.get()));
+      return P(Blast.View(() => R.get()));
     };
 
     expect(toHTML(test1())).toEqual('<p>Hello</p>');
@@ -237,7 +237,7 @@ test('blaze - render - view isolation', () => {
   (function () {
     const R = ReactiveVar(['Hello', ' World']);
     const test1 = function () {
-      return P(Blaze.View(() => R.get()));
+      return P(Blast.View(() => R.get()));
     };
 
     expect(toHTML(test1())).toEqual('<p>Hello World</p>');
@@ -261,11 +261,11 @@ const malformedStylesAllowed = function () {
   return (div.getAttribute('style') === 'bar::d;');
 };
 
-test('blaze - render - view GC', () => {
+test('blast - render - view GC', () => {
   // test that removing parent element removes listeners and stops autoruns.
   (function () {
     const R = ReactiveVar('Hello');
-    const test1 = P(Blaze.View(() => R.get()));
+    const test1 = P(Blast.View(() => R.get()));
 
     const div = document.createElement('DIV');
     materialize(test1, div);
@@ -288,7 +288,7 @@ test('blaze - render - view GC', () => {
   }());
 });
 
-test('blaze - render - reactive attributes', () => {
+test('blast - render - reactive attributes', () => {
   (function () {
     const R = ReactiveVar({
       class: ['david gre', CharRef({ html: '&euml;', str: '\u00eb' }), 'nspan'],
@@ -301,21 +301,21 @@ test('blaze - render - reactive attributes', () => {
       ));
     };
 
-    expect(Blaze.toHTML(spanFunc())).toEqual(
+    expect(Blast.toHTML(spanFunc())).toEqual(
       '<span class="david gre&euml;nspan" id="foo"></span>',
     );
 
     expect(R._numListeners()).toEqual(0);
 
     const div = document.createElement('DIV');
-    Blaze.render(spanFunc, div);
+    Blast.render(spanFunc, div);
     expect(canonicalizeHtml(div.innerHTML)).toEqual('<span class="david gre\u00ebnspan" id="foo"></span>');
 
     expect(R._numListeners()).toEqual(1);
 
     const span = div.firstChild;
     expect(span.nodeName).toEqual('SPAN');
-    span.className += ' blah'; // change the element's class outside of Blaze. this simulates what a jQuery could do
+    span.className += ' blah'; // change the element's class outside of Blast. this simulates what a jQuery could do
 
     R.set({ class: 'david smith', id: 'bar' });
     Tracker.flush();
@@ -340,12 +340,12 @@ test('blaze - render - reactive attributes', () => {
     const divFunc = function () {
       return DIV({
         style() {
-          return [Blaze.If(() => style.get(), () => 'background-color: red; '), 'padding: 10px'];
+          return [Blast.If(() => style.get(), () => 'background-color: red; '), 'padding: 10px'];
         },
       });
     };
 
-    Blaze.render(divFunc, div);
+    Blast.render(divFunc, div);
     expect(canonicalizeHtml(div.innerHTML)).toEqual('<div style="padding: 10px"></div>');
 
     style.set('blue');
@@ -369,12 +369,12 @@ test('blaze - render - reactive attributes', () => {
       return SPAN(HTML.Attrs(() => R.get()));
     };
 
-    expect(Blaze.toHTML(spanFunc())).toEqual('<span style="foo: &quot;a;aa&quot;; bar: b;" id="foo"></span>');
+    expect(Blast.toHTML(spanFunc())).toEqual('<span style="foo: &quot;a;aa&quot;; bar: b;" id="foo"></span>');
 
     expect(R._numListeners()).toEqual(0);
 
     const div = document.createElement('DIV');
-    Blaze.render(spanFunc, div);
+    Blast.render(spanFunc, div);
     expect(canonicalizeHtml(div.innerHTML)).toEqual('<span id="foo" style="foo: &quot;a;aa&quot;; bar: b"></span>');
 
     expect(R._numListeners()).toEqual(1);
@@ -408,7 +408,7 @@ test('blaze - render - reactive attributes', () => {
 
     const div = document.createElement('DIV');
     document.body.appendChild(div);
-    Blaze.render(spanFunc, div);
+    Blast.render(spanFunc, div);
     expect(canonicalizeHtml(div.innerHTML)).toEqual('<span style="foo: a"></span>');
 
     const span = div.firstChild;
@@ -463,13 +463,13 @@ test('blaze - render - reactive attributes', () => {
       ));
     };
 
-    expect(Blaze.toHTML(spanFunc())).toEqual('<span id="foo" ggg="xyz"></span>');
+    expect(Blast.toHTML(spanFunc())).toEqual('<span id="foo" ggg="xyz"></span>');
     expect(toCode(SPAN(R.get()))).toEqual(
       'HTML.SPAN({id: "foo", ggg: ["x", ["y", ["z"]]]})',
     );
 
     const div = document.createElement('DIV');
-    Blaze.render(spanFunc, div);
+    Blast.render(spanFunc, div);
     const span = div.firstChild;
     expect(span.nodeName).toEqual('SPAN');
 
@@ -492,7 +492,7 @@ test('blaze - render - reactive attributes', () => {
   }());
 });
 
-test('blaze - render - templates and views', () => {
+test('blast - render - templates and views', () => {
   (function () {
     let counter = 1;
     const buf = [];
@@ -514,7 +514,7 @@ test('blaze - render - templates and views', () => {
     myTemplate.created = function () {
       expect(Tracker.active).toBeFalsy();
       const { view } = this;
-      const parent = Blaze.getView(view, 'myTemplate');
+      const parent = Blast.getView(view, 'myTemplate');
       if (parent) {
         buf.push(`parent of ${view.number} is ${
           parent.number}`);
@@ -553,12 +553,12 @@ test('blaze - render - templates and views', () => {
 
     var makeView = function () {
       const number = counter++;
-      return Blaze.With(number, () => myTemplate.constructView(number));
+      return Blast.With(number, () => myTemplate.constructView(number));
     };
 
     const div = document.createElement('DIV');
 
-    Blaze.render(makeView, div);
+    Blast.render(makeView, div);
     buf.push('---flush---');
     Tracker.flush();
     expect(buf).toEqual(['created 1',
@@ -584,7 +584,7 @@ test('blaze - render - templates and views', () => {
     buf.length = 0;
     counter = 1;
 
-    const html = Blaze.toHTML(makeView());
+    const html = Blast.toHTML(makeView());
 
     expect(buf).toEqual(['created 1',
       'parent of 2 is 1',
@@ -599,7 +599,7 @@ test('blaze - render - templates and views', () => {
   }());
 });
 
-test('blaze - render - findAll', () => {
+test('blast - render - findAll', () => {
   let found = null;
   let $found = null;
 
@@ -614,7 +614,7 @@ test('blaze - render - findAll', () => {
 
   const div = document.createElement('DIV');
 
-  Blaze.render(myTemplate, div);
+  Blast.render(myTemplate, div);
   Tracker.flush();
 
   expect(Array.isArray(found)).toEqual(true);
@@ -623,7 +623,7 @@ test('blaze - render - findAll', () => {
   expect($found.length).toEqual(2);
 });
 
-test('blaze - render - reactive attributes 2', () => {
+test('blast - render - reactive attributes 2', () => {
   const R1 = ReactiveVar(['foo']);
   const R2 = ReactiveVar(['bar']);
 
@@ -635,9 +635,9 @@ test('blaze - render - reactive attributes 2', () => {
   };
 
   const div = document.createElement('DIV');
-  Blaze.render(spanFunc, div);
+  Blast.render(spanFunc, div);
   const check = function (expected) {
-    expect(Blaze.toHTML(spanFunc())).toEqual(expected);
+    expect(Blast.toHTML(spanFunc())).toEqual(expected);
     expect(canonicalizeHtml(div.innerHTML)).toEqual(expected);
   };
   check('<span blah="bar"></span>');
@@ -677,7 +677,7 @@ test('blaze - render - reactive attributes 2', () => {
   expect(R2._numListeners()).toEqual(0);
 });
 
-test('blaze - render - SVG', () => {
+test('blast - render - SVG', () => {
   if (!document.createElementNS) {
     // IE 8
     return;
@@ -727,11 +727,11 @@ test('ui - attributes', () => {
 });
 
 if (typeof MutationObserver !== 'undefined') {
-  // This test is not really able to test that Blaze._materializeDOM is called only when
-  // not Blaze._isContentEqual(lastHtmljs, htmljs), which is what we would in fact want to test.
-  test('blaze - render - optimization', () => {
+  // This test is not really able to test that Blast._materializeDOM is called only when
+  // not Blast._isContentEqual(lastHtmljs, htmljs), which is what we would in fact want to test.
+  test('blast - render - optimization', () => {
     const R = ReactiveVar('aa');
-    const view = Blaze.View(() => R.get().substr(0, 1));
+    const view = Blast.View(() => R.get().substr(0, 1));
 
     let renderedCount = 0;
     expect(view.renderCount).toEqual(0);
@@ -754,8 +754,8 @@ if (typeof MutationObserver !== 'undefined') {
     observer.observe(div, { childList: true, subtree: true });
 
     let materializeCount = 0;
-    const originalMaterializeDOM = Blaze._materializeDOM;
-    Blaze._materializeDOM = function (htmljs, intoArray, parentView, _existingWorkStack) {
+    const originalMaterializeDOM = Blast._materializeDOM;
+    Blast._materializeDOM = function (htmljs, intoArray, parentView, _existingWorkStack) {
       if (parentView === view) {
         materializeCount++;
       }
@@ -775,7 +775,7 @@ if (typeof MutationObserver !== 'undefined') {
       expect(view.renderCount).toEqual(2);
       expect(renderedCount).toEqual(1);
     } finally {
-      Blaze._materializeDOM = originalMaterializeDOM;
+      Blast._materializeDOM = originalMaterializeDOM;
     }
 
     expect(materializeCount).toEqual(1);

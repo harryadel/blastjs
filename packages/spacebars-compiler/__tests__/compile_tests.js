@@ -1,71 +1,71 @@
 import { SpacebarsCompiler } from '../src/preamble';
 
 export function runCompilerOutputTests(run) {
-  run("abc", `function () {
+  run('abc', `function () {
   var view = this;
   return "abc";
 }`);
-  run("{{foo}}", `function() {
+  run('{{foo}}', `function() {
   var view = this;
-  return Blaze.View("lookup:foo", function() {
+  return Blast.View("lookup:foo", function() {
     return Spacebars.mustache(view.lookup("foo"));
   });
 }`);
-  run("{{foo bar}}", `function() {
+  run('{{foo bar}}', `function() {
   var view = this;
-  return Blaze.View("lookup:foo", function() {
+  return Blast.View("lookup:foo", function() {
     return Spacebars.mustache(view.lookup("foo"),
                               view.lookup("bar"));
   });
 }`);
-  run("{{foo x=bar}}", `function() {
+  run('{{foo x=bar}}', `function() {
   var view = this;
-  return Blaze.View("lookup:foo", function() {
+  return Blast.View("lookup:foo", function() {
     return Spacebars.mustache(view.lookup("foo"), Spacebars.kw({
       x: view.lookup("bar")
     }));
   });
 }`);
-  run("{{foo.bar baz}}", `function() {
+  run('{{foo.bar baz}}', `function() {
   var view = this;
-  return Blaze.View("lookup:foo.bar", function() {
+  return Blast.View("lookup:foo.bar", function() {
     return Spacebars.mustache(Spacebars.dot(
              view.lookup("foo"), "bar"),
              view.lookup("baz"));
   });
 }`);
-  run("{{foo.bar (baz qux)}}", `function() {
+  run('{{foo.bar (baz qux)}}', `function() {
   var view = this;
-  return Blaze.View("lookup:foo.bar", function() {
+  return Blast.View("lookup:foo.bar", function() {
     return Spacebars.mustache(Spacebars.dot(
              view.lookup("foo"), "bar"),
              Spacebars.dataMustache(view.lookup("baz"), view.lookup("qux")));
   });
 }`);
-  run("{{foo bar.baz}}", `function() {
+  run('{{foo bar.baz}}', `function() {
   var view = this;
-  return Blaze.View("lookup:foo", function() {
+  return Blast.View("lookup:foo", function() {
     return Spacebars.mustache(view.lookup("foo"),
            Spacebars.dot(view.lookup("bar"), "baz"));
   });
 }`);
-  run("{{foo x=bar.baz}}", `function() {
+  run('{{foo x=bar.baz}}', `function() {
   var view = this;
-  return Blaze.View("lookup:foo", function() {
+  return Blast.View("lookup:foo", function() {
     return Spacebars.mustache(view.lookup("foo"), Spacebars.kw({
       x: Spacebars.dot(view.lookup("bar"), "baz")
     }));
   });
 }`);
-  run("{{#foo}}abc{{/foo}}", `function() {
+  run('{{#foo}}abc{{/foo}}', `function() {
   var view = this;
   return Spacebars.include(view.lookupTemplate("foo"), (function() {
     return "abc";
   }));
 }`);
-  run("{{#if cond}}aaa{{else}}bbb{{/if}}", `function() {
+  run('{{#if cond}}aaa{{else}}bbb{{/if}}', `function() {
   var view = this;
-  return Blaze.If(function () {
+  return Blast.If(function () {
     return Spacebars.call(view.lookup("cond"));
   }, (function() {
     return "aaa";
@@ -73,9 +73,9 @@ export function runCompilerOutputTests(run) {
     return "bbb";
   }));
 }`);
-  run("{{!-- --}}{{#if cond}}aaa{{!\n}}{{else}}{{!}}bbb{{!-- --}}{{/if}}{{!}}", `function() {
+  run('{{!-- --}}{{#if cond}}aaa{{!\n}}{{else}}{{!}}bbb{{!-- --}}{{/if}}{{!}}', `function() {
   var view = this;
-  return Blaze.If(function () {
+  return Blast.If(function () {
     return Spacebars.call(view.lookup("cond"));
   }, (function() {
     return "aaa";
@@ -83,29 +83,29 @@ export function runCompilerOutputTests(run) {
     return "bbb";
   }));
 }`);
-  run("{{!-- --}}{{#if cond}}<p>aaa</p><p>ppp</p>{{!\n}}{{else}}{{!}}<p>{{bbb}}</p>{{!-- --}}{{/if}}{{!}}", `function() {
+  run('{{!-- --}}{{#if cond}}<p>aaa</p><p>ppp</p>{{!\n}}{{else}}{{!}}<p>{{bbb}}</p>{{!-- --}}{{/if}}{{!}}', `function() {
   var view = this;
-  return Blaze.If(function () {
+  return Blast.If(function () {
     return Spacebars.call(view.lookup("cond"));
   }, (function() {
     return HTML.Raw("<p>aaa</p><p>ppp</p>");
   }), (function() {
-    return HTML.P(Blaze.View("lookup:bbb", function() {
+    return HTML.P(Blast.View("lookup:bbb", function() {
       return Spacebars.mustache(view.lookup("bbb"));
     }));
   }));
 }`);
-  run("{{> foo bar}}", `function() {
+  run('{{> foo bar}}', `function() {
   var view = this;
-  return Blaze._TemplateWith(function() {
+  return Blast._TemplateWith(function() {
     return Spacebars.call(view.lookup("bar"));
   }, function() {
     return Spacebars.include(view.lookupTemplate("foo"));
   });
 }`);
-  run("{{> foo x=bar}}", `function() {
+  run('{{> foo x=bar}}', `function() {
   var view = this;
-  return Blaze._TemplateWith(function() {
+  return Blast._TemplateWith(function() {
     return {
       x: Spacebars.call(view.lookup("bar"))
     };
@@ -114,17 +114,17 @@ export function runCompilerOutputTests(run) {
   });
 }
 `);
-  run("{{> foo bar.baz}}", `function() {
+  run('{{> foo bar.baz}}', `function() {
   var view = this;
-  return Blaze._TemplateWith(function() {
+  return Blast._TemplateWith(function() {
     return Spacebars.call(Spacebars.dot(view.lookup("bar"), "baz"));
   }, function() {
     return Spacebars.include(view.lookupTemplate("foo"));
   });
 }`);
-  run("{{> foo x=bar.baz}}", `function() {
+  run('{{> foo x=bar.baz}}', `function() {
   var view = this;
-  return Blaze._TemplateWith(function() {
+  return Blast._TemplateWith(function() {
     return {
       x: Spacebars.call(Spacebars.dot(view.lookup("bar"), "baz"))
     };
@@ -132,18 +132,18 @@ export function runCompilerOutputTests(run) {
     return Spacebars.include(view.lookupTemplate("foo"));
   });
 }`);
-  run("{{> foo bar baz}}", `function() {
+  run('{{> foo bar baz}}', `function() {
   var view = this;
-  return Blaze._TemplateWith(function() {
+  return Blast._TemplateWith(function() {
     return Spacebars.dataMustache(view.lookup("bar"), view.lookup("baz"));
   }, function() {
     return Spacebars.include(view.lookupTemplate("foo"));
   });
 }
 `);
-  run("{{#foo bar baz}}aaa{{/foo}}", `function() {
+  run('{{#foo bar baz}}aaa{{/foo}}', `function() {
   var view = this;
-  return Blaze._TemplateWith(function() {
+  return Blast._TemplateWith(function() {
     return Spacebars.dataMustache(view.lookup("bar"), view.lookup("baz"));
   }, function() {
     return Spacebars.include(view.lookupTemplate("foo"), (function() {
@@ -151,9 +151,9 @@ export function runCompilerOutputTests(run) {
     }));
   });
 }`);
-  run("{{#foo p.q r.s}}aaa{{/foo}}", `function() {
+  run('{{#foo p.q r.s}}aaa{{/foo}}', `function() {
   var view = this;
-  return Blaze._TemplateWith(function() {
+  return Blast._TemplateWith(function() {
     return Spacebars.dataMustache(Spacebars.dot(view.lookup("p"), "q"), Spacebars.dot(view.lookup("r"), "s"));
   }, function() {
     return Spacebars.include(view.lookupTemplate("foo"), (function() {
@@ -161,13 +161,13 @@ export function runCompilerOutputTests(run) {
     }));
   });
 }`);
-  run("<a {{b}}></a>", `function() {
+  run('<a {{b}}></a>', `function() {
   var view = this;
   return HTML.A(HTML.Attrs(function() {
     return Spacebars.attrMustache(view.lookup("b"));
   }));
 }`);
-  run("<a {{b}} c=d{{e}}f></a>", `function() {
+  run('<a {{b}} c=d{{e}}f></a>', `function() {
   var view = this;
   return HTML.A(HTML.Attrs({
     c: (function() { return [
@@ -178,29 +178,29 @@ export function runCompilerOutputTests(run) {
     return Spacebars.attrMustache(view.lookup("b"));
   }));
 }`);
-  run("<asdf>{{foo}}</asdf>", `function() {
+  run('<asdf>{{foo}}</asdf>', `function() {
   var view = this;
-  return HTML.getTag("asdf")(Blaze.View("lookup:foo", function() {
+  return HTML.getTag("asdf")(Blast.View("lookup:foo", function() {
     return Spacebars.mustache(view.lookup("foo"));
   }));
 }`);
-  run("<textarea>{{foo}}</textarea>", `function() {
+  run('<textarea>{{foo}}</textarea>', `function() {
   var view = this;
   return HTML.TEXTAREA({value: (function () {
     return Spacebars.mustache(view.lookup("foo"));
   }) });
 }`);
-  run("<textarea>{{{{|{{|foo}}</textarea>", `function() {
+  run('<textarea>{{{{|{{|foo}}</textarea>', `function() {
   var view = this;
   return HTML.TEXTAREA({value: (function () {
     return [ "{{{{", "{{", "foo}}" ];
   }) });
 }`);
-  run("{{|foo}}", `function() {
+  run('{{|foo}}', `function() {
   var view = this;
   return [ "{{", "foo}}" ];
 }`);
-  run("<a b={{{|></a>", `function() {
+  run('<a b={{{|></a>', `function() {
   var view = this;
   return HTML.A({
     b: (function () {
@@ -208,13 +208,13 @@ export function runCompilerOutputTests(run) {
     })
   });
 }`);
-  run("<div><div>{{helper}}<div>a</div><div>b</div></div></div>", `function() {
+  run('<div><div>{{helper}}<div>a</div><div>b</div></div></div>', `function() {
   var view = this;
-  return HTML.DIV(HTML.DIV(Blaze.View("lookup:helper",function(){
+  return HTML.DIV(HTML.DIV(Blast.View("lookup:helper",function(){
       return Spacebars.mustache(view.lookup("helper"));
   }), HTML.Raw("<div>a</div><div>b</div>")));
 }`);
-  run("<table><colgroup><col></colgroup><tr><td>aaa</td><td>bbb</td></tr></table>", `function() {
+  run('<table><colgroup><col></colgroup><tr><td>aaa</td><td>bbb</td></tr></table>', `function() {
   var view = this;
   return HTML.TABLE(
     HTML.Raw("<colgroup><col></colgroup>"),
@@ -227,7 +227,7 @@ export function runCompilerOutputTests(run) {
   var view = this;
   return HTML.DIV(
     "\\n    ",
-    Blaze.View("lookup:helper",function(){
+    Blast.View("lookup:helper",function(){
       return Spacebars.mustache(view.lookup("helper"));
     }),
     "\\n"
@@ -238,7 +238,7 @@ export function runCompilerOutputTests(run) {
 </div>`, `function() {
   var view = this;
   return HTML.DIV(
-    Blaze.View("lookup:helper",function(){
+    Blast.View("lookup:helper",function(){
       return Spacebars.mustache(view.lookup("helper"));
     })
   );
@@ -249,7 +249,7 @@ export function runCompilerOutputTests(run) {
 </div>`, `function() {
   var view = this;
   return HTML.DIV(
-    Blaze.View("lookup:helper",function(){
+    Blast.View("lookup:helper",function(){
       return Spacebars.mustache(view.lookup("helper"));
     }),
     HTML.Raw("<span>Test</span> <span>Spaces</span>")
@@ -306,72 +306,71 @@ export function runCompilerOutputTests(run) {
 //   runCompilerOutputTests(run);
 // });
 
-
-test("spacebars-compiler - compiler errors", function () {
-
-  var getError = function (input) {
+test('spacebars-compiler - compiler errors', () => {
+  const getError = function (input) {
     try {
       SpacebarsCompiler.compile(input);
     } catch (e) {
       return e.message;
     }
-    test.fail("Didn't throw an error: " + input);
+    test.fail(`Didn't throw an error: ${input}`);
     return '';
   };
 
-  var assertStartsWith = function (a, b) {
+  const assertStartsWith = function (a, b) {
     expect(a.substring(0, b.length)).toEqual(b);
   };
 
-  var isError = function (input, errorStart) {
+  const isError = function (input, errorStart) {
     assertStartsWith(getError(input), errorStart);
   };
 
-  isError("<input></input>",
-          "Unexpected HTML close tag.  <input> should have no close tag.");
-  isError("{{#each foo}}<input></input>{{/foo}}",
-          "Unexpected HTML close tag.  <input> should have no close tag.");
+  isError('<input></input>',
+    'Unexpected HTML close tag.  <input> should have no close tag.');
+  isError('{{#each foo}}<input></input>{{/foo}}',
+    'Unexpected HTML close tag.  <input> should have no close tag.');
 
-  isError("{{#if}}{{/if}}", "#if requires an argument");
-  isError("{{#with}}{{/with}}", "#with requires an argument");
-  isError("{{#each}}{{/each}}", "#each requires an argument");
-  isError("{{#unless}}{{/unless}}", "#unless requires an argument");
+  isError('{{#if}}{{/if}}', '#if requires an argument');
+  isError('{{#with}}{{/with}}', '#with requires an argument');
+  isError('{{#each}}{{/each}}', '#each requires an argument');
+  isError('{{#unless}}{{/unless}}', '#unless requires an argument');
 
-  isError("{{0 0}}", "Expected IDENTIFIER");
+  isError('{{0 0}}', 'Expected IDENTIFIER');
 
-  isError("{{> foo 0 0}}",
-          "First argument must be a function");
-  isError("{{> foo 0 x=0}}",
-          "First argument must be a function");
-  isError("{{#foo 0 0}}{{/foo}}",
-          "First argument must be a function");
-  isError("{{#foo 0 x=0}}{{/foo}}",
-          "First argument must be a function");
+  isError('{{> foo 0 0}}',
+    'First argument must be a function');
+  isError('{{> foo 0 x=0}}',
+    'First argument must be a function');
+  isError('{{#foo 0 0}}{{/foo}}',
+    'First argument must be a function');
+  isError('{{#foo 0 x=0}}{{/foo}}',
+    'First argument must be a function');
 
   ['asdf</br>', '{{!foo}}</br>', '{{!foo}} </br>',
-          'asdf</a>', '{{!foo}}</a>', '{{!foo}} </a>'].forEach(
-            function (badFrag) {
-            isError(badFrag, "Unexpected HTML close tag");
-          });
+    'asdf</a>', '{{!foo}}</a>', '{{!foo}} </a>'].forEach(
+    (badFrag) => {
+      isError(badFrag, 'Unexpected HTML close tag');
+    },
+  );
 
-  isError("{{#let myHelper}}{{/let}}", "Incorrect form of #let");
-  isError("{{#each foo in.in bar}}{{/each}}", "Malformed #each");
-  isError("{{#each foo.bar in baz}}{{/each}}", "Bad variable name in #each");
-  isError("{{#each ../foo in baz}}{{/each}}", "Bad variable name in #each");
-  isError("{{#each 3 in baz}}{{/each}}", "Bad variable name in #each");
+  isError('{{#let myHelper}}{{/let}}', 'Incorrect form of #let');
+  isError('{{#each foo in.in bar}}{{/each}}', 'Malformed #each');
+  isError('{{#each foo.bar in baz}}{{/each}}', 'Bad variable name in #each');
+  isError('{{#each ../foo in baz}}{{/each}}', 'Bad variable name in #each');
+  isError('{{#each 3 in baz}}{{/each}}', 'Bad variable name in #each');
 
-  isError("{{#foo}}x{{else bar}}y{{else}}z{{else baz}}q{{/foo}}", "Unexpected else after {{else}}");
-  isError("{{#foo}}x{{else bar}}y{{else}}z{{else}}q{{/foo}}", "Unexpected else after {{else}}");
+  isError('{{#foo}}x{{else bar}}y{{else}}z{{else baz}}q{{/foo}}', 'Unexpected else after {{else}}');
+  isError('{{#foo}}x{{else bar}}y{{else}}z{{else}}q{{/foo}}', 'Unexpected else after {{else}}');
 
   // errors using `{{> React}}`
-  isError("{{> React component=emptyComponent}}",
-          "{{> React}} must be used in a container element");
-  isError("<div>{{#if include}}{{> React component=emptyComponent}}{{/if}}</div>",
-          "{{> React}} must be used in a container element");
-  isError("<div><div>Sibling</div>{{> React component=emptyComponent}}</div>",
-          "{{> React}} must be used as the only child in a container element");
-  isError("<div>Sibling{{> React component=emptyComponent}}</div>",
-          "{{> React}} must be used as the only child in a container element");
-  isError("<div>{{#if sibling}}Sibling{{/if}}{{> React component=emptyComponent}}</div>",
-          "{{> React}} must be used as the only child in a container element");
+  isError('{{> React component=emptyComponent}}',
+    '{{> React}} must be used in a container element');
+  isError('<div>{{#if include}}{{> React component=emptyComponent}}{{/if}}</div>',
+    '{{> React}} must be used in a container element');
+  isError('<div><div>Sibling</div>{{> React component=emptyComponent}}</div>',
+    '{{> React}} must be used as the only child in a container element');
+  isError('<div>Sibling{{> React component=emptyComponent}}</div>',
+    '{{> React}} must be used as the only child in a container element');
+  isError('<div>{{#if sibling}}Sibling{{/if}}{{> React component=emptyComponent}}</div>',
+    '{{> React}} must be used as the only child in a container element');
 });

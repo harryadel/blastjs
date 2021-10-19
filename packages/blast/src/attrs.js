@@ -1,11 +1,11 @@
 import { OrderedDict } from '@blastjs/ordered-dict';
-import { Blaze } from './preamble';
+import { Blast } from './preamble';
 
 let jsUrlsAllowed = false;
-Blaze._allowJavascriptUrls = function () {
+Blast._allowJavascriptUrls = function () {
   jsUrlsAllowed = true;
 };
-Blaze._javascriptUrlsAllowed = function () {
+Blast._javascriptUrlsAllowed = function () {
   return jsUrlsAllowed;
 };
 
@@ -36,7 +36,7 @@ const AttributeHandler = function (name, value) {
   this.name = name;
   this.value = value;
 };
-Blaze._AttributeHandler = AttributeHandler;
+Blast._AttributeHandler = AttributeHandler;
 
 AttributeHandler.prototype.update = function (element, oldValue, value) {
   if (value === null) {
@@ -66,7 +66,7 @@ AttributeHandler.extend = function (options) {
 //
 // Extended below to support classes, SVG elements and styles.
 
-Blaze._DiffingAttributeHandler = AttributeHandler.extend({
+Blast._DiffingAttributeHandler = AttributeHandler.extend({
   update(element, oldValue, value) {
     if (!this.getCurrentValue || !this.setValue || !this.parseValue || !this.joinValues) throw new Error("Missing methods in subclass of 'DiffingAttributeHandler'");
 
@@ -103,7 +103,7 @@ Blaze._DiffingAttributeHandler = AttributeHandler.extend({
   },
 });
 
-const ClassHandler = Blaze._DiffingAttributeHandler.extend({
+const ClassHandler = Blast._DiffingAttributeHandler.extend({
   // @param rawValue {String}
   getCurrentValue(element) {
     return element.className;
@@ -138,7 +138,7 @@ const SVGClassHandler = ClassHandler.extend({
   },
 });
 
-const StyleHandler = Blaze._DiffingAttributeHandler.extend({
+const StyleHandler = Blast._DiffingAttributeHandler.extend({
   getCurrentValue(element) {
     return element.getAttribute('style');
   },
@@ -276,7 +276,7 @@ const getUrlProtocol = function (url) {
 
 // UrlHandler is an attribute handler for all HTML attributes that take
 // URL values. It disallows javascript: URLs, unless
-// Blaze._allowJavascriptUrls() has been called. To detect javascript:
+// Blast._allowJavascriptUrls() has been called. To detect javascript:
 // urls, we set the attribute on a dummy anchor element and then read
 // out the 'protocol' property of the attribute.
 const origUpdate = AttributeHandler.prototype.update;
@@ -285,15 +285,15 @@ const UrlHandler = AttributeHandler.extend({
     const self = this;
     const args = arguments;
 
-    if (Blaze._javascriptUrlsAllowed()) {
+    if (Blast._javascriptUrlsAllowed()) {
       origUpdate.apply(self, args);
     } else {
       const isJavascriptProtocol = (getUrlProtocol(value) === 'javascript:');
       const isVBScriptProtocol = (getUrlProtocol(value) === 'vbscript:');
       if (isJavascriptProtocol || isVBScriptProtocol) {
-        Blaze._warn("URLs that use the 'javascript:' or 'vbscript:' protocol are not "
+        Blast._warn("URLs that use the 'javascript:' or 'vbscript:' protocol are not "
                     + 'allowed in URL attribute values. '
-                    + 'Call Blaze._allowJavascriptUrls() '
+                    + 'Call Blast._allowJavascriptUrls() '
                     + 'to enable them.');
         origUpdate.apply(self, [element, oldValue, null]);
       } else {
@@ -304,7 +304,7 @@ const UrlHandler = AttributeHandler.extend({
 });
 
 // XXX make it possible for users to register attribute handlers!
-Blaze._makeAttributeHandler = function (elem, name, value) {
+Blast._makeAttributeHandler = function (elem, name, value) {
   // generally, use setAttribute but certain attributes need to be set
   // by directly setting a JavaScript property on the DOM element.
   if (name === 'class') {

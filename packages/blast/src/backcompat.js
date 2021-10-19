@@ -1,15 +1,15 @@
 import { ReactiveVar } from '@blastjs/reactive-var';
-import { Blaze } from './preamble';
+import { Blast } from './preamble';
 
-// const UI = Blaze;
+// const UI = Blast;
 
-// Blaze.ReactiveVar = ReactiveVar;
-// UI._templateInstance = Blaze.Template.instance;
+// Blast.ReactiveVar = ReactiveVar;
+// UI._templateInstance = Blast.Template.instance;
 
 // Handlebars = {};
-// Handlebars.registerHelper = Blaze.registerHelper;
+// Handlebars.registerHelper = Blast.registerHelper;
 
-// Handlebars._escape = Blaze._escape;
+// Handlebars._escape = Blast._escape;
 
 // // Return these from {{...}} helpers to achieve the same as returning
 // // strings from {{{...}}} helpers

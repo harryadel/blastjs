@@ -1,9 +1,9 @@
 import { Tracker } from '@blastjs/tracker';
 import { ReactiveVar } from '@blastjs/reactive-var';
 import { HTML } from '@blastjs/htmljs';
-import { Blaze } from './preamble';
+import { Blast } from './preamble';
 
-Blaze._calculateCondition = function (cond) {
+Blast._calculateCondition = function (cond) {
   if (HTML.isArray(cond) && cond.length === 0) { cond = false; }
   return !!cond;
 };
@@ -14,8 +14,8 @@ Blaze._calculateCondition = function (cond) {
  * @param {Object|Function} data An object to use as the data context, or a function returning such an object.  If a function is provided, it will be reactively re-run.
  * @param {Function} contentFunc A Function that returns [*renderable content*](#Renderable-Content).
  */
-Blaze.With = function (data, contentFunc) {
-  const view = Blaze.View('with', contentFunc);
+Blast.With = function (data, contentFunc) {
+  const view = Blast.View('with', contentFunc);
 
   view.dataVar = new ReactiveVar();
 
@@ -39,7 +39,7 @@ Blaze.With = function (data, contentFunc) {
  * corresponds to a value or a function that will be reactively re-run.
  * @param {View} view The target.
  */
-Blaze._attachBindingsToView = function (bindings, view) {
+Blast._attachBindingsToView = function (bindings, view) {
   view.onViewCreated(() => {
     _.each(bindings, (binding, name) => {
       view._scopeBindings[name] = new ReactiveVar();
@@ -60,9 +60,9 @@ Blaze._attachBindingsToView = function (bindings, view) {
  * values or computations to reactively re-run.
  * @param {Function} contentFunc A Function that returns [*renderable content*](#Renderable-Content).
  */
-Blaze.Let = function (bindings, contentFunc) {
-  const view = Blaze.View('let', contentFunc);
-  Blaze._attachBindingsToView(bindings, view);
+Blast.Let = function (bindings, contentFunc) {
+  const view = Blast.View('let', contentFunc);
+  Blast._attachBindingsToView(bindings, view);
 
   return view;
 };
@@ -74,15 +74,15 @@ Blaze.Let = function (bindings, contentFunc) {
  * @param {Function} contentFunc A Function that returns [*renderable content*](#Renderable-Content).
  * @param {Function} [elseFunc] Optional.  A Function that returns [*renderable content*](#Renderable-Content).  If no `elseFunc` is supplied, no content is shown in the "else" case.
  */
-Blaze.If = function (conditionFunc, contentFunc, elseFunc, _not) {
+Blast.If = function (conditionFunc, contentFunc, elseFunc, _not) {
   const conditionVar = new ReactiveVar();
 
-  const view = Blaze.View(_not ? 'unless' : 'if', () => (conditionVar.get() ? contentFunc()
+  const view = Blast.View(_not ? 'unless' : 'if', () => (conditionVar.get() ? contentFunc()
     : (elseFunc ? elseFunc() : null)));
   view.__conditionVar = conditionVar;
   view.onViewCreated(function () {
     this.autorun(() => {
-      const cond = Blaze._calculateCondition(conditionFunc());
+      const cond = Blast._calculateCondition(conditionFunc());
       conditionVar.set(_not ? (!cond) : cond);
     }, this.parentView, 'condition');
   });
@@ -91,14 +91,14 @@ Blaze.If = function (conditionFunc, contentFunc, elseFunc, _not) {
 };
 
 /**
- * @summary An inverted [`Blaze.If`](#Blaze-If).
+ * @summary An inverted [`Blast.If`](#Blast-If).
  * @locus Client
  * @param {Function} conditionFunc A function to reactively re-run.  If the result is falsy, `contentFunc` is shown, otherwise `elseFunc` is shown.  An empty array is considered falsy.
  * @param {Function} contentFunc A Function that returns [*renderable content*](#Renderable-Content).
  * @param {Function} [elseFunc] Optional.  A Function that returns [*renderable content*](#Renderable-Content).  If no `elseFunc` is supplied, no content is shown in the "else" case.
  */
-Blaze.Unless = function (conditionFunc, contentFunc, elseFunc) {
-  return Blaze.If(conditionFunc, contentFunc, elseFunc, true /* _not */);
+Blast.Unless = function (conditionFunc, contentFunc, elseFunc) {
+  return Blast.If(conditionFunc, contentFunc, elseFunc, true /* _not */);
 };
 
 /**
@@ -121,8 +121,8 @@ Blaze.Unless = function (conditionFunc, contentFunc, elseFunc) {
  * content*](#Renderable-Content) to display in the case when there are no items
  * in the sequence.
  */
-Blaze.Each = function (argFunc, contentFunc, elseFunc) {
-  const eachView = Blaze.View('each', function () {
+Blast.Each = function (argFunc, contentFunc, elseFunc) {
+  const eachView = Blast.View('each', function () {
     const subviews = this.initialSubviews;
     this.initialSubviews = null;
     if (this._isCreatedForExpansion) {
@@ -154,7 +154,7 @@ Blaze.Each = function (argFunc, contentFunc, elseFunc) {
 
   eachView.onViewCreated(() => {
     // We evaluate argFunc in an autorun to make sure
-    // Blaze.currentView is always set when it runs (rather than
+    // Blast.currentView is always set when it runs (rather than
     // passing argFunc straight to ObserveSequence).
     eachView.autorun(() => {
       // argFunc can return either a sequence as is or a wrapper object with a
@@ -175,9 +175,9 @@ Blaze.Each = function (argFunc, contentFunc, elseFunc) {
           if (eachView.variableName) {
             // new-style #each (as in {{#each item in items}})
             // doesn't create a new data context
-            newItemView = Blaze.View('item', eachView.contentFunc);
+            newItemView = Blast.View('item', eachView.contentFunc);
           } else {
-            newItemView = Blaze.With(item, eachView.contentFunc);
+            newItemView = Blast.With(item, eachView.contentFunc);
           }
 
           eachView.numItems++;
@@ -187,7 +187,7 @@ Blaze.Each = function (argFunc, contentFunc, elseFunc) {
           if (eachView.variableName) {
             bindings[eachView.variableName] = item;
           }
-          Blaze._attachBindingsToView(bindings, newItemView);
+          Blast._attachBindingsToView(bindings, newItemView);
 
           if (eachView.expandedValueDep) {
             eachView.expandedValueDep.changed();
@@ -197,7 +197,7 @@ Blaze.Each = function (argFunc, contentFunc, elseFunc) {
               eachView.inElseMode = false;
             }
 
-            const range = Blaze._materializeView(newItemView, eachView);
+            const range = Blast._materializeView(newItemView, eachView);
             eachView._domrange.addMember(range, index);
             updateIndices(index);
           } else {
@@ -216,8 +216,8 @@ Blaze.Each = function (argFunc, contentFunc, elseFunc) {
             if (eachView.elseFunc && eachView.numItems === 0) {
               eachView.inElseMode = true;
               eachView._domrange.addMember(
-                Blaze._materializeView(
-                  Blaze.View('each_else', eachView.elseFunc),
+                Blast._materializeView(
+                  Blast.View('each_else', eachView.elseFunc),
                   eachView,
                 ), 0,
               );
@@ -267,7 +267,7 @@ Blaze.Each = function (argFunc, contentFunc, elseFunc) {
 
     if (eachView.elseFunc && eachView.numItems === 0) {
       eachView.inElseMode = true;
-      eachView.initialSubviews[0] = Blaze.View('each_else', eachView.elseFunc);
+      eachView.initialSubviews[0] = Blast.View('each_else', eachView.elseFunc);
     }
   });
 
@@ -278,7 +278,7 @@ Blaze.Each = function (argFunc, contentFunc, elseFunc) {
   return eachView;
 };
 
-Blaze._TemplateWith = function (arg, contentFunc) {
+Blast._TemplateWith = function (arg, contentFunc) {
   let w;
 
   let argFunc = arg;
@@ -289,13 +289,13 @@ Blaze._TemplateWith = function (arg, contentFunc) {
   }
 
   // This is a little messy.  When we compile `{{> Template.contentBlock}}`, we
-  // wrap it in Blaze._InOuterTemplateScope in order to skip the intermediate
+  // wrap it in Blast._InOuterTemplateScope in order to skip the intermediate
   // parent Views in the current template.  However, when there's an argument
   // (`{{> Template.contentBlock arg}}`), the argument needs to be evaluated
   // in the original scope.  There's no good order to nest
-  // Blaze._InOuterTemplateScope and Spacebars.TemplateWith to achieve this,
+  // Blast._InOuterTemplateScope and Spacebars.TemplateWith to achieve this,
   // so we wrap argFunc to run it in the "original parentView" of the
-  // Blaze._InOuterTemplateScope.
+  // Blast._InOuterTemplateScope.
   //
   // To make this better, reconsider _InOuterTemplateScope as a primitive.
   // Longer term, evaluate expressions in the proper lexical scope.
@@ -305,7 +305,7 @@ Blaze._TemplateWith = function (arg, contentFunc) {
       viewToEvaluateArg = w.parentView.originalParentView;
     }
     if (viewToEvaluateArg) {
-      return Blaze._withCurrentView(viewToEvaluateArg, argFunc);
+      return Blast._withCurrentView(viewToEvaluateArg, argFunc);
     }
     return argFunc();
   };
@@ -313,26 +313,26 @@ Blaze._TemplateWith = function (arg, contentFunc) {
   const wrappedContentFunc = function () {
     let content = contentFunc.call(this);
 
-    // Since we are generating the Blaze._TemplateWith view for the
+    // Since we are generating the Blast._TemplateWith view for the
     // user, set the flag on the child view.  If `content` is a template,
     // construct the View so that we can set the flag.
-    if (content instanceof Blaze.Template) {
+    if (content instanceof Blast.Template) {
       content = content.constructView();
     }
-    if (content instanceof Blaze.View) {
+    if (content instanceof Blast.View) {
       content._hasGeneratedParent = true;
     }
 
     return content;
   };
 
-  w = Blaze.With(wrappedArgFunc, wrappedContentFunc);
+  w = Blast.With(wrappedArgFunc, wrappedContentFunc);
   w.__isTemplateWith = true;
   return w;
 };
 
-Blaze._InOuterTemplateScope = function (templateView, contentFunc) {
-  const view = Blaze.View('InOuterTemplateScope', contentFunc);
+Blast._InOuterTemplateScope = function (templateView, contentFunc) {
+  const view = Blast.View('InOuterTemplateScope', contentFunc);
   let { parentView } = templateView;
 
   // Hack so that if you call `{{> foo bar}}` and it expands into
@@ -350,4 +350,4 @@ Blaze._InOuterTemplateScope = function (templateView, contentFunc) {
 };
 
 // XXX COMPAT WITH 0.9.0
-Blaze.InOuterTemplateScope = Blaze._InOuterTemplateScope;
+Blast.InOuterTemplateScope = Blast._InOuterTemplateScope;

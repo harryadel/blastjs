@@ -1,4 +1,4 @@
-var Template = Blaze.Template;
+const { Template } = Blast;
 
 /**
  * @isTemplate true
@@ -12,28 +12,26 @@ var Template = Blaze.Template;
  */
 
 Template.__dynamicWithDataContext.helpers({
-  chooseTemplate: function (name) {
-    return Blaze._getTemplate(name, function () {
-      return Template.instance();
-    });
-  }
+  chooseTemplate(name) {
+    return Blast._getTemplate(name, () => Template.instance());
+  },
 });
 
 Template.__dynamic.helpers({
-  dataContextPresent: function () {
-    return _.has(this, "data");
+  dataContextPresent() {
+    return _.has(this, 'data');
   },
-  checkContext: function () {
-    if (! _.has(this, "template")) {
-      throw new Error("Must specify name in the 'template' argument " +
-                      "to {{> Template.dynamic}}.");
+  checkContext() {
+    if (!_.has(this, 'template')) {
+      throw new Error("Must specify name in the 'template' argument "
+                      + 'to {{> Template.dynamic}}.');
     }
 
-    _.each(this, function (v, k) {
-      if (k !== "template" && k !== "data") {
-        throw new Error("Invalid argument to {{> Template.dynamic}}: " +
-                        k);
+    _.each(this, (v, k) => {
+      if (k !== 'template' && k !== 'data') {
+        throw new Error(`Invalid argument to {{> Template.dynamic}}: ${
+          k}`);
       }
     });
-  }
+  },
 });
