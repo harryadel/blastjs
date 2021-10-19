@@ -9,7 +9,7 @@
     "watch": "watch 'npm run build' src",
     "clean": "rimraf ./dist",
     "build": "cross-env BABEL_ENV=production babel src --out-dir ./dist",
-    "prepublish": "npm run clean && npm run build"
+    "prepublish": "npm run test && npm run clean && npm run build"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.16",
