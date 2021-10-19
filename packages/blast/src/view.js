@@ -1,5 +1,5 @@
-import { HTML } from 'htmljs';
-import { Tracker } from 'standalone-tracker';
+import { HTML } from '@blastjs/htmljs';
+import { Tracker } from '@blastjs/tracker';
 import { Blast } from './preamble';
 
 /// [new] Blast.View([name], renderMethod)
