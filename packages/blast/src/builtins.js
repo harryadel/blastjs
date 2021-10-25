@@ -41,7 +41,7 @@ Blast.With = function (data, contentFunc) {
  */
 Blast._attachBindingsToView = function (bindings, view) {
   view.onViewCreated(() => {
-    _.each(bindings, (binding, name) => {
+    Object.entries(bindings).forEach(([name, binding]) => {
       view._scopeBindings[name] = new ReactiveVar();
       if (typeof binding === 'function') {
         view.autorun(() => {
@@ -160,7 +160,7 @@ Blast.Each = function (argFunc, contentFunc, elseFunc) {
       // argFunc can return either a sequence as is or a wrapper object with a
       // _sequence and _variable fields set.
       let arg = argFunc();
-      if (_.isObject(arg) && _.has(arg, '_sequence')) {
+      if (isObject(arg) && has(arg, '_sequence')) {
         eachView.variableName = arg._variable || null;
         arg = arg._sequence;
       }

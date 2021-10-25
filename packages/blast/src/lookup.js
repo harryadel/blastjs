@@ -1,3 +1,4 @@
+import has from 'lodash.has';
 import { Blast } from './preamble';
 
 Blast._globalHelpers = {};
@@ -89,7 +90,7 @@ Blast._lexicalBindingLookup = function (view, name) {
   do {
     // skip block helpers views
     // if we found the binding on the scope, return it
-    if (_.has(currentView._scopeBindings, name)) {
+    if (has(currentView._scopeBindings, name)) {
       var bindingReactiveVar = currentView._scopeBindings[name];
       return function () {
         return bindingReactiveVar.get();

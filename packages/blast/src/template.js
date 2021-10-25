@@ -1,3 +1,7 @@
+import isObject from 'lodash.isobject';
+import isFunction from 'lodash.isfunction';
+import has from 'lodash.has';
+import isEmpty from 'lodash.isempty';
 import { Tracker } from '@blastjs/tracker';
 import { Blast } from './preamble';
 
@@ -343,16 +347,15 @@ Blast.TemplateInstance.prototype.autorun = function (f) {
  * @param {DDP.Connection} [options.connection] The connection on which to make the
  * subscription.
  */
-Blast.TemplateInstance.prototype.subscribe = function (/* arguments */) {
+Blast.TemplateInstance.prototype.subscribe = function (...args) {
   const self = this;
 
   const subHandles = self._subscriptionHandles;
-  const args = _.toArray(arguments);
 
   // Duplicate logic from Meteor.subscribe
   let options = {};
   if (args.length) {
-    const lastParam = _.last(args);
+    const lastParam = args[args.length - 1];
 
     // Match pattern to check if the last arg is an options argument
     const lastParamOptionsPattern = {
@@ -364,9 +367,9 @@ Blast.TemplateInstance.prototype.subscribe = function (/* arguments */) {
       connection: Match.Optional(Match.Any),
     };
 
-    if (_.isFunction(lastParam)) {
+    if (isFunction(lastParam)) {
       options.onReady = args.pop();
-    } else if (lastParam && !_.isEmpty(lastParam) && Match.test(lastParam, lastParamOptionsPattern)) {
+    } else if (lastParam && !isEmpty(lastParam) && Match.test(lastParam, lastParamOptionsPattern)) {
       options = args.pop();
     }
   }
@@ -391,7 +394,8 @@ Blast.TemplateInstance.prototype.subscribe = function (/* arguments */) {
   };
 
   const { connection } = options;
-  const callbacks = _.pick(options, ['onReady', 'onError', 'onStop']);
+  const { onReady, onError, onStop } = options;
+  const callbacks = { onReady, onError, onStop };
 
   // The callbacks are passed as the last item in the arguments array passed to
   // View#subscribe
@@ -403,7 +407,7 @@ Blast.TemplateInstance.prototype.subscribe = function (/* arguments */) {
     connection,
   });
 
-  if (!_.has(subHandles, subHandle.subscriptionId)) {
+  if (!has(subHandles, subHandle.subscriptionId)) {
     subHandles[subHandle.subscriptionId] = subHandle;
 
     // Adding a new subscription will always cause us to transition from ready
@@ -425,8 +429,7 @@ Blast.TemplateInstance.prototype.subscribe = function (/* arguments */) {
  */
 Blast.TemplateInstance.prototype.subscriptionsReady = function () {
   this._allSubsReadyDep.depend();
-
-  this._allSubsReady = _.all(this._subscriptionHandles, (handle) => handle.ready());
+  this._allSubsReady = Object.values(this._subscriptionHandles).every((handle) => handle.ready());
 
   return this._allSubsReady;
 };
@@ -438,11 +441,11 @@ Blast.TemplateInstance.prototype.subscriptionsReady = function () {
  * @importFromPackage templating
  */
 Template.prototype.helpers = function (dict) {
-  if (!_.isObject(dict)) {
+  if (!isObject(dict)) {
     throw new Error('Helpers dictionary has to be an object');
   }
 
-  for (const k in dict) { this.__helpers.set(k, dict[k]); }
+  for (const k in dict) this.__helpers.set(k, dict[k]);
 };
 
 const canUseGetters = (function () {
@@ -513,7 +516,7 @@ if (canUseGetters) {
  * @importFromPackage templating
  */
 Template.prototype.events = function (eventMap) {
-  if (!_.isObject(eventMap)) {
+  if (!isObject(eventMap)) {
     throw new Error('Event map has to be an object');
   }
 
@@ -521,10 +524,10 @@ Template.prototype.events = function (eventMap) {
   const eventMap2 = {};
   for (const k in eventMap) {
     eventMap2[k] = (function (k, v) {
-      return function (event/* , ... */) {
+      return function (event /* , ... */) {
         const view = this; // passed by EventAugmenter
         let data = Blast.getData(event.currentTarget);
-        if (data == null) { data = {}; }
+        if (data == null) data = {};
         const args = Array.prototype.slice.call(arguments);
         const tmplInstanceFunc = Blast._bind(view.templateInstance, view);
         args.splice(1, 0, tmplInstanceFunc());

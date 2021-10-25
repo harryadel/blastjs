@@ -54,5 +54,7 @@ if (nativeBind) {
   };
 } else {
   // A slower but backwards compatible version.
-  Blast._bind = _.bind;
+  Blast._bind = function (objA, objB) {
+    objA.bind(objB);
+  };
 }

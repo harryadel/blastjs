@@ -834,10 +834,11 @@ Blast._addEventMap = function (view, eventMap, thisInHandler) {
   if (!view._domrange) { throw new Error('View must have a DOMRange'); }
 
   view._domrange.onAttached((range, element) => {
-    _.each(eventMap, (handler, spec) => {
+    Object.keys(eventMap).forEach((spec) => {
+      const handler = eventMap[spec];
       const clauses = spec.split(/,\s+/);
       // iterate over clauses of spec, e.g. ['click .foo', 'click .bar']
-      _.each(clauses, (clause) => {
+      clauses.forEach((clause) => {
         const parts = clause.split(/\s+/);
         if (parts.length === 0) { return; }
 
@@ -858,7 +859,7 @@ Blast._addEventMap = function (view, eventMap, thisInHandler) {
   });
 
   view.onViewDestroyed(() => {
-    _.each(handles, (h) => {
+    handles.forEach((h) => {
       h.stop();
     });
     handles.length = 0;
