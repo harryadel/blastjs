@@ -1,3 +1,4 @@
+import { Template, Blast } from '@blastjs/blast';
 // Packages and apps add templates on to this object.
 
 /**
@@ -5,7 +6,7 @@
  * @class
  * @instanceName Template.myTemplate
  */
-Template = Blast.Template;
+// Template = Blast.Template;
 
 const RESERVED_TEMPLATE_NAMES = '__proto__ name'.split(' ');
 
@@ -15,8 +16,14 @@ Template.__checkName = function (name) {
   //  - Properties Blast sets on the Template object.
   //  - Properties that some browsers don't let the code to set.
   //    These are specified in RESERVED_TEMPLATE_NAMES.
-  if (name in Template || _.contains(RESERVED_TEMPLATE_NAMES, name)) {
-    if ((Template[name] instanceof Template) && name !== 'body') { throw new Error(`There are multiple templates named '${name}'. Each template needs a unique name.`); }
+  if (name in Template || RESERVED_TEMPLATE_NAMES.includes(name)) {
+    if (Template[name] instanceof Template && name !== 'body') {
+      throw new Error(
+        `There are multiple templates named '${
+          name
+        }'. Each template needs a unique name.`,
+      );
+    }
     throw new Error(`This template name is reserved: ${name}`);
   }
 };
@@ -38,13 +45,13 @@ Template.__define__ = function (name, renderFunc) {
 // multiple) will have their contents added to it.
 
 /**
- * @summary The [template object](#Template-Declarations) representing your `<body>`
- * tag.
- * @locus Client
- */
+  * @summary The [template object](#Template-Declarations) representing your `<body>`
+  * tag.
+  * @locus Client
+  */
 Template.body = new Template('body', function () {
   const view = this;
-  return _.map(Template.body.contentRenderFuncs, (func) => func.apply(view));
+  return Template.body.contentRenderFuncs.map((func) => func.apply(view));
 });
 Template.body.contentRenderFuncs = []; // array of Blast.Views
 Template.body.view = null;
@@ -167,12 +174,3 @@ Template._migrateTemplate = function (templateName, newTemplate, migrate) {
   Template.__checkName(templateName);
   Template[templateName] = newTemplate;
 };
-
-// XXX COMPAT WITH 0.9.0
-UI.body = Template.body;
-
-// XXX COMPAT WITH 0.9.0
-// (<body> tags in packages built with 0.9.0)
-Template.__body__ = Template.body;
-Template.__body__.__contentParts = Template.body.contentViews;
-Template.__body__.__instantiate = Template.body.renderToDocument;
