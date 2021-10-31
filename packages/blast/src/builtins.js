@@ -348,6 +348,3 @@ Blast._InOuterTemplateScope = function (templateView, contentFunc) {
   });
   return view;
 };
-
-// XXX COMPAT WITH 0.9.0
-Blast.InOuterTemplateScope = Blast._InOuterTemplateScope;
