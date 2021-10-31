@@ -2,21 +2,28 @@
   "name": "express-project",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "build": "node ./node_modules/.bin/blaze ./example.html > ./templates/example.template.js",
-    "start": "node ./index.js",
+    "build": "babel index.js -d dist",
+    "start": "npm run build && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.4",
-    "jsdom": "^13.0.0",
-    "meteor-blaze-runtime": "^1.1.2",
-    "meteor-blaze-compiler": "^1.0.8",
+    "@blastjs/blast": "^2.4.3",
+    "@blastjs/spacebars": "^0.1.0",
+    "@blastjs/templating-tools": "^1.2.0",
+    "express": "^4.17.1",
+    "jsdom": "^18.0.0",
     "node-hook": "^1.0.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.25.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
   }
 }
