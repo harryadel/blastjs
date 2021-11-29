@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/templating-runtime",
   "description": "Runtime for compiled .html files",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "main": "dist/templating.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
