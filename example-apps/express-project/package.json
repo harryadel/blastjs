@@ -12,6 +12,7 @@
   "dependencies": {
     "@blastjs/blast": "^2.4.3",
     "@blastjs/spacebars": "^0.1.0",
+    "@blastjs/templating-runtime": "^1.4.1",
     "@blastjs/templating-tools": "^1.2.0",
     "express": "^4.17.1",
     "jsdom": "^18.0.0",

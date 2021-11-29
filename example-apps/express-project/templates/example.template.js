@@ -1,5 +1,6 @@
 const { Spacebars } = require('@blastjs/spacebars');
-const { Blast, Template } = require('@blastjs/blast');
+const { Blast } = require('@blastjs/blast');
+const { Template } = require('@blastjs/templating-runtime');
 
 Template.__checkName('example');
 
