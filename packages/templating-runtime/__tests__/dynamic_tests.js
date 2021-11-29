@@ -1,3 +1,7 @@
+import { ReactiveVar } from '@blastjs/reactive-var';
+import { Tracker } from '@blastjs/tracker';
+import { Template } from '../src/templating';
+
 test(
   'spacebars - ui-dynamic-template - render template dynamically', () => {
     const tmpl = Template.ui_dynamic_test;

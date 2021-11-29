@@ -1,4 +1,6 @@
-import { Template, Blast } from '@blastjs/blast';
+import { Blast } from '@blastjs/blast';
+
+import './dynamic';
 // Packages and apps add templates on to this object.
 
 /**
@@ -6,7 +8,7 @@ import { Template, Blast } from '@blastjs/blast';
  * @class
  * @instanceName Template.myTemplate
  */
-// Template = Blast.Template;
+export const { Template } = Blast;
 
 const RESERVED_TEMPLATE_NAMES = '__proto__ name'.split(' ');
 
