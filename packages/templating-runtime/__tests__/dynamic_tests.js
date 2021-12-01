@@ -1,6 +1,17 @@
 import { ReactiveVar } from '@blastjs/reactive-var';
+import { Blast, canonicalizeHtml } from '@blastjs/blast';
 import { Tracker } from '@blastjs/tracker';
 import { Template } from '../src/templating';
+
+const renderToDiv = function (template, optData) {
+  const div = document.createElement('DIV');
+  if (optData == null) {
+    Blast.render(template, div);
+  } else {
+    Blast.renderWithData(template, optData, div);
+  }
+  return div;
+};
 
 test(
   'spacebars - ui-dynamic-template - render template dynamically', () => {
