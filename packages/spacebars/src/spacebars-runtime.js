@@ -1,6 +1,8 @@
 import { Blast, Handlebars } from '@blastjs/blast';
+import { HTML } from '@blastjs/htmljs';
+import { Tracker } from '@blastjs/tracker';
 
-export const Spacebars = {};
+const Spacebars = {};
 
 const tripleEquals = function (a, b) { return a === b; };
 
@@ -261,3 +263,5 @@ Spacebars.With = function (argFunc, contentFunc, elseFunc) {
 
   return view;
 };
+
+export { Spacebars };
