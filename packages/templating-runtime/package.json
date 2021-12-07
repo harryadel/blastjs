@@ -13,7 +13,7 @@
   "dependencies": {
     "@blastjs/blast": "^2.4.3",
     "@blastjs/reactive-var": "^1.0.1",
-    "@blastjs/spacebars": "^0.1.0",
+    "@blastjs/spacebars": "^0.1.1",
     "@blastjs/tracker": "^1.0.2",
     "lodash.has": "^4.5.2"
   },

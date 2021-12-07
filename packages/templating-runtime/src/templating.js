@@ -1,14 +1,15 @@
 import { Blast } from '@blastjs/blast';
+import has from 'lodash.has';
+import { Spacebars } from '@blastjs/spacebars';
 
-import './dynamic';
-// Packages and apps add templates on to this object.
+// import './dynamic.html.template';
 
 /**
  * @summary The class for defining templates
  * @class
  * @instanceName Template.myTemplate
  */
-export const { Template } = Blast;
+const { Template } = Blast;
 
 const RESERVED_TEMPLATE_NAMES = '__proto__ name'.split(' ');
 
@@ -176,3 +177,59 @@ Template._migrateTemplate = function (templateName, newTemplate, migrate) {
   Template.__checkName(templateName);
   Template[templateName] = newTemplate;
 };
+
+Template.__checkName('__dynamic');
+Template.__dynamic = new Template('Template.__dynamic', (function () { const view = this; return [Blast.View('lookup:checkContext', () => Spacebars.mustache(view.lookup('checkContext'))), '\n  ', Blast.If(() => Spacebars.call(view.lookup('dataContextPresent')), (() => ['\n    ', Spacebars.include(view.lookupTemplate('__dynamicWithDataContext'), (() => Blast._InOuterTemplateScope(view, () => Spacebars.include(() => Spacebars.call(view.templateContentBlock))))), '\n  ']), (() => ['\n    \n    ', Blast._TemplateWith(() => ({ template: Spacebars.call(view.lookup('template')), data: Spacebars.call(view.lookup('..')) }), () => Spacebars.include(view.lookupTemplate('__dynamicWithDataContext'), (() => Blast._InOuterTemplateScope(view, () => Spacebars.include(() => Spacebars.call(view.templateContentBlock)))))), '\n  ']))]; }));
+
+Template.__checkName('__dynamicWithDataContext');
+Template.__dynamicWithDataContext = new Template('Template.__dynamicWithDataContext', (function () { const view = this; return Spacebars.With(() => Spacebars.dataMustache(view.lookup('chooseTemplate'), view.lookup('template')), (() => ['\n    \n    ', Blast._TemplateWith(() => Spacebars.call(Spacebars.dot(view.lookup('..'), 'data')), () => Spacebars.include(view.lookupTemplate('..'), (() => Blast._InOuterTemplateScope(view, () => Spacebars.include(() => Spacebars.call(view.templateContentBlock)))))), '\n  '])); }));
+
+/**
+ * @isTemplate true
+ * @memberOf Template
+ * @function dynamic
+ * @summary Choose a template to include dynamically, by name.
+ * @locus Templates
+ * @param {String} template The name of the template to include.
+ * @param {Object} [data] Optional. The data context in which to include the
+ * template.
+ */
+
+/**
+ * @isTemplate true
+ * @memberOf Template
+ * @function dynamic
+ * @summary Choose a template to include dynamically, by name.
+ * @locus Templates
+ * @param {String} template The name of the template to include.
+ * @param {Object} [data] Optional. The data context in which to include the
+ * template.
+ */
+
+Template.__dynamicWithDataContext.helpers({
+  chooseTemplate(name) {
+    return Blast._getTemplate(name, () => Template.instance());
+  },
+});
+
+Template.__dynamic.helpers({
+  dataContextPresent() {
+    return has(this, 'data');
+  },
+  checkContext() {
+    if (!has(this, 'template')) {
+      throw new Error(
+        "Must specify name in the 'template' argument "
+          + 'to {{> Template.dynamic}}.',
+      );
+    }
+
+    Object.keys(this).forEach((k) => {
+      if (k !== 'template' && k !== 'data') {
+        throw new Error(`Invalid argument to {{> Template.dynamic}}: ${k}`);
+      }
+    });
+  },
+});
+
+export { Template };
