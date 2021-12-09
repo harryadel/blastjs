@@ -143,7 +143,7 @@ DOMBackend.Teardown = {
   },
 };
 
-if ($jq.event) {
+if ($jq.event && $jq.event.special) {
   $jq.event.special[DOMBackend.Teardown._JQUERY_EVENT_NAME] = {
     setup() {
     // This "setup" callback is important even though it is empty!
