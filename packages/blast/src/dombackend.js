@@ -143,32 +143,34 @@ DOMBackend.Teardown = {
   },
 };
 
-$jq.event.special[DOMBackend.Teardown._JQUERY_EVENT_NAME] = {
-  setup() {
+if ($jq.event) {
+  $jq.event.special[DOMBackend.Teardown._JQUERY_EVENT_NAME] = {
+    setup() {
     // This "setup" callback is important even though it is empty!
     // Without it, jQuery will call addEventListener, which is a
     // performance hit, especially with Chrome's async stack trace
     // feature enabled.
-  },
-  teardown() {
-    const elem = this;
-    const callbacks = elem[DOMBackend.Teardown._CB_PROP];
-    if (callbacks) {
-      let elt = callbacks.next;
-      while (elt !== callbacks) {
-        elt.go();
-        elt = elt.next;
+    },
+    teardown() {
+      const elem = this;
+      const callbacks = elem[DOMBackend.Teardown._CB_PROP];
+      if (callbacks) {
+        let elt = callbacks.next;
+        while (elt !== callbacks) {
+          elt.go();
+          elt = elt.next;
+        }
+        callbacks.go();
+
+        elem[DOMBackend.Teardown._CB_PROP] = null;
       }
-      callbacks.go();
+    },
+  };
 
-      elem[DOMBackend.Teardown._CB_PROP] = null;
-    }
-  },
-};
-
-// Must use jQuery semantics for `context`, not
-// querySelectorAll's.  In other words, all the parts
-// of `selector` must be found under `context`.
-DOMBackend.findBySelector = function (selector, context) {
-  return $jq(selector, context);
-};
+  // Must use jQuery semantics for `context`, not
+  // querySelectorAll's.  In other words, all the parts
+  // of `selector` must be found under `context`.
+  DOMBackend.findBySelector = function (selector, context) {
+    return $jq(selector, context);
+  };
+}
