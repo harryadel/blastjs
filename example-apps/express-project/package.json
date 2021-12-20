@@ -10,10 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@blastjs/blast": "^2.4.3",
-    "@blastjs/spacebars": "^0.1.0",
-    "@blastjs/templating-runtime": "^1.4.1",
-    "@blastjs/templating-tools": "^1.2.0",
+    "@blastjs/blast": "file:../../packages/blast",
+    "@blastjs/spacebars": "file:../../packages/spacebars",
+    "@blastjs/templating-runtime": "file:../../packages/templating-runtime",
+    "@blastjs/templating-tools": "file:../../packages/templating-tools",
     "express": "^4.17.1",
     "jsdom": "^18.0.0",
     "node-hook": "^1.0.0"
