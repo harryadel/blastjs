@@ -1,7 +1,4 @@
-import { JSDOM } from 'jsdom';
 import { Blast } from './preamble';
-
-const { document } = (new JSDOM('...')).window;
 
 // A constant empty array (frozen if the JS engine supports it).
 const _emptyArray = Object.freeze ? Object.freeze([]) : [];
