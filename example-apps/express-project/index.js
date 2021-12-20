@@ -1,15 +1,15 @@
-require('./blastHook');
-require('./example.html');
-
 const express = require('express');
-const { JSDOM } = require('jsdom');
-const { Blast, Template } = require('@blastjs/blast');
 
 const app = express();
 const port = 3000;
+const { JSDOM } = require('jsdom');
 
 window = new JSDOM('...').window;
 document = window.document;
+
+require('./blastHook');
+const { Blast, Template } = require('@blastjs/templating-runtime');
+require('./example.html');
 
 app.get('/', (req, res) => {
   const query = req.url.split('?')[1];
