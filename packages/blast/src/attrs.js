@@ -245,7 +245,6 @@ const isUrlAttribute = function (tagName, attrName) {
     SCRIPT: ['src'],
     INPUT: ['src', 'usemap', 'formaction'],
     BUTTON: ['formaction'],
-    BASE: ['href'],
     MENUITEM: ['icon'],
     HTML: ['manifest'],
     VIDEO: ['poster'],
