@@ -6,9 +6,15 @@ const { JSDOM } = require('jsdom');
 
 window = new JSDOM('...').window;
 document = window.document;
+const { Template } = require('@blastjs/templating-runtime');
+const { Blast } = require('@blastjs/blast');
+const { Spacebars } = require('@blastjs/spacebars');
+
+global.Template = Template;
+global.Blast = Blast;
+global.Spacebars = Spacebars;
 
 require('./blastHook');
-const { Blast, Template } = require('@blastjs/templating-runtime');
 require('./example.html');
 
 app.get('/', (req, res) => {
