@@ -7,9 +7,9 @@
       "integrity": "sha512-xSmQ7XHbP13MZI1EjtFRD9CNBd1709Wtv/Z+U/ZUcdZiZob05vN58OI1cyVP/r7iQN4D+53q0VYHw0cA85cODw==",
       "dependencies": {
         "@blastjs/htmljs": {
-          "version": "0.1.1",
-          "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.1.tgz",
-          "integrity": "sha512-hUXASKnLpmSTHI7VsF7Lf+1/rsmjMFDcgRSFYHxLKUI79LrqTAbqArajObCpvWEllIDc/pyjiUYlx/sD0Ps46g=="
+          "version": "0.1.2",
+          "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.2.tgz",
+          "integrity": "sha512-2cLaw8uRvvQzV0SlttlgSUmNj5bQCqwJNZOIXw6WBXs+wTmTCBBLyBKRBssIFiH6E7qj3WMx9K44a6vUGn+1vw=="
         }
       }
     },
@@ -19,9 +19,9 @@
       "integrity": "sha512-eV499Hv9DevdchrFa4EpwdkvuEigiD6sh/MTOKqHxnquFhnvFYhF+oqcCp6GJ45JBXWWWh/WYBRiqUaLqFwsVg==",
       "dependencies": {
         "@blastjs/htmljs": {
-          "version": "0.1.1",
-          "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.1.tgz",
-          "integrity": "sha512-hUXASKnLpmSTHI7VsF7Lf+1/rsmjMFDcgRSFYHxLKUI79LrqTAbqArajObCpvWEllIDc/pyjiUYlx/sD0Ps46g=="
+          "version": "0.1.2",
+          "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.2.tgz",
+          "integrity": "sha512-2cLaw8uRvvQzV0SlttlgSUmNj5bQCqwJNZOIXw6WBXs+wTmTCBBLyBKRBssIFiH6E7qj3WMx9K44a6vUGn+1vw=="
         }
       }
     },
@@ -43,16 +43,16 @@
       "integrity": "sha512-F+modnE/JzHNA6RgKOTOrIx4x2yWlqZpJHq1or25DXf8IOsogTYBQVwciCK65X5jtzblE0FaovORj0hu6t0v2w==",
       "dependencies": {
         "@blastjs/htmljs": {
-          "version": "0.1.1",
-          "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.1.tgz",
-          "integrity": "sha512-hUXASKnLpmSTHI7VsF7Lf+1/rsmjMFDcgRSFYHxLKUI79LrqTAbqArajObCpvWEllIDc/pyjiUYlx/sD0Ps46g=="
+          "version": "0.1.2",
+          "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.2.tgz",
+          "integrity": "sha512-2cLaw8uRvvQzV0SlttlgSUmNj5bQCqwJNZOIXw6WBXs+wTmTCBBLyBKRBssIFiH6E7qj3WMx9K44a6vUGn+1vw=="
         }
       }
     },
     "@blastjs/htmljs": {
-      "version": "0.1.1",
-      "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.1.tgz",
-      "integrity": "sha512-hUXASKnLpmSTHI7VsF7Lf+1/rsmjMFDcgRSFYHxLKUI79LrqTAbqArajObCpvWEllIDc/pyjiUYlx/sD0Ps46g=="
+      "version": "0.1.2",
+      "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.2.tgz",
+      "integrity": "sha512-2cLaw8uRvvQzV0SlttlgSUmNj5bQCqwJNZOIXw6WBXs+wTmTCBBLyBKRBssIFiH6E7qj3WMx9K44a6vUGn+1vw=="
     },
     "@blastjs/mongo-id": {
       "version": "0.1.3",
@@ -85,9 +85,9 @@
       "integrity": "sha512-h+1YRYGEMYLHoisJp+IFYY0yPcRLJrILofObex48tRse0EdwpmPUGcqQvCxEECjKQDttbb1XkkwBEdZ4RVDW0A==",
       "dependencies": {
         "@blastjs/htmljs": {
-          "version": "0.1.1",
-          "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.1.tgz",
-          "integrity": "sha512-hUXASKnLpmSTHI7VsF7Lf+1/rsmjMFDcgRSFYHxLKUI79LrqTAbqArajObCpvWEllIDc/pyjiUYlx/sD0Ps46g=="
+          "version": "0.1.2",
+          "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.2.tgz",
+          "integrity": "sha512-2cLaw8uRvvQzV0SlttlgSUmNj5bQCqwJNZOIXw6WBXs+wTmTCBBLyBKRBssIFiH6E7qj3WMx9K44a6vUGn+1vw=="
         }
       }
     },
@@ -97,9 +97,9 @@
       "integrity": "sha512-7RIus0mYRqBMdLYWOxtJfA3C0h/eUgrlIaUt/oOJVp8mTBrHdHMCDeGUSF2nd2p8mAjh5dxel6t1KCPUDf/mag==",
       "dependencies": {
         "@blastjs/htmljs": {
-          "version": "0.1.1",
-          "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.1.tgz",
-          "integrity": "sha512-hUXASKnLpmSTHI7VsF7Lf+1/rsmjMFDcgRSFYHxLKUI79LrqTAbqArajObCpvWEllIDc/pyjiUYlx/sD0Ps46g=="
+          "version": "0.1.2",
+          "resolved": "https://registry.npmjs.org/@blastjs/htmljs/-/htmljs-0.1.2.tgz",
+          "integrity": "sha512-2cLaw8uRvvQzV0SlttlgSUmNj5bQCqwJNZOIXw6WBXs+wTmTCBBLyBKRBssIFiH6E7qj3WMx9K44a6vUGn+1vw=="
         }
       }
     },

@@ -17,7 +17,7 @@ Npm.depends({
   '@blastjs/spacebars': '0.1.3',
   '@blastjs/templating-runtime': '1.4.4',
   '@blastjs/templating-tools': '1.2.1',
-  '@blastjs/htmljs': '0.1.1',
+  '@blastjs/htmljs': '0.1.2',
 });
 
 Package.onUse((api) => {
