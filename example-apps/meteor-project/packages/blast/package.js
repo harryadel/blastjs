@@ -10,20 +10,23 @@ Package.describe({
   documentation: 'README.md',
 });
 
-// NOTE: intentionally NOT npm depending this - if we do, meteor will bundle meteor-blaze-runtime in here, we don't want it to - we want meteor-blaze-runtime to be bundled with the rest of the npm modules.
-/*
 Npm.depends({
-  "meteor-blaze-runtime": "1.1.8"
+  jsdom: '19.0.0',
+  jquery: '3.0.0',
+  '@blastjs/blast': '2.4.10',
+  '@blastjs/spacebars': '0.1.3',
+  '@blastjs/templating-runtime': '1.4.4',
+  '@blastjs/templating-tools': '1.2.1',
+  '@blastjs/htmljs': '0.1.1',
 });
-*/
 
 Package.onUse((api) => {
   api.use('ecmascript');
   api.use('reactive-var');
   api.use('isobuild:compiler-plugin@1.0.0');
-  api.use('jquery', 'client');
-  api.mainModule('blast-client.js', 'client', { lazy: true });
-  api.mainModule('blast-server.js', 'server', { lazy: true });
+  // api.use('jquery', 'client');
+  api.mainModule('blast-client.js', 'client');
+  api.mainModule('blast-server.js', 'server');
   // api.mainModule('blast-client.js', 'server', { lazy: true });
 });
 
@@ -44,6 +47,6 @@ Package.registerBuildPlugin({
     'blast.js',
   ],
   npmDependencies: {
-    'meteor-blaze-compiler': '1.0.12',
+    '@blastjs/templating-tools': '1.2.1',
   },
 });

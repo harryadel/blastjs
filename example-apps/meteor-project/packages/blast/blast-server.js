@@ -1,4 +1,3 @@
-import cheerio from 'cheerio';
 import { Random } from 'meteor/random';
 import { JSDOM } from 'jsdom';
 import { Tracker } from 'meteor/tracker';
@@ -7,9 +6,12 @@ global.Random = Random;
 global.window = new JSDOM('...').window;
 global.document = window.document;
 Package.tracker.Tracker = global.Tracker || Tracker;
-require('meteor-blaze-runtime');
+const { Template } = require('@blastjs/templating-runtime');
+const { Blast } = require('@blastjs/blast');
+const { Spacebars } = require('@blastjs/spacebars');
+const { HTML } = require('@blastjs/htmljs');
 
-global.$ = cheerio.load;
+// global.$ = cheerio.load;
 // not sure why this is required? I guess a different global context.
 global.Template = Template;
 global.Spacebars = Spacebars;
@@ -65,20 +67,3 @@ Tracker.Computation.prototype._compute = function _compute() {
   }
 };
 */
-Meteor.subscribe = (name, ...args) => {
-  const options = args[args.length - 1];
-  if (options.onReady) {
-    options.onReady();
-  }
-
-  const handle = {
-    stop() {
-      options.onStop();
-    },
-    ready() {
-      return true;
-    },
-    subscriptionId: Random.id(),
-  };
-  return handle;
-};

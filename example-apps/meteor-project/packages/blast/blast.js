@@ -1,4 +1,4 @@
-import { TemplatingTools } from 'meteor-blaze-compiler';
+import { TemplatingTools } from '@blastjs/templating-tools';
 // global.TemplatingTools = TemplatingTools;
 
 Plugin.registerCompiler({
