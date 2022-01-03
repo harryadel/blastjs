@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/observe-sequence",
   "description": "Observe changes to various sequence types such as arrays, cursors and objects",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/observe-sequence",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",

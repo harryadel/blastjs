@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/html-tools",
   "description": "Standards-compliant HTML tools",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist/main.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",

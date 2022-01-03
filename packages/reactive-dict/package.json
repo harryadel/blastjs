@@ -1,6 +1,6 @@
 {
   "name": "@blastjs/reactive-dict",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "[Source code of released version](https://github.com/meteor/meteor/tree/master/packages/reactive-dict) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/reactive-dict) ***",
   "main": "./dist/reactive-dict.js",
   "scripts": {

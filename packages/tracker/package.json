@@ -1,6 +1,6 @@
 {
   "name": "@blastjs/tracker",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Create reactive data sources with ease",
   "main": "dist/tracker.js",
   "scripts": {

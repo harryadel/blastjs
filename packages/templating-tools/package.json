@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/templating-tools",
   "description": "Tools to scan HTML and compile tags when building a templating package",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "dist/templating-tools.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",

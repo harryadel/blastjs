@@ -1,6 +1,6 @@
 {
   "name": "@blastjs/session",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "[Source code of released version](https://github.com/meteor/meteor/tree/master/packages/session) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/session) ***",
   "main": "dist/session.js",
   "scripts": {

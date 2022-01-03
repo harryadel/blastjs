@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/spacebars-compiler",
   "description": "Compiler for Spacebars template language",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "main": "dist/preamble.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
