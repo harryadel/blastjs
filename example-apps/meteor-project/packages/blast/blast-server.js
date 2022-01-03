@@ -13,7 +13,7 @@ global.$ = cheerio.load;
 // not sure why this is required? I guess a different global context.
 global.Template = Template;
 global.Spacebars = Spacebars;
-global.Blaze = Blaze;
+global.Blast = Blast;
 global.HTML = HTML;
 
 const oldSetImmediate = Meteor._setImmediate;

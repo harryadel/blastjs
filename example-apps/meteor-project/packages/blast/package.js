@@ -1,5 +1,5 @@
 Package.describe({
-  name: 'harry97:blaze',
+  name: 'harry97:blast',
   version: '2.3.0',
   // Brief, one-line summary of the package.
   summary: '',
@@ -22,16 +22,16 @@ Package.onUse((api) => {
   api.use('reactive-var');
   api.use('isobuild:compiler-plugin@1.0.0');
   api.use('jquery', 'client');
-  api.mainModule('blaze-client.js', 'client', { lazy: true });
-  api.mainModule('blaze-server.js', 'server', { lazy: true });
-  // api.mainModule('blaze-client.js', 'server', { lazy: true });
+  api.mainModule('blast-client.js', 'client', { lazy: true });
+  api.mainModule('blast-server.js', 'server', { lazy: true });
+  // api.mainModule('blast-client.js', 'server', { lazy: true });
 });
 
 Package.onTest((api) => {
   api.use('ecmascript');
   api.use('tinytest');
-  api.use('harry97:blaze');
-  api.mainModule('blaze-tests.js');
+  api.use('harry97:blast');
+  api.mainModule('blast-tests.js');
 });
 
 Package.registerBuildPlugin({
@@ -41,7 +41,7 @@ Package.registerBuildPlugin({
     'caching-html-compiler@1.1.2',
   ],
   sources: [
-    'blaze.js',
+    'blast.js',
   ],
   npmDependencies: {
     'meteor-blaze-compiler': '1.0.12',
