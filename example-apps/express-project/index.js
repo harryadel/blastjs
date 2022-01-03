@@ -9,10 +9,12 @@ document = window.document;
 const { Template } = require('@blastjs/templating-runtime');
 const { Blast } = require('@blastjs/blast');
 const { Spacebars } = require('@blastjs/spacebars');
+const { HTML } = require('@blastjs/htmljs');
 
 global.Template = Template;
 global.Blast = Blast;
 global.Spacebars = Spacebars;
+global.HTML = HTML;
 
 require('./blastHook');
 require('./example.html');

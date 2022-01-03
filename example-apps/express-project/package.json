@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@blastjs/blast": "file:../../packages/blast",
+    "@blastjs/htmljs": "file:../../packages/htmljs",
     "@blastjs/spacebars": "file:../../packages/spacebars",
     "@blastjs/templating-runtime": "file:../../packages/templating-runtime",
     "@blastjs/templating-tools": "file:../../packages/templating-tools",
