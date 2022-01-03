@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/htmljs",
   "description": "Small library for expressing HTML trees",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist/preamble.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
