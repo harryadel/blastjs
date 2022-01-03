@@ -1,5 +1,5 @@
 Package.describe({
-  name: 'znewsham:blaze',
+  name: 'harry97:blaze',
   version: '2.3.0',
   // Brief, one-line summary of the package.
   summary: '',
@@ -30,7 +30,7 @@ Package.onUse((api) => {
 Package.onTest((api) => {
   api.use('ecmascript');
   api.use('tinytest');
-  api.use('znewsham:blaze');
+  api.use('harry97:blaze');
   api.mainModule('blaze-tests.js');
 });
 

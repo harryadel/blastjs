@@ -1,15 +1,16 @@
-import cheerio from "cheerio";
-import { Random } from "meteor/random";
-import { JSDOM } from "jsdom";
-import { Tracker } from "meteor/tracker";
+import cheerio from 'cheerio';
+import { Random } from 'meteor/random';
+import { JSDOM } from 'jsdom';
+import { Tracker } from 'meteor/tracker';
 
 global.Random = Random;
 global.window = new JSDOM('...').window;
 global.document = window.document;
 Package.tracker.Tracker = global.Tracker || Tracker;
-require("meteor-blaze-runtime");
+require('meteor-blaze-runtime');
+
 global.$ = cheerio.load;
-//not sure why this is required? I guess a different global context.
+// not sure why this is required? I guess a different global context.
 global.Template = Template;
 global.Spacebars = Spacebars;
 global.Blaze = Blaze;
@@ -77,7 +78,7 @@ Meteor.subscribe = (name, ...args) => {
     ready() {
       return true;
     },
-    subscriptionId: Random.id()
+    subscriptionId: Random.id(),
   };
   return handle;
 };
