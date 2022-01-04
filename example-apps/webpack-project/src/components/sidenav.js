@@ -17,9 +17,9 @@ const pages = {
 };
 Template.sidenav.helpers({
   pages() {
-    return pages.map((page, id) => {
-      page.id = id;
-      return page;
+    return Object.keys(pages).map((key) => {
+      pages[key].id = key;
+      return pages;
     });
   },
 });
