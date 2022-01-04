@@ -1,6 +1,7 @@
 import { Tracker } from '@blastjs/tracker';
 import { ReactiveVar } from '@blastjs/reactive-var';
 import { HTML } from '@blastjs/htmljs';
+import { ObserveSequence } from '@blastjs/observe-sequence';
 import isObject from 'lodash.isobject';
 import has from 'lodash.has';
 import { Blast } from './preamble';
