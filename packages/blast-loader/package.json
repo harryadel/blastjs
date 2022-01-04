@@ -1,0 +1,32 @@
+{
+  "name": "@blastjs/blast-loader",
+  "description": "webpack library for loading blast",
+  "version": "0.1.2",
+  "main": "dist/blast-loader.js",
+  "scripts": {
+    "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
+    "test:watch": "jest --watch",
+    "watch": "watch 'npm run build' src",
+    "clean": "rimraf ./dist",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir ./dist",
+    "prepublish": "npm run clean && npm run build"
+  },
+  "dependencies": {
+    "@blastjs/templating-tools": "^1.2.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.14.2",
+    "@babel/preset-env": "^7.14.2",
+    "cross-env": "^7.0.3",
+    "jest": "^26.6.3",
+    "rimraf": "^2.7.1",
+    "watch": "^0.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/blast-loader"
+  },
+  "author": "Harry Adel <harryadelb@gmail.com>",
+  "license": "GPLV3"
+}
