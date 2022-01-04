@@ -20,7 +20,7 @@ Npm.depends({
 
 Package.onUse((api) => {
   api.use('ecmascript');
-  api.use('isobuild:compiler-plugin@1.0.0');
+  api.use('isobuild:compiler-plugin@1.0.0', 'server');
   api.mainModule('blast-client.js', 'client');
   api.mainModule('blast-server.js', 'server');
 });
