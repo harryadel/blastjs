@@ -90,12 +90,12 @@ export class MultiFileCachingCompiler extends CachingCompilerBase {
       cacheKeyMap.set(importPath, this._getCacheKeyWithPath(inputFile));
     });
 
-    inputFiles.forEach((inputFile) => {
+    for await (const inputFile of inputFiles) {
       if (arches) {
         arches[inputFile.getArch()] = 1;
       }
 
-      const getResult = () => {
+      const getResult = async () => {
         const absoluteImportPath = this.getAbsoluteImportPath(inputFile);
         const cacheKey = cacheKeyMap.get(absoluteImportPath);
         let cacheEntry = this._cache.get(cacheKey);
@@ -109,7 +109,7 @@ export class MultiFileCachingCompiler extends CachingCompilerBase {
         if (!(cacheEntry && this._cacheEntryValid(cacheEntry, cacheKeyMap))) {
           cacheMisses.push(inputFile.getDisplayPath());
 
-          const compileOneFileReturn = Promise.await(this.compileOneFile(inputFile, allFiles));
+          const compileOneFileReturn = await this.compileOneFile(inputFile, allFiles);
 
           if (!compileOneFileReturn) {
             // compileOneFile should have called inputFile.error.
@@ -163,12 +163,12 @@ export class MultiFileCachingCompiler extends CachingCompilerBase {
         }
         this.compileOneFileLater(inputFile, getResult);
       } else if (this.isRoot(inputFile)) {
-        const result = getResult();
+        const result = await getResult();
         if (result) {
           this.addCompileResult(inputFile, result);
         }
       }
-    });
+    }
 
     if (this._cacheDebugEnabled) {
       this._afterLinkCallbacks.push(() => {

@@ -89,12 +89,12 @@ export class CachingCompiler extends CachingCompilerBase {
     const cacheMisses = [];
     const arches = this._cacheDebugEnabled && Object.create(null);
 
-    inputFiles.forEach((inputFile) => {
+    for (const inputFile of inputFiles) {
       if (arches) {
         arches[inputFile.getArch()] = 1;
       }
 
-      const getResult = () => {
+      const getResult = async () => {
         const cacheKey = this._deepHash(this.getCacheKey(inputFile));
         let compileResult = this._cache.get(cacheKey);
 
@@ -107,7 +107,7 @@ export class CachingCompiler extends CachingCompilerBase {
 
         if (!compileResult) {
           cacheMisses.push(inputFile.getDisplayPath());
-          compileResult = Promise.await(this.compileOneFile(inputFile));
+          compileResult = await this.compileOneFile(inputFile);
 
           if (!compileResult) {
             // compileOneFile should have called inputFile.error.
@@ -127,12 +127,12 @@ export class CachingCompiler extends CachingCompilerBase {
         && inputFile.supportsLazyCompilation) {
         this.compileOneFileLater(inputFile, getResult);
       } else {
-        const result = getResult();
+        const result = await getResult();
         if (result) {
           this.addCompileResult(inputFile, result);
         }
       }
-    });
+    }
 
     if (this._cacheDebugEnabled) {
       this._afterLinkCallbacks.push(() => {
