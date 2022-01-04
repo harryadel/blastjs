@@ -26,6 +26,7 @@ export class CachingHtmlCompiler extends CachingCompiler {
 
     this.tagScannerFunc = tagScannerFunc;
     this.tagHandlerFunc = tagHandlerFunc;
+    this._templatingTools = TemplatingTools;
   }
 
   // Implements method from CachingCompilerBase
