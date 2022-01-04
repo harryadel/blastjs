@@ -1,1 +1,1 @@
-import '../imports/client/anotherTemplate';
+import '../imports/client/anotherTemplate.js';
