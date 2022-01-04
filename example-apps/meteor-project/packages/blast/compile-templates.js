@@ -1,14 +1,13 @@
 import { TemplatingTools } from '@blastjs/templating-tools';
-import { HTML } from '@blastjs/htmljs';
 
 global.TemplatingTools = TemplatingTools;
-// global.HTML = HTML;
 
 Plugin.registerCompiler({
   extensions: ['html'],
+  archMatching: 'web',
   isTemplate: true,
-}, (...args) => new CachingHtmlCompiler(
+}, () => new CachingHtmlCompiler(
   'templating',
-  (...args) => TemplatingTools.scanHtmlForTags(...args),
+  TemplatingTools.scanHtmlForTags,
   TemplatingTools.compileTagsWithSpacebars,
 ));
