@@ -5,7 +5,7 @@ import { CachingCompiler } from '@blastjs/caching-compiler';
 
 // The CompileResult type for this CachingCompiler is the return value of
 // htmlScanner.scan: a {js, head, body, bodyAttrs} object.
-export class CachingHtmlCompiler extends CachingCompiler {
+class CachingHtmlCompiler extends CachingCompiler {
   /**
    * Constructor for CachingHtmlCompiler
    * @param  {String} name The name of the compiler, printed in errors -
@@ -26,7 +26,6 @@ export class CachingHtmlCompiler extends CachingCompiler {
 
     this.tagScannerFunc = tagScannerFunc;
     this.tagHandlerFunc = tagHandlerFunc;
-    this._templatingTools = TemplatingTools;
   }
 
   // Implements method from CachingCompilerBase
@@ -142,3 +141,8 @@ export class CachingHtmlCompiler extends CachingCompiler {
     }
   }
 }
+
+export {
+  TemplatingTools,
+  CachingHtmlCompiler,
+};
