@@ -12,5 +12,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'import/prefer-default-export': 'off',
+    'no-underscore-dangle': 'off',
   },
 };
