@@ -36,12 +36,11 @@ Package.registerBuildPlugin({
   name: 'compileTemplatesBatch',
   use: [
     'ecmascript',
-    'caching-html-compiler@1.2.1',
   ],
   sources: [
     'compile-templates.js',
   ],
   npmDependencies: {
-    '@blastjs/templating-tools': '1.2.1',
+    '@blastjs/caching-html-compiler': '0.1.5',
   },
 });
