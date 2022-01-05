@@ -1,28 +1,5 @@
+import setImmediate from 'setimmediate';
 import { debugFunc, _maybeSuppressMoreLogs } from './debug';
-
-const isClient = () => typeof window === 'object';
-
-// If we are on the client we can't make use of Fibers so we only import
-// the module if we have no window available.
-// At the same time we need to import a polyfill for "setImmediate", because
-// this is natively only available on some IE and node versions.
-const Fiber = (function () {
-  let mod;
-
-  try {
-    if (!isClient()) {
-      // eslint-disable-next-line global-require
-      mod = require('fibers');
-    } else {
-      // eslint-disable-next-line global-require
-      require('setimmediate');
-    }
-  } catch (e) {
-    console.error(e);
-  }
-
-  return mod;
-}());
 
 /**
  * @namespace Tracker

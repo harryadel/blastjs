@@ -564,7 +564,7 @@ test('tracker - Tracker.autorun, onError option', () => {
       onError: (err) => {
         expect(err.message).toEqual('foo');
       },
-    }
+    },
   );
   d.changed();
   Tracker.flush();
