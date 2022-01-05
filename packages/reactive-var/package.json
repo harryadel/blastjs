@@ -1,6 +1,6 @@
 {
   "name": "@blastjs/reactive-var",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "[Source code of released version](https://github.com/meteor/meteor/tree/master/packages/reactive-var) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/reactive-var) ***",
   "main": "dist/reactive-var.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "prepublish": "npm run test && npm run clean && npm run build"
   },
   "dependencies": {
-    "@blastjs/tracker": "^1.0.1"
+    "@blastjs/tracker": "^1.0.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",

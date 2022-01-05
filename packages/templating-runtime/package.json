@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/templating-runtime",
   "description": "Runtime for compiled .html files",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "main": "dist/templating.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
@@ -14,7 +14,7 @@
     "@blastjs/blast": "^2.4.3",
     "@blastjs/reactive-var": "^1.0.1",
     "@blastjs/spacebars": "^0.1.1",
-    "@blastjs/tracker": "^1.0.2",
+    "@blastjs/tracker": "^1.0.5",
     "lodash.has": "^4.5.2"
   },
   "devDependencies": {

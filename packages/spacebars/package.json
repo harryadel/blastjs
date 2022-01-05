@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/spacebars",
   "description": "Handlebars-like template language for Meteor",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "dist/spacebars-runtime.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@blastjs/observe-sequence": "^0.1.0",
-    "@blastjs/tracker": "^1.0.1",
+    "@blastjs/tracker": "^1.0.5",
     "@blastjs/htmljs": "^0.1.0",
     "@blastjs/blast": "^2.4.3"
   },

@@ -2,7 +2,7 @@
   "name": "@blastjs/blast-tools",
   "description": "Compile-time tools for Blast",
   "main": "./dist/preamble.js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
     "clean": "rimraf ./dist",
@@ -14,7 +14,7 @@
     "@blastjs/htmljs": "^0.1.0",
     "@blastjs/reactive-dict": "^1.0.9",
     "@blastjs/mongo-id": "^0.1.2",
-    "@blastjs/tracker": "^1.0.1"
+    "@blastjs/tracker": "^1.0.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",

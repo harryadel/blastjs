@@ -1,6 +1,6 @@
 {
   "name": "@blastjs/session",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "[Source code of released version](https://github.com/meteor/meteor/tree/master/packages/session) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/session) ***",
   "main": "dist/session.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "dependencies": {
     "@blastjs/reactive-dict": "^1.0.9",
     "@blastjs/mongo-id": "^0.1.2",
-    "@blastjs/tracker": "^1.0.1"
+    "@blastjs/tracker": "^1.0.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",

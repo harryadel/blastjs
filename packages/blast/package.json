@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/blast",
   "summary": "Reactive Templating library",
-  "version": "2.4.13",
+  "version": "2.4.14",
   "main": "./dist/index.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
@@ -17,7 +17,7 @@
     "@blastjs/observe-sequence": "^0.1.2",
     "@blastjs/ordered-dict": "^0.1.0",
     "@blastjs/reactive-var": "^1.0.1",
-    "@blastjs/tracker": "^1.0.1",
+    "@blastjs/tracker": "^1.0.5",
     "jsdom": "^19.0.0",
     "lodash.has": "^4.5.2",
     "lodash.isempty": "^4.4.0",
