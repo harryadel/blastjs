@@ -1,6 +1,6 @@
 {
   "name": "@blastjs/tracker",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Create reactive data sources with ease",
   "main": "dist/tracker.js",
   "scripts": {
@@ -9,6 +9,9 @@
     "clean": "rimraf dist",
     "build": "cross-env BABEL_ENV=production babel src --out-dir dist",
     "prepublish": "npm run test && npm run clean && npm run build"
+  },
+  "dependencies": {
+    "setimmediate": "^1.0.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.7",
@@ -23,8 +26,5 @@
     "url": "https://github.com/harryadel/blastjs/tree/main/packages/tracker"
   },
   "author": "Harry Adel <harryadelb@gmail.com>",
-  "license": "GPLV3",
-  "dependencies": {
-    "setasap": "^2.0.1"
-  }
+  "license": "GPLV3"
 }

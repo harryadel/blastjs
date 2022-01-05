@@ -1,5 +1,7 @@
-import setAsap from 'setasap';
 import { debugFunc, _maybeSuppressMoreLogs } from './debug';
+
+require('setimmediate');
+
 /**
  * @namespace Tracker
  * @summary The namespace for Tracker-related methods.
@@ -99,7 +101,7 @@ const afterFlushCallbacks = [];
 function requireFlush() {
   if (!willFlush) {
     // We want this code to work without Meteor, see debugFunc above
-    setAsap(Tracker._runFlush);
+    setImmediate(Tracker._runFlush);
     willFlush = true;
   }
 }
