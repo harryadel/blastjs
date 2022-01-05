@@ -6,14 +6,11 @@ module.exports = {
   entry: './src/index.js',
   plugins: [
     new webpack.ProvidePlugin({
-      process: 'process/browser',
+      process: 'process',
       Buffer: ['buffer', 'Buffer'],
     }),
   ],
   resolve: {
-    alias: {
-      process: 'process/browser',
-    },
     fallback: {
       fs: false,
       url: false,
@@ -29,6 +26,7 @@ module.exports = {
       os: require.resolve('os-browserify/browser'),
       stream: require.resolve('stream-browserify'),
       path: require.resolve('path-browserify'),
+      process: require.resolve('process/browser'),
     },
   },
   module: {
