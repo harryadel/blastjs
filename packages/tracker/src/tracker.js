@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { debugFunc, _maybeSuppressMoreLogs } from './debug';
 
 const isClient = () => typeof window === 'object';

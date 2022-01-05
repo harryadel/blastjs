@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-/* eslint-disable no-underscore-dangle */
 
 let suppress = 0;
 

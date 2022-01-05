@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { Tracker } from '@blastjs/tracker';
 import EJSON from 'ejson';
 import { MongoID } from '@blastjs/mongo-id';
