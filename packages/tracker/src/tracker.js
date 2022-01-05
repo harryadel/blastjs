@@ -1,5 +1,6 @@
-import setImmediate from 'setimmediate';
 import { debugFunc, _maybeSuppressMoreLogs } from './debug';
+
+require('setimmediate');
 
 /**
  * @namespace Tracker
