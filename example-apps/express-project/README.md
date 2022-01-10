@@ -5,6 +5,6 @@ This is an example of using blaze to render dynamic HTML with express. We use `n
 For obvious reasons events wont work on the client and the created/rendered/destroyed callbacks won't be useful
 
 run `npm install` to install the dependencies then
-run `npm run start` to start the server
+run `npm run dev` to start the server
 
 navigate to `http://localhost:3000` and see your template.
