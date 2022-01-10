@@ -12,7 +12,7 @@ Package.describe({
 
 Npm.depends({
   jsdom: '19.0.0',
-  '@blastjs/blast': '2.4.15',
+  '@blastjs/blast': '2.4.16',
   '@blastjs/spacebars': '0.1.4',
   '@blastjs/templating-runtime': '1.4.5',
   '@blastjs/htmljs': '0.1.2',

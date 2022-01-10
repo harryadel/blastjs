@@ -2,9 +2,9 @@
   "lockfileVersion": 1,
   "dependencies": {
     "@blastjs/blast": {
-      "version": "2.4.15",
-      "resolved": "https://registry.npmjs.org/@blastjs/blast/-/blast-2.4.15.tgz",
-      "integrity": "sha512-K1B9zYM6BzplmkWqt3izLrwKRd6JiSvtDLi3W9lk9Sq02rdcEtzRlHH8mwmTpV9R8ce5omb8WLqi4CQvsH+rXw==",
+      "version": "2.4.16",
+      "resolved": "https://registry.npmjs.org/@blastjs/blast/-/blast-2.4.16.tgz",
+      "integrity": "sha512-D431SrsrfK0k+dEL+e487n/ejfJnWIWD7LMJroKMBzwbUljiDUHWhrsnggLqXPXUo6HpVZ1LVAIXiHbH6cpLdw==",
       "dependencies": {
         "@blastjs/htmljs": {
           "version": "0.1.2",
@@ -289,6 +289,11 @@
       "version": "4.4.0",
       "resolved": "https://registry.npmjs.org/lodash.isempty/-/lodash.isempty-4.4.0.tgz",
       "integrity": "sha1-b4bL7di+TsmHvpqvM8loTbGzHn4="
+    },
+    "lodash.isequal": {
+      "version": "4.5.0",
+      "resolved": "https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz",
+      "integrity": "sha1-QVxEePK8wwEgwizhDtMib30+GOA="
     },
     "lodash.isfunction": {
       "version": "3.0.9",
