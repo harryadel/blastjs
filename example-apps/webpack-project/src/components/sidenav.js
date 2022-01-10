@@ -1,4 +1,5 @@
-const $ = require('jquery');
+import $ from 'jquery';
+
 require('./sidenav.html');
 require('./page1.html');
 require('./page2.html');
@@ -15,12 +16,14 @@ const pages = {
     templateName: 'page2',
   },
 };
+
 Template.sidenav.helpers({
   pages() {
-    return Object.keys(pages).map((key) => {
-      pages[key].id = key;
-      return pages;
-    });
+    const res = Object.keys(pages).map((key) => ({
+      id: key,
+      title: pages[key].title,
+    }));
+    return res;
   },
 });
 Template.sidenav.events({
