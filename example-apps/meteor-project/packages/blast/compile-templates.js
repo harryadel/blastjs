@@ -2,9 +2,10 @@ import { CachingHtmlCompiler, TemplatingTools } from '@blastjs/caching-html-comp
 
 Plugin.registerCompiler({
   extensions: ['html'],
+  archMatching: 'web',
   isTemplate: true,
-}, (...args) => new CachingHtmlCompiler(
+}, () => new CachingHtmlCompiler(
   'templating',
-  (...args) => TemplatingTools.scanHtmlForTags(...args),
-  (...args) => TemplatingTools.compileTagsWithSpacebars(...args),
+  TemplatingTools.scanHtmlForTags,
+  TemplatingTools.compileTagsWithSpacebars,
 ));
