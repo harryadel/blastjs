@@ -1,7 +1,52 @@
 import has from 'lodash.has';
+import isEqual from 'lodash.isequal';
 import { HTML } from '@blastjs/htmljs';
 import { Tracker } from '@blastjs/tracker';
 import { Blast } from './preamble';
+
+// Turns HTMLjs into DOM nodes and DOMRanges.
+//
+// - `htmljs`: the value to materialize, which may be any of the htmljs
+//   types (Tag, CharRef, Comment, Raw, array, string, boolean, number,
+//   null, or undefined) or a View or Template (which will be used to
+//   construct a View).
+// - `intoArray`: the array of DOM nodes and DOMRanges to push the output
+//   into (required)
+// - `parentView`: the View we are materializing content for (optional)
+// - `_existingWorkStack`: optional argument, only used for recursive
+//   calls when there is some other _materializeDOM on the call stack.
+//   If _materializeDOM called your function and passed in a workStack,
+//   pass it back when you call _materializeDOM (such as from a workStack
+//   task).
+//
+// Returns `intoArray`, which is especially useful if you pass in `[]`.
+Blast._materializeDOM = function (
+  htmljs,
+  intoArray,
+  parentView,
+  _existingWorkStack,
+) {
+// In order to use fewer stack frames, materializeDOMInner can push
+// tasks onto `workStack`, and they will be popped off
+// and run, last first, after materializeDOMInner returns.  The
+// reason we use a stack instead of a queue is so that we recurse
+// depth-first, doing newer tasks first.
+  const workStack = (_existingWorkStack || []);
+  materializeDOMInner(htmljs, intoArray, parentView, workStack);
+
+  if (!_existingWorkStack) {
+    // We created the work stack, so we are responsible for finishing
+    // the work.  Call each "task" function, starting with the top
+    // of the stack.
+    while (workStack.length) {
+      // Note that running task() may push new items onto workStack.
+      const task = workStack.pop();
+      task();
+    }
+  }
+
+  return intoArray;
+};
 
 const ElementAttributesUpdater = function (elem) {
   this.elem = elem;
@@ -51,7 +96,7 @@ ElementAttributesUpdater.prototype.update = function (newAttrs) {
   }
 };
 
-const materializeDOMInner = function (htmljs, intoArray, parentView, workStack) {
+function materializeDOMInner(htmljs, intoArray, parentView, workStack) {
   if (htmljs == null) {
     // null or undefined
     return;
@@ -63,22 +108,21 @@ const materializeDOMInner = function (htmljs, intoArray, parentView, workStack) 
       return;
     case 'object':
       if (htmljs.htmljsType) {
-        switch (htmljs.htmljsType) {
-          case HTML.Tag.htmljsType:
-            intoArray.push(materializeTag(htmljs, parentView, workStack));
-            return;
-          case HTML.CharRef.htmljsType:
-            intoArray.push(document.createTextNode(htmljs.str));
-            return;
-          case HTML.Comment.htmljsType:
-            intoArray.push(document.createComment(htmljs.sanitizedValue));
-            return;
-          case HTML.Raw.htmljsType:
-            // Get an array of DOM nodes by using the browser's HTML parser
-            // (like innerHTML).
-            var nodes = Blast._DOMBackend.parseHTML(htmljs.value);
-            for (var i = 0; i < nodes.length; i++) { intoArray.push(nodes[i]); }
-            return;
+        if (isEqual(htmljs.htmljsType, HTML.Tag.htmljsType)) {
+          intoArray.push(materializeTag(htmljs, parentView, workStack));
+          return;
+        } if (isEqual(htmljs.htmljsType, HTML.CharRef.htmljsType)) {
+          intoArray.push(document.createTextNode(htmljs.str));
+          return;
+        } if (isEqual(htmljs.htmljsType, HTML.Comment.htmljsType)) {
+          intoArray.push(document.createComment(htmljs.sanitizedValue));
+          return;
+        } if (isEqual(htmljs.htmljsType, HTML.Raw.htmljsType)) {
+          // Get an array of DOM nodes by using the browser's HTML parser
+          // (like innerHTML).
+          const nodes = Blast._DOMBackend.parseHTML(htmljs.value);
+          for (var i = 0; i < nodes.length; i++) { intoArray.push(nodes[i]); }
+          return;
         }
       } else if (HTML.isArray(htmljs)) {
         for (var i = htmljs.length - 1; i >= 0; i--) {
@@ -105,51 +149,7 @@ const materializeDOMInner = function (htmljs, intoArray, parentView, workStack) 
   }
 
   throw new Error(`Unexpected object in htmljs: ${htmljs}`);
-};
-
-// Turns HTMLjs into DOM nodes and DOMRanges.
-//
-// - `htmljs`: the value to materialize, which may be any of the htmljs
-//   types (Tag, CharRef, Comment, Raw, array, string, boolean, number,
-//   null, or undefined) or a View or Template (which will be used to
-//   construct a View).
-// - `intoArray`: the array of DOM nodes and DOMRanges to push the output
-//   into (required)
-// - `parentView`: the View we are materializing content for (optional)
-// - `_existingWorkStack`: optional argument, only used for recursive
-//   calls when there is some other _materializeDOM on the call stack.
-//   If _materializeDOM called your function and passed in a workStack,
-//   pass it back when you call _materializeDOM (such as from a workStack
-//   task).
-//
-// Returns `intoArray`, which is especially useful if you pass in `[]`.
-Blast._materializeDOM = function (
-  htmljs,
-  intoArray,
-  parentView,
-  _existingWorkStack,
-) {
-  // In order to use fewer stack frames, materializeDOMInner can push
-  // tasks onto `workStack`, and they will be popped off
-  // and run, last first, after materializeDOMInner returns.  The
-  // reason we use a stack instead of a queue is so that we recurse
-  // depth-first, doing newer tasks first.
-  const workStack = (_existingWorkStack || []);
-  materializeDOMInner(htmljs, intoArray, parentView, workStack);
-
-  if (!_existingWorkStack) {
-    // We created the work stack, so we are responsible for finishing
-    // the work.  Call each "task" function, starting with the top
-    // of the stack.
-    while (workStack.length) {
-      // Note that running task() may push new items onto workStack.
-      const task = workStack.pop();
-      task();
-    }
-  }
-
-  return intoArray;
-};
+}
 
 const isSVGAnchor = function (node) {
   // We generally aren't able to detect SVG <a> elements because
