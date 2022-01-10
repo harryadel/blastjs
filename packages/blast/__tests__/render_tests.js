@@ -41,10 +41,12 @@ test('blast - render - basic', () => {
     if (typeof expectedCode !== 'undefined') { expect(toCode(input)).toEqual(expectedCode); }
   };
 
-  run(P('Hello'),
+  run(
+    P('Hello'),
     '<p>Hello</p>',
     '<p>Hello</p>',
-    'HTML.P("Hello")');
+    'HTML.P("Hello")',
+  );
 
   run([], '', '', '[]');
   run([null, null], '', '', '[null, null]');
@@ -52,59 +54,77 @@ test('blast - render - basic', () => {
   // Test crazy character references
 
   // `&zopf;` is "Mathematical double-struck small z" a.k.a. "open-face z"
-  run(P(CharRef({ html: '&zopf;', str: '\ud835\udd6b' })),
+  run(
+    P(CharRef({ html: '&zopf;', str: '\ud835\udd6b' })),
     '<p>\ud835\udd6b</p>',
     '<p>&zopf;</p>',
-    'HTML.P(HTML.CharRef({html: "&zopf;", str: "\\ud835\\udd6b"}))');
+    'HTML.P(HTML.CharRef({html: "&zopf;", str: "\\ud835\\udd6b"}))',
+  );
 
-  run(P({ id: CharRef({ html: '&zopf;', str: '\ud835\udd6b' }) }, 'Hello'),
+  run(
+    P({ id: CharRef({ html: '&zopf;', str: '\ud835\udd6b' }) }, 'Hello'),
     '<p id="\ud835\udd6b">Hello</p>',
     '<p id="&zopf;">Hello</p>',
-    'HTML.P({id: HTML.CharRef({html: "&zopf;", str: "\\ud835\\udd6b"})}, "Hello")');
+    'HTML.P({id: HTML.CharRef({html: "&zopf;", str: "\\ud835\\udd6b"})}, "Hello")',
+  );
 
-  run(P({ id: [CharRef({ html: '&zopf;', str: '\ud835\udd6b' }), '!'] }, 'Hello'),
+  run(
+    P({ id: [CharRef({ html: '&zopf;', str: '\ud835\udd6b' }), '!'] }, 'Hello'),
     '<p id="\ud835\udd6b!">Hello</p>',
     '<p id="&zopf;!">Hello</p>',
-    'HTML.P({id: [HTML.CharRef({html: "&zopf;", str: "\\ud835\\udd6b"}), "!"]}, "Hello")');
+    'HTML.P({id: [HTML.CharRef({html: "&zopf;", str: "\\ud835\\udd6b"}), "!"]}, "Hello")',
+  );
 
   // Test comments
 
-  run(DIV(Comment('Test')),
+  run(
+    DIV(Comment('Test')),
     '<div><!----></div>', // our innerHTML-canonicalization function kills comment contents
     '<div><!--Test--></div>',
-    'HTML.DIV(HTML.Comment("Test"))');
+    'HTML.DIV(HTML.Comment("Test"))',
+  );
 
   // Test arrays
 
-  run([P('Hello'), P('World')],
+  run(
+    [P('Hello'), P('World')],
     '<p>Hello</p><p>World</p>',
     '<p>Hello</p><p>World</p>',
-    '[HTML.P("Hello"), HTML.P("World")]');
+    '[HTML.P("Hello"), HTML.P("World")]',
+  );
 
   // Test slightly more complicated structure
 
-  run(DIV({ class: 'foo' }, UL(LI(P(A({ href: '#one' }, 'One'))),
-    LI(P('Two', BR(), 'Three')))),
-  '<div class="foo"><ul><li><p><a href="#one">One</a></p></li><li><p>Two<br>Three</p></li></ul></div>',
-  '<div class="foo"><ul><li><p><a href="#one">One</a></p></li><li><p>Two<br>Three</p></li></ul></div>',
-  'HTML.DIV({"class": "foo"}, HTML.UL(HTML.LI(HTML.P(HTML.A({href: "#one"}, "One"))), HTML.LI(HTML.P("Two", HTML.BR(), "Three"))))');
+  run(
+    DIV({ class: 'foo' }, UL(
+      LI(P(A({ href: '#one' }, 'One'))),
+      LI(P('Two', BR(), 'Three')),
+    )),
+    '<div class="foo"><ul><li><p><a href="#one">One</a></p></li><li><p>Two<br>Three</p></li></ul></div>',
+    '<div class="foo"><ul><li><p><a href="#one">One</a></p></li><li><p>Two<br>Three</p></li></ul></div>',
+    'HTML.DIV({"class": "foo"}, HTML.UL(HTML.LI(HTML.P(HTML.A({href: "#one"}, "One"))), HTML.LI(HTML.P("Two", HTML.BR(), "Three"))))',
+  );
 
   // Test nully attributes
-  run(BR({
-    x: null,
-    y: [[], []],
-    a: [['']],
-  }),
-  '<br a="">',
-  '<br a="">',
-  'HTML.BR({a: [[""]]})');
+  run(
+    BR({
+      x: null,
+      y: [[], []],
+      a: [['']],
+    }),
+    '<br a="">',
+    '<br a="">',
+    'HTML.BR({a: [[""]]})',
+  );
 
-  run(BR({
-    x() { return Blast.View(() => Blast.View(() => [])); },
-    a() { return Blast.View(() => Blast.View(() => '')); },
-  }),
-  '<br a="">',
-  '<br a="">');
+  run(
+    BR({
+      x() { return Blast.View(() => Blast.View(() => [])); },
+      a() { return Blast.View(() => Blast.View(() => '')); },
+    }),
+    '<br a="">',
+    '<br a="">',
+  );
 });
 
 // test that we correctly update the 'value' property on input fields
@@ -161,26 +181,36 @@ test('blast - render - textarea', () => {
     if (typeof code === 'string') { expect(toCode(node)).toEqual(code); }
   };
 
-  run('Hello',
+  run(
+    'Hello',
     '<textarea>Hello</textarea>',
-    'HTML.TEXTAREA({value: "Hello"})');
+    'HTML.TEXTAREA({value: "Hello"})',
+  );
 
-  run('\nHello',
+  run(
+    '\nHello',
     '<textarea>\n\nHello</textarea>',
-    'HTML.TEXTAREA({value: "\\nHello"})');
+    'HTML.TEXTAREA({value: "\\nHello"})',
+  );
 
-  run('</textarea>',
+  run(
+    '</textarea>',
     '<textarea>&lt;/textarea></textarea>',
-    'HTML.TEXTAREA({value: "</textarea>"})');
+    'HTML.TEXTAREA({value: "</textarea>"})',
+  );
 
-  run(CharRef({ html: '&amp;', str: '&' }),
+  run(
+    CharRef({ html: '&amp;', str: '&' }),
     '&',
     '<textarea>&amp;</textarea>',
-    'HTML.TEXTAREA({value: HTML.CharRef({html: "&amp;", str: "&"})})');
+    'HTML.TEXTAREA({value: HTML.CharRef({html: "&amp;", str: "&"})})',
+  );
 
-  run(() => ['a', Blast.View(() => 'b'), 'c'],
+  run(
+    () => ['a', Blast.View(() => 'b'), 'c'],
     'abc',
-    '<textarea>abc</textarea>');
+    '<textarea>abc</textarea>',
+  );
 
   // test that reactivity of textarea "value" attribute works...
   (function () {

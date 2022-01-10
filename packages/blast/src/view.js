@@ -189,9 +189,7 @@ Blast.View.prototype.autorun = function (f, _inViewScope, displayName) {
   const templateInstanceFunc = Blast.Template._currentTemplateInstanceFunc;
 
   const func = function viewAutorun(c) {
-    return Blast._withCurrentView(_inViewScope || self, () => Blast.Template._withTemplateInstanceFunc(
-      templateInstanceFunc, () => f.call(self, c),
-    ));
+    return Blast._withCurrentView(_inViewScope || self, () => Blast.Template._withTemplateInstanceFunc(templateInstanceFunc, () => f.call(self, c)));
   };
 
   // Give the autorun function a better name for debugging and profiling.
@@ -292,11 +290,9 @@ const doFirstRender = function (view, initialContent) {
   domrange.onAttached((range, element) => {
     view._isAttached = true;
 
-    teardownHook = Blast._DOMBackend.Teardown.onElementTeardown(
-      element, () => {
-        Blast._destroyView(view, true /* _skipNodes */);
-      },
-    );
+    teardownHook = Blast._DOMBackend.Teardown.onElementTeardown(element, () => {
+      Blast._destroyView(view, true /* _skipNodes */);
+    });
   });
 
   // tear down the teardown hook
@@ -382,8 +378,14 @@ Blast._materializeView = function (view, parentView, _workStack, _intoArray) {
         _intoArray.push(domrange);
       });
       // now push the task that calculates initialContents
-      _workStack.push(Blast._bind(Blast._materializeDOM, null,
-        lastHtmljs, initialContents, view, _workStack));
+      _workStack.push(Blast._bind(
+        Blast._materializeDOM,
+        null,
+        lastHtmljs,
+        initialContents,
+        view,
+        _workStack,
+      ));
     }
   });
 
@@ -444,9 +446,7 @@ Blast._HTMLJSExpander.def({
     // that contains Views must be wrapped in a function.
     if (typeof value === 'function') value = Blast._withCurrentView(this.parentView, value);
 
-    return HTML.TransformingVisitor.prototype.visitAttribute.call(
-      this, name, value, tag,
-    );
+    return HTML.TransformingVisitor.prototype.visitAttribute.call(this, name, value, tag);
   },
 });
 
@@ -652,8 +652,14 @@ Blast.insert = function (view, parentElement, nextNode) {
 Blast.renderWithData = function (content, data, parentElement, nextNode, parentView) {
   // We defer the handling of optional arguments to Blast.render.  At this point,
   // `nextNode` may actually be `parentView`.
-  return Blast.render(Blast._TemplateWith(data, contentAsFunc(content)),
-    parentElement, nextNode, parentView);
+  return Blast.render(
+    Blast._TemplateWith(data, contentAsFunc(content)),
+    parentElement,
+
+    nextNode,
+
+    parentView,
+  );
 };
 
 /**
@@ -695,9 +701,7 @@ Blast.toHTML = function (content, parentView) {
 Blast.toHTMLWithData = function (content, data, parentView) {
   parentView = parentView || currentViewIfRendering();
 
-  return HTML.toHTML(Blast._expandView(Blast._TemplateWith(
-    data, contentAsFunc(content),
-  ), parentView));
+  return HTML.toHTML(Blast._expandView(Blast._TemplateWith(data, contentAsFunc(content)), parentView));
 };
 
 Blast._toText = function (htmljs, parentView, textMode) {
@@ -845,14 +849,17 @@ Blast._addEventMap = function (view, eventMap, thisInHandler) {
         const newEvents = parts.shift();
         const selector = parts.join(' ');
         handles.push(Blast._EventSupport.listen(
-          element, newEvents, selector,
+          element,
+          newEvents,
+          selector,
           function (evt) {
             if (!range.containsElement(evt.currentTarget)) { return null; }
             const handlerThis = thisInHandler || this;
             const handlerArgs = arguments;
             return Blast._withCurrentView(view, () => handler.apply(handlerThis, handlerArgs));
           },
-          range, (r) => r.parentRange,
+          range,
+          (r) => r.parentRange,
         ));
       });
     });
