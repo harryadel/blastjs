@@ -1,5 +1,6 @@
 import has from 'lodash.has';
 import { HTML } from '@blastjs/htmljs';
+import { Tracker } from '@blastjs/tracker';
 import { Blast } from './preamble';
 
 const ElementAttributesUpdater = function (elem) {
@@ -50,47 +51,7 @@ ElementAttributesUpdater.prototype.update = function (newAttrs) {
   }
 };
 
-// Turns HTMLjs into DOM nodes and DOMRanges.
-//
-// - `htmljs`: the value to materialize, which may be any of the htmljs
-//   types (Tag, CharRef, Comment, Raw, array, string, boolean, number,
-//   null, or undefined) or a View or Template (which will be used to
-//   construct a View).
-// - `intoArray`: the array of DOM nodes and DOMRanges to push the output
-//   into (required)
-// - `parentView`: the View we are materializing content for (optional)
-// - `_existingWorkStack`: optional argument, only used for recursive
-//   calls when there is some other _materializeDOM on the call stack.
-//   If _materializeDOM called your function and passed in a workStack,
-//   pass it back when you call _materializeDOM (such as from a workStack
-//   task).
-//
-// Returns `intoArray`, which is especially useful if you pass in `[]`.
-Blast._materializeDOM = function (htmljs, intoArray, parentView,
-  _existingWorkStack) {
-  // In order to use fewer stack frames, materializeDOMInner can push
-  // tasks onto `workStack`, and they will be popped off
-  // and run, last first, after materializeDOMInner returns.  The
-  // reason we use a stack instead of a queue is so that we recurse
-  // depth-first, doing newer tasks first.
-  const workStack = (_existingWorkStack || []);
-  materializeDOMInner(htmljs, intoArray, parentView, workStack);
-
-  if (!_existingWorkStack) {
-    // We created the work stack, so we are responsible for finishing
-    // the work.  Call each "task" function, starting with the top
-    // of the stack.
-    while (workStack.length) {
-      // Note that running task() may push new items onto workStack.
-      const task = workStack.pop();
-      task();
-    }
-  }
-
-  return intoArray;
-};
-
-var materializeDOMInner = function (htmljs, intoArray, parentView, workStack) {
+const materializeDOMInner = function (htmljs, intoArray, parentView, workStack) {
   if (htmljs == null) {
     // null or undefined
     return;
@@ -121,8 +82,14 @@ var materializeDOMInner = function (htmljs, intoArray, parentView, workStack) {
         }
       } else if (HTML.isArray(htmljs)) {
         for (var i = htmljs.length - 1; i >= 0; i--) {
-          workStack.push(Blast._bind(Blast._materializeDOM, null,
-            htmljs[i], intoArray, parentView, workStack));
+          workStack.push(Blast._bind(
+            Blast._materializeDOM,
+            null,
+            htmljs[i],
+            intoArray,
+            parentView,
+            workStack,
+          ));
         }
         return;
       } else {
@@ -138,6 +105,68 @@ var materializeDOMInner = function (htmljs, intoArray, parentView, workStack) {
   }
 
   throw new Error(`Unexpected object in htmljs: ${htmljs}`);
+};
+
+// Turns HTMLjs into DOM nodes and DOMRanges.
+//
+// - `htmljs`: the value to materialize, which may be any of the htmljs
+//   types (Tag, CharRef, Comment, Raw, array, string, boolean, number,
+//   null, or undefined) or a View or Template (which will be used to
+//   construct a View).
+// - `intoArray`: the array of DOM nodes and DOMRanges to push the output
+//   into (required)
+// - `parentView`: the View we are materializing content for (optional)
+// - `_existingWorkStack`: optional argument, only used for recursive
+//   calls when there is some other _materializeDOM on the call stack.
+//   If _materializeDOM called your function and passed in a workStack,
+//   pass it back when you call _materializeDOM (such as from a workStack
+//   task).
+//
+// Returns `intoArray`, which is especially useful if you pass in `[]`.
+Blast._materializeDOM = function (
+  htmljs,
+  intoArray,
+  parentView,
+  _existingWorkStack,
+) {
+  // In order to use fewer stack frames, materializeDOMInner can push
+  // tasks onto `workStack`, and they will be popped off
+  // and run, last first, after materializeDOMInner returns.  The
+  // reason we use a stack instead of a queue is so that we recurse
+  // depth-first, doing newer tasks first.
+  const workStack = (_existingWorkStack || []);
+  materializeDOMInner(htmljs, intoArray, parentView, workStack);
+
+  if (!_existingWorkStack) {
+    // We created the work stack, so we are responsible for finishing
+    // the work.  Call each "task" function, starting with the top
+    // of the stack.
+    while (workStack.length) {
+      // Note that running task() may push new items onto workStack.
+      const task = workStack.pop();
+      task();
+    }
+  }
+
+  return intoArray;
+};
+
+const isSVGAnchor = function (node) {
+  // We generally aren't able to detect SVG <a> elements because
+  // if "A" were in our list of known svg element names, then all
+  // <a> nodes would be created using
+  // `document.createElementNS`. But in the special case of <a
+  // xlink:href="...">, we can at least detect that attribute and
+  // create an SVG <a> tag in that case.
+  //
+  // However, we still have a general problem of knowing when to
+  // use document.createElementNS and when to use
+  // document.createElement; for example, font tags will always
+  // be created as SVG elements which can cause other
+  // problems. #1977
+  return (node.tagName === 'a'
+          && node.attrs
+          && node.attrs['xlink:href'] !== undefined);
 };
 
 var materializeTag = function (tag, parentView, workStack) {
@@ -183,9 +212,11 @@ var materializeTag = function (tag, parentView, workStack) {
         // so that attributes with nully values are considered absent.
         // stringify anything else (e.g. strings, booleans, numbers including 0).
         if (flattenedAttrs[attrName] == null || flattenedAttrs[attrName] === false) { stringAttrs[attrName] = null; } else {
-          stringAttrs[attrName] = Blast._toText(flattenedAttrs[attrName],
+          stringAttrs[attrName] = Blast._toText(
+            flattenedAttrs[attrName],
             parentView,
-            HTML.TEXTMODE.STRING);
+            HTML.TEXTMODE.STRING,
+          );
         }
       }
       attrUpdater.update(stringAttrs);
@@ -213,28 +244,15 @@ var materializeTag = function (tag, parentView, workStack) {
       }
     });
     // now push the task that calculates childNodesAndRanges
-    workStack.push(Blast._bind(Blast._materializeDOM, null,
-      children, childNodesAndRanges, parentView,
-      workStack));
+    workStack.push(Blast._bind(
+      Blast._materializeDOM,
+      null,
+      children,
+      childNodesAndRanges,
+      parentView,
+      workStack,
+    ));
   }
 
   return elem;
-};
-
-var isSVGAnchor = function (node) {
-  // We generally aren't able to detect SVG <a> elements because
-  // if "A" were in our list of known svg element names, then all
-  // <a> nodes would be created using
-  // `document.createElementNS`. But in the special case of <a
-  // xlink:href="...">, we can at least detect that attribute and
-  // create an SVG <a> tag in that case.
-  //
-  // However, we still have a general problem of knowing when to
-  // use document.createElementNS and when to use
-  // document.createElement; for example, font tags will always
-  // be created as SVG elements which can cause other
-  // problems. #1977
-  return (node.tagName === 'a'
-          && node.attrs
-          && node.attrs['xlink:href'] !== undefined);
 };
