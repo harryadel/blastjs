@@ -19,14 +19,14 @@ Npm.depends({
 });
 
 Package.onUse((api) => {
-  api.use('ecmascript');
+  api.use('ecmascript@0.16.1');
   api.use('isobuild:compiler-plugin@1.0.0', 'server');
   api.mainModule('blast-client.js', 'client');
   api.mainModule('blast-server.js', 'server');
 });
 
 Package.onTest((api) => {
-  api.use('ecmascript');
+  api.use('ecmascript@0.16.1');
   api.use('tinytest');
   api.use('harry97:blast');
   api.mainModule('blast-tests.js');
