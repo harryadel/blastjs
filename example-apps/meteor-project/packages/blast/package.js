@@ -2,7 +2,7 @@ Package.describe({
   name: 'harry97:blast',
   version: '1.0.0',
   // Brief, one-line summary of the package.
-  summary: '',
+  summary: 'Blast wrapper package',
   // URL to the Git repository containing the source code for this package.
   git: 'https://github.com/harryadel/blastjs/tree/main/example-apps/meteor-project/packages/blast',
   // By default, Meteor will default to using README.md for documentation.
