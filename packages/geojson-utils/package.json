@@ -1,0 +1,29 @@
+{
+  "name": "@blastjs/geojson-utils",
+  "description": "GeoJSON utility functions (from https://github.com/maxogden/geojson-js-utils)",
+  "version": "0.1.2",
+  "main": "dist/geojson-utils.js",
+  "scripts": {
+    "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
+    "test:watch": "jest --watch",
+    "watch": "watch 'npm run build' src",
+    "clean": "rimraf ./dist",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir ./dist",
+    "prepublish": "npm run test && npm run clean && npm run build"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.14.2",
+    "@babel/preset-env": "^7.14.2",
+    "cross-env": "^7.0.3",
+    "jest": "^26.6.3",
+    "rimraf": "^2.7.1",
+    "watch": "^0.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/geojson-utils"
+  },
+  "author": "Harry Adel <harryadelb@gmail.com>",
+  "license": "GPLV3"
+}
