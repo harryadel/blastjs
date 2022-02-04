@@ -1,4 +1,4 @@
-import { EJSON } from '@blastjs/ejson';
+import EJSON from 'ejson';
 
 export class IdMap {
   constructor(idStringify, idParse) {
