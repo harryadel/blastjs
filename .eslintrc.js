@@ -15,5 +15,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'no-underscore-dangle': 'off',
     'no-plusplus': 'off',
+    'no-use-before-define': 'off',
+    'no-param-reassign': 'off',
   },
 };
