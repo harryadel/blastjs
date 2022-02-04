@@ -17,5 +17,6 @@ module.exports = {
     'no-plusplus': 'off',
     'no-use-before-define': 'off',
     'no-param-reassign': 'off',
+    'max-classes-per-file': 'off',
   },
 };
