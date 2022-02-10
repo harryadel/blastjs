@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/id-map",
   "description": "Dictionary data structure allowing non-string keys",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/id-map.js",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
