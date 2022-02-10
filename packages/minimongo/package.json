@@ -1,6 +1,7 @@
 {
   "name": "@blastjs/minimongo",
   "description": "Meteor's client-side datastore: a port of MongoDB to Javascript",
+  "version": "0.1.0",
   "main": "dist/minimongo",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
