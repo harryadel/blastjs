@@ -1,7 +1,7 @@
 {
   "name": "@blastjs/mongo-decimal",
   "description": "JS simulation of MongoDB Decimal128 type",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/decimal",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
