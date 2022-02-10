@@ -2,6 +2,7 @@
   "name": "@blastjs/mongo-decimal",
   "description": "JS simulation of MongoDB Decimal128 type",
   "version": "0.1.0",
+  "main": "dist/decimal",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
     "test:watch": "jest --watch",
@@ -11,7 +12,8 @@
     "prepublish": "npm run clean && npm run build"
   },
   "dependencies": {
-    "decimal.js": "^10.3.1"
+    "decimal.js": "^10.3.1",
+    "ejson": "^2.2.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.16",
