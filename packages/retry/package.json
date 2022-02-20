@@ -1,0 +1,30 @@
+{
+  "name": "@blastjs/retry",
+  "description": "Retry logic with exponential backoff",
+  "version": "0.1.0",
+  "main": "dist/retry",
+  "scripts": {
+    "test": "jest --runInBand --detectOpenHandles --forceExit __tests__/*",
+    "clean": "rimraf dist",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir dist",
+    "prepublish": "npm run clean && npm run build"
+  },
+  "dependencies": {
+    "@reactioncommerce/random": "^1.0.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.14.2",
+    "@babel/preset-env": "^7.14.2",
+    "cross-env": "^7.0.3",
+    "jest": "^26.6.3",
+    "rimraf": "^2.7.1",
+    "watch": "^0.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryadel/blastjs/tree/main/packages/retry"
+  },
+  "author": "Harry Adel <harryadelb@gmail.com>",
+  "license": "GPLV3"
+}
