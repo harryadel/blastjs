@@ -6,7 +6,6 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
-    'plugin:node/recommended',
   ],
   parserOptions: {
     ecmaVersion: 12,
